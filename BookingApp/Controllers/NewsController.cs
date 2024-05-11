@@ -19,7 +19,53 @@ namespace BookingApp.Controllers
             return new string[] { "value1", "value2" };
         }
 
-        // GET api/<NewsController>/5
+        [HttpGet]
+        public List<NewsModel> GetHot()
+        {
+            using var db = new AppDbContext();
+            var listNews = db.Files.OrderByDescending(x => x.CreatedDate).ToList();
+
+            var response = listNews?
+                    .AsEnumerable()
+                    .Select(x => new NewsModel
+                    {
+                        Id = x.Id,
+                        Title = x.Title,
+                        Sumary = x.FilePath.Substring(0, 20) + "...",
+                        Description = x.FilePath,
+                        Image = "/file/" + x.VideoPath + ".webp",
+                        YoutbeLink = x.UrlVideo,
+                        Author = x.ChannelYoutubeName.Replace("https://www.youtube.com/@", "").Replace("/videos", ""),
+                        CreatedDate = x.CreatedDate.ToShortDateString(),
+                    })
+                    .AsQueryable().ToList();
+            return response;
+        }
+        [HttpGet()]
+        public List<NewsModel> GetRecomend()
+        {
+            using var db = new AppDbContext();
+            var listNews = db.Files.OrderByDescending(x => x.CreatedDate).ToList();
+            var response = listNews?
+                    .AsEnumerable()
+                    .Select(x => new NewsModel
+                    {
+                        Id = x.Id,
+                        Title = x.Title,
+                        Sumary = x.FilePath.Substring(0, 20) + "...",
+                        Description = x.FilePath,
+                        Image = "/file/" + x.VideoPath + ".webp",
+                        YoutbeLink = x.UrlVideo,
+                        Author = x.ChannelYoutubeName.Replace("https://www.youtube.com/@", "").Replace("/videos", ""),
+                        CreatedDate = x.CreatedDate.ToShortDateString(),
+                    })
+                    .AsQueryable()
+                   
+                    .OrderByDescending(x => x.CreatedDate)
+                    .Take(5)
+                    .ToList();
+            return response;
+        }
         [HttpGet("{id}")]
         public IPagedList<NewsModel> Get(int id)
         {
