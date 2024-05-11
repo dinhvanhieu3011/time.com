@@ -1,0 +1,118 @@
+﻿@{
+    ViewData["Title"] = "Update com";
+}
+
+@model BookingApp.Models.AccountUpdateModel
+
+<div class="container">
+    <div class="div-center">
+        <h4>Cập nhật username</h4>
+        <div class="row">
+            @{
+                Microsoft.Extensions.Primitives.StringValues queryVal;
+
+                if (Context.Request.Query.TryGetValue("error", out queryVal) &&
+                    queryVal.FirstOrDefault() == "wrongName")
+                {
+                    <p class="text-danger">The book already exist.</p>
+                }
+                else if (Context.Request.Query.TryGetValue("error", out queryVal) &&
+                    queryVal.FirstOrDefault() == "lessBooks")
+                {
+                    <p class="text-danger">You cannot have less books than the reserved ones.</p>
+                }
+                else if (Context.Request.Query.TryGetValue("error", out queryVal) &&
+                   queryVal.FirstOrDefault() == "error")
+                {
+                    <p class="text-danger">Try again later.</p>
+                }
+                else if (Context.Request.Query.TryGetValue("msg", out queryVal) &&
+                  queryVal.FirstOrDefault() == "updated")
+                {
+                    <p class="text-success">The book was updated.</p>
+                }
+            }
+        </div>
+        <div>
+            <form method="post" enctype="multipart/form-data">
+                <div class="mb-2">
+                    <label for="fileToUpload" class="form-label">
+                        Select File to Upload
+                    </label>
+                    <input id="fileToUpload" name="fileToUpload"
+                           type="file" class="d-none" />
+                    <div class="input-group">
+                        <button class="input-group-text btn btn-success"
+                                type="button"
+                                onclick="selectFileClick();">
+                            Select a File
+                        </button>
+                        <input id="fileDisplay" type="text"
+                               class="form-control" readonly="readonly"
+                               onclick="selectFileClick();" />
+                        <div class="input-group-text" onclick="selectFileClick();">
+                            <i class="fa-regular fa-folder-open"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-2 form-group">
+                    <button class="btn btn-primary">Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        $(document).on('change', ':file', function (e) {
+            console.log('in change');
+            $("#fileDisplay").val(e.target.value);
+        });
+
+        function selectFileClick() {
+            console.log('in trigger');
+            $("#fileToUpload").trigger("click");
+        }
+    </script>
+}
+<style>
+    .actions {
+        text-align: right;
+    }
+
+    .btn-circle {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        text-align: center;
+        font-size: 12px;
+        line-height: 1.42857;
+    }
+
+    .div-center {
+        width: 90%;
+        margin: auto;
+        max-width: 400px;
+        overflow: auto;
+        padding: 1em 2em;
+    }
+</style>
+<script>
+    $(function () {
+        let total = parseInt($("#total").val());
+
+        $("#btnAdd").click(function () {
+            $("#barcodes").append(`<div class="form-group" id="div-${total}">
+                <label for="[${total}]">Barcode #${total + 1}</label><input type="text" class="form-control" minlength="8" name="[${total}]" id="[${total}]" aria-describedby="barcode" placeholder="Barcode" required></div>`);
+            total++;
+        });
+
+        $("#btnMinus").click(function () {
+            if ((total - 1) > 0) {
+                total--;
+                $(`#div-${total}`).remove();
+            }
+        });
+    });
+</script>

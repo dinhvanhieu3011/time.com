@@ -1,0 +1,1 @@
+translate.exe C:\Users\hieu\source\repos\TrackingTiktok\BookingApp\temp.txt 

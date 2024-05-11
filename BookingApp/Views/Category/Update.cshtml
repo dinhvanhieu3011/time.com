@@ -1,0 +1,76 @@
+﻿@{
+    ViewData["Title"] = "Category Manager ";
+}
+
+@model BookingApp.DB.Classes.DB.Category
+
+<div class="container">
+    <div class="div-center">
+        <h4>Upadate Category </h4>
+        <div class="row">
+            @{
+                Microsoft.Extensions.Primitives.StringValues queryVal;
+
+                if (Context.Request.Query.TryGetValue("error", out queryVal) &&
+                    queryVal.FirstOrDefault() == "wrongName")
+                {
+                    <p class="text-danger">Already exist.</p>
+                }
+                else if (Context.Request.Query.TryGetValue("error", out queryVal) &&
+                    queryVal.FirstOrDefault() == "lessBooks")
+                {
+                    <p class="text-danger">You cannot have less books than the reserved ones.</p>
+                }
+                else if (Context.Request.Query.TryGetValue("error", out queryVal) &&
+                   queryVal.FirstOrDefault() == "error")
+                {
+                    <p class="text-danger">Try again later.</p>
+                }
+                else if (Context.Request.Query.TryGetValue("msg", out queryVal) &&
+                  queryVal.FirstOrDefault() == "updated")
+                {
+                    <p class="text-success">Updated.</p>
+                }
+            }
+        </div>
+        <div>
+            @using (Html.BeginForm("Update", "Category", FormMethod.Post, new { role = "form" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label for="book">Name</label>
+                    <input type="text" class="form-control" value="@Model.Name" name="name" id="name" maxlength="50"  placeholder="" required>
+                </div>
+                <div class="actions">
+                    @Html.ActionLink("Back", "Index", "Category", new { }, new { @class = "btn btn-info" })
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<style>
+    .actions {
+        text-align: right;
+    }
+
+    .btn-circle {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        text-align: center;
+        font-size: 12px;
+        line-height: 1.42857;
+    }
+
+    .div-center {
+        width: 90%;
+        margin: auto;
+        max-width: 400px;
+        overflow: auto;
+        padding: 1em 2em;
+    }
+</style>
+<script>
+</script>

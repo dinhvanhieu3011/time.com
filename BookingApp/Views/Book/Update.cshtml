@@ -1,0 +1,97 @@
+﻿@{
+    ViewData["Title"] = "Update com";
+}
+
+@model BookingApp.Models.BookUpdateModel
+
+<div class="container">
+    <div class="div-center">
+        <h4>Cập nhật máy</h4>
+        <div class="row">
+            @{
+                Microsoft.Extensions.Primitives.StringValues queryVal;
+
+                if (Context.Request.Query.TryGetValue("error", out queryVal) &&
+                    queryVal.FirstOrDefault() == "wrongName")
+                {
+                    <p class="text-danger">The book already exist.</p>
+                }
+                else if (Context.Request.Query.TryGetValue("error", out queryVal) &&
+                    queryVal.FirstOrDefault() == "lessBooks")
+                {
+                    <p class="text-danger">You cannot have less books than the reserved ones.</p>
+                }
+                else if (Context.Request.Query.TryGetValue("error", out queryVal) &&
+                   queryVal.FirstOrDefault() == "error")
+                {
+                    <p class="text-danger">Try again later.</p>
+                }
+                else if (Context.Request.Query.TryGetValue("msg", out queryVal) &&
+                  queryVal.FirstOrDefault() == "updated")
+                {
+                    <p class="text-success">The book was updated.</p>
+                }
+            }
+        </div>
+        <div>
+            @using (Html.BeginForm("Update", "Book", FormMethod.Post, new { role = "form" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label for="book">Tên máy</label>
+                    <input type="text" class="form-control" name="book" id="book" maxlength="50" aria-describedby="bookName" placeholder="Tên máy" value="@Model.Book" required />
+                </div>
+                <div class="form-group">
+                    <label for="author">Mã máy</label>
+                    <input type="text" class="form-control" name="author" id="author" aria-describedby="author" placeholder="Mã máy" value="@Model.Author" required />
+                </div>
+                @Html.HiddenFor(m => m.Total, new { @id = "total" })
+                <div class="actions">
+                    @Html.ActionLink("Back", "Index", "Library", new { }, new { @class = "btn btn-info" })
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<style>
+    .actions {
+        text-align: right;
+    }
+
+    .btn-circle {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        text-align: center;
+        font-size: 12px;
+        line-height: 1.42857;
+    }
+
+    .div-center {
+        width: 90%;
+        margin: auto;
+        max-width: 400px;
+        overflow: auto;
+        padding: 1em 2em;
+    }
+</style>
+<script>
+    $(function () {
+        let total = parseInt($("#total").val());
+
+        $("#btnAdd").click(function () {
+            $("#barcodes").append(`<div class="form-group" id="div-${total}">
+                <label for="[${total}]">Barcode #${total + 1}</label><input type="text" class="form-control" minlength="8" name="[${total}]" id="[${total}]" aria-describedby="barcode" placeholder="Barcode" required></div>`);
+            total++;
+        });
+
+        $("#btnMinus").click(function () {
+            if ((total - 1) > 0) {
+                total--;
+                $(`#div-${total}`).remove();
+            }
+        });
+    });
+</script>
