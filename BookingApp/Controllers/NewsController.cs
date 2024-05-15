@@ -23,7 +23,7 @@ namespace BookingApp.Controllers
         public List<NewsModel> GetHot()
         {
             using var db = new AppDbContext();
-            var listNews = db.Files.OrderByDescending(x => x.CreatedDate).ToList();
+            var listNews = db.Files.Where(x=>x.Status!= "Duration > 20 mins").OrderByDescending(x => x.CreatedDate).Take(5).ToList();
 
             var response = listNews?
                     .AsEnumerable()
@@ -36,7 +36,7 @@ namespace BookingApp.Controllers
                         Image = "/file/" + x.VideoPath + ".webp",
                         YoutbeLink = x.UrlVideo,
                         Author = x.ChannelYoutubeName.Replace("https://www.youtube.com/@", "").Replace("/videos", ""),
-                        CreatedDate = x.CreatedDate.ToShortDateString(),
+                        created_date = x.CreatedDate.ToShortDateString(),
                     })
                     .AsQueryable().ToList();
             return response;
@@ -45,7 +45,7 @@ namespace BookingApp.Controllers
         public List<NewsModel> GetRecomend()
         {
             using var db = new AppDbContext();
-            var listNews = db.Files.OrderByDescending(x => x.CreatedDate).ToList();
+            var listNews = db.Files.Where(x => x.Status != "Duration > 20 mins").OrderByDescending(x => x.CreatedDate).ToList();
             var response = listNews?
                     .AsEnumerable()
                     .Select(x => new NewsModel
@@ -57,11 +57,10 @@ namespace BookingApp.Controllers
                         Image = "/file/" + x.VideoPath + ".webp",
                         YoutbeLink = x.UrlVideo,
                         Author = x.ChannelYoutubeName.Replace("https://www.youtube.com/@", "").Replace("/videos", ""),
-                        CreatedDate = x.CreatedDate.ToShortDateString(),
+                        created_date = x.CreatedDate.ToShortDateString(),
                     })
                     .AsQueryable()
                    
-                    .OrderByDescending(x => x.CreatedDate)
                     .Take(5)
                     .ToList();
             return response;
@@ -71,7 +70,7 @@ namespace BookingApp.Controllers
         {
             int PageIndex = id; int PageSize = 10;
             using var db = new AppDbContext();
-            var listNews = db.Files.OrderByDescending(x => x.CreatedDate).ToList();
+            var listNews = db.Files.Where(x => x.Status != "Duration > 20 mins").OrderByDescending(x => x.CreatedDate).ToList();
             if (PageIndex == 0) PageIndex = 1;
             if (PageSize == 0) PageSize = 10;
 
@@ -86,10 +85,9 @@ namespace BookingApp.Controllers
                         Image = "/file/" + x.VideoPath + ".webp",
                         YoutbeLink = x.UrlVideo,
                         Author = x.ChannelYoutubeName.Replace("https://www.youtube.com/@", "").Replace("/videos",""),
-                        CreatedDate = x.CreatedDate.ToShortDateString(),
+                        created_date = x.CreatedDate.ToShortDateString(),
                     })
                     .AsQueryable()
-                    .OrderByDescending(x => x.CreatedDate)
                     .ToPagedList(PageIndex, PageSize);
             return response;
         }
@@ -100,7 +98,7 @@ namespace BookingApp.Controllers
             {
                 int PageIndex = id; int PageSize = 10;
                 using var db = new AppDbContext();
-                var x = db.Files.Where(x => x.Id == id).FirstOrDefault();
+                var x = db.Files.Where(x => x.Status != "Duration > 20 mins").Where(x => x.Id == id).FirstOrDefault();
                 if (PageIndex == 0) PageIndex = 1;
                 if (PageSize == 0) PageSize = 10;
 
@@ -110,10 +108,10 @@ namespace BookingApp.Controllers
                     Title = x.Title,
                     Sumary = x.FilePath.Substring(0, 100) + "...",
                     Description = x.FilePath,
-                    Image = "//file//" + x.VideoPath + "webp",
+                    Image = "/file/" + x.VideoPath + ".webp",
                     YoutbeLink = x.UrlVideo,
                     Author = x.ChannelYoutubeName.Replace("https://www.youtube.com/@", "").Replace("/videos", ""),
-                    CreatedDate = x.CreatedDate.ToShortDateString(),
+                    created_date = x.CreatedDate.ToShortDateString(),
                 };
                 return response;
             }
@@ -129,7 +127,7 @@ namespace BookingApp.Controllers
             public string Sumary { set; get; }    
             public string Image { get; set; }
             public string Description { get; set; }
-            public string CreatedDate { get; set; }
+            public string created_date { get; set; }
             public string Author { get; set; }
             public string YoutbeLink { get; set; }
         }
