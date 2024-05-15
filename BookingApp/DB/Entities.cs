@@ -51,7 +51,7 @@ namespace BookingApp.DB.Classes.DB
         public string Link { get; set; }
         public string Category { get; set; }
         public int CookaAccountId { get; set; }
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public int CategoryId { get; set; }
     }
 

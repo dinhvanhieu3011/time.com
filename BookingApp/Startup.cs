@@ -15,6 +15,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 namespace BookingApp
 {
@@ -100,6 +101,18 @@ namespace BookingApp
                  .UseRecommendedSerializerSettings()
                  .UseMemoryStorage());
             services.AddHangfireServer();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Your API Title",
+                    Version = "v1",
+                    Description = "A ASP.NET Core Web API"
+                });
+
+                // Enable annotations for automatic documentation (optional but recommended)
+                // c.EnableAnnotations();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -156,7 +169,14 @@ namespace BookingApp
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
-
+            app.UseSwagger();
+            app.UseSwagger(o => {
+                //o.RouteTemplate = PPREFIX_URL + "/swagger/{documentName}/swagger.json";
+                o.RouteTemplate = "swagger/v1/swagger.json";
+            }).UseSwaggerUI(c => {
+                c.RoutePrefix = "swagger/v1";
+                c.SwaggerEndpoint($"/swagger/v1/swagger.json", "IP Authentication");
+            });
 
             ///add hangfire
             //app.UseHangfireDashboard("/cgis/hangfire");

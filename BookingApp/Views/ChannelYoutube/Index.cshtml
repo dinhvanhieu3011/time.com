@@ -64,7 +64,7 @@
     <div>
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a class="nav-link active" href="#booksTab" data-toggle="tab">Channel Youtube </a>
+                <a class="nav-link active" href="#booksTab" data-toggle="tab">Computer </a>
             </li>
         </ul>
 
@@ -85,11 +85,13 @@
                         <table class="tblResponsive">
                             <thead>
                                 <tr>
-                                    <th>Channel Name</th>
-                                    <th>Link</th>
-                                    <th>Category</th>
-                                    <th>Language</th>
-                                    <th>Employee</th>
+                                    <th>Computer Name</th>
+                                    <th>IP</th>
+                                    <th>Port</th>
+                                    <th>Employee </th>
+                        @*             <th>Employee</th> *@
+                                    <th></th>
+                                    <th></th>
                                     <th></th>
                                     <th></th>
                                 </tr>
@@ -107,17 +109,23 @@
                                         <td>
                                             @Html.DisplayFor(modelItem => item.Category)
                                         </td>
-                                        <td>
+                              @*           <td>
                                             @Html.DisplayFor(modelItem => item.Language)
-                                        </td>
+                                        </td> *@
                                         <td>
-                                             @Html.DisplayFor(modelItem => item.UserName)
+                                             @Html.DisplayFor(modelItem => item.UserId)
                                         </td>
                                         <td>
                                                 @Html.ActionLink("Sửa", "Update", "ChannelYoutube", new { id = item.Id })
                                         </td>
                                         <td>
                                                 @Html.ActionLink("Xóa", "Delete", "ChannelYoutube", new { id = item.Id }, new { @onclick = "return confirm('Are you sure?')" })
+                                        </td>
+                                        <td>
+                                            @Html.ActionLink("Lịch sử", "Index", "File", new { id = item.Id })
+                                        </td>
+                                        <td>
+                                            @Html.ActionLink("Live", "Live", "ChannelYoutube", new { id = item.Id })
                                         </td>
                                     </tr>
                                 }

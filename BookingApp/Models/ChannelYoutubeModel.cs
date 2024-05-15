@@ -10,7 +10,7 @@ namespace BookingApp.Models
         public string Category { get; set; }
         public int CookaAccountId { get; set; }
         public string Language { get; set; }
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public string UserName { get; set; }
     }
 

@@ -32,7 +32,7 @@ namespace BookingApp.Controllers
             var role = _httpContextAccessor.HttpContext.Session.GetInt32("role");
             if (role != null)
             {
-                return role == 0 ? RedirectToAction("Index", "CookaAccount") : (IActionResult)RedirectToAction("Index", "File");
+                return RedirectToAction("Index", "ChannelYoutube");
             }
 
             return View();

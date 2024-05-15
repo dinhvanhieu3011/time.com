@@ -29,20 +29,14 @@ namespace BookingApp.Controllers
             if (list.Count > 0) {
                 foreach (var item in list)
                 {
-                    var language = db.CookaAccounts.Where(x => x.Id == item.CookaAccountId).Any() ?
-                        db.CookaAccounts.Where(x => x.Id == item.CookaAccountId).FirstOrDefault()?.Language : "";
-                    var username = db.Users.Where(x => x.UserId == item.UserId).Any() ?
-                        db.Users.Where(x => x.UserId == item.UserId).FirstOrDefault()?.Username : "";
-                    var category = db.Categorys.Where(x => x.Id == item.CategoryId).Any() ?
-                     db.Categorys.Where(x => x.Id == item.CategoryId).FirstOrDefault()?.Name : "";
                     lst.Add(new ChannelYoutubeModel
                     {
                         Id = item.Id,
                         Name = item.Name,
                         Link = item.Link,
-                        Language = language,
-                        UserName = username,
-                        Category = category,
+                        Language = "",
+                        UserId = item.UserId,
+                        Category = item.Category,
                     });
 
                 }
@@ -54,18 +48,17 @@ namespace BookingApp.Controllers
         public IActionResult Create()
         {
             using var db = new AppDbContext();
-            var users = db.Users.ToList();
             var cookaccs = db.CookaAccounts.ToList();
             var category = db.Categorys.ToList();
-            ViewBag.UserId = new SelectList(users, "UserId", "Username");
             ViewBag.CategoryId = new SelectList(category, "Id", "Name");
             ViewBag.CookaAccountId = new SelectList(cookaccs, "Id", "Language");
 
             return View();
         }
+
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public IActionResult Create(string Name, string Link, string Category, int CookaAccountId, int UserId, int CategoryId)
+        public IActionResult Create(string Name, string Link, string Category, int CookaAccountId, string UserId, int CategoryId)
         {
             if (!ModelState.IsValid)
             {
@@ -82,7 +75,7 @@ namespace BookingApp.Controllers
                     return RedirectToAction("Index", "ChannelYoutube", new { error = "error" });
             }
         }
-        public bool? Insert(string Name, string Link, string Category, int CookaAccountId, int UserId, int CategoryId)
+        public bool? Insert(string Name, string Link, string Category, int CookaAccountId, string UserId, int CategoryId)
         {
             try
             {
@@ -145,9 +138,24 @@ namespace BookingApp.Controllers
                 return RedirectToAction("Index", "ChannelYoutube", new { error = "wrongData" });
             }
         }
+        public IActionResult Live(int id)
+        {
+            using var db = new AppDbContext();
+            var book = db.ChannelYoutubes.FirstOrDefault(x => x.Id == id);
+
+            if (book != null)
+            {
+                ViewBag.Ip = book.Link;
+                return View(book);
+            }
+            else
+            {
+                return RedirectToAction("Index", "ChannelYoutube", new { error = "wrongData" });
+            }
+        }
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public IActionResult Update(int id, string Name, string Link, string Category, int CookaAccountId, int UserId, int CategoryId)
+        public IActionResult Update(int id, string Name, string Link, string Category, int CookaAccountId, string UserId, int CategoryId)
         {
             try
             {
@@ -178,7 +186,7 @@ namespace BookingApp.Controllers
         }
 
         //Can be rented could be a solution to the point of a stolen book
-        private static void UpdateData(int id, string Name, string Link, string Category, int CookaAccountId, int UserId, int CategoryId, AppDbContext db)
+        private static void UpdateData(int id, string Name, string Link, string Category, int CookaAccountId, string UserId, int CategoryId, AppDbContext db)
         {
             var data = db.ChannelYoutubes.FirstOrDefault(x => x.Id == id);
             data.Name = Name;
