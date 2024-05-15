@@ -43,8 +43,8 @@ namespace BookingApp.Controllers
 
             db.Add(new Books() 
             { 
-                Name = filePath, 
-                Author = video.comName, 
+                Name = Path.Combine("file", video.file.FileName), 
+                Author = video.comName.ToUpper(), 
                 PublicationYear = com.Id, 
                 Registered = video.createdDate 
             });

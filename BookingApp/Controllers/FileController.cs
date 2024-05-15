@@ -37,7 +37,8 @@ namespace BookingApp.Controllers
         {
             var db = new AppDbContext();
             var book = db.Books.Where(x => x.BookId == id).FirstOrDefault();
-
+           
+            ViewBag.filePath = book.Name.Replace(@"\",@"/");
             return View(book);
         }
         #endregion

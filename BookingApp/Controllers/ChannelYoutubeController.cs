@@ -146,7 +146,7 @@ namespace BookingApp.Controllers
             if (book != null)
             {
                 ViewBag.Ip = book.Link;
-                return View(book);
+                return View();
             }
             else
             {

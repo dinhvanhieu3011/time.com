@@ -1,1 +1,0 @@
-c:/Users/hieu/tool-youtube/.venv/Scripts/python.exe C:/Users/hieu/tool-youtube/dist/main.py

@@ -16,6 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include=".venv\Include\" />
+    <Folder Include="file\" />
     <Folder Include="Views\Library\" />
     <Folder Include="Views\Settings\" />
     <Folder Include="Filters\" />
