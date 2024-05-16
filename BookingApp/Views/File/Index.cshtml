@@ -85,7 +85,8 @@
                         <table class="tblResponsive">
                             <thead>
                                 <tr>
-                                    <th>CreatedDate</th>
+                                    <th>fromDate</th>
+                                    <th>toDate</th>
                                     <th>FilePath</th>
                                     <th></th>
                                     <th></th>
@@ -97,7 +98,10 @@
                                 {
                                     <tr>
                                         <td>
-                                            @Html.DisplayFor(modelItem => item.Registered)
+                                            @Html.DisplayFor(modelItem => item.fromDate)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.toDate)
                                         </td>
                                         <td>
                                             @Html.DisplayFor(modelItem => item.Name)
@@ -120,7 +124,7 @@
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="~/lib/jquery-3.3.1.min.js"></script>
 
 <style>
 
@@ -169,7 +173,7 @@
         background-color: #f2f2f2;
     }
 </style>
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+<link rel="stylesheet" type="text/css" href="~/lib/jquery.dataTables.css">
 
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
 <script>

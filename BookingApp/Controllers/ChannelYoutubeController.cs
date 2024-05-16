@@ -145,7 +145,7 @@ namespace BookingApp.Controllers
 
             if (book != null)
             {
-                ViewBag.Ip = book.Link;
+                ViewBag.Ip = book.Link+"/ScreenTask.jpg";
                 return View();
             }
             else

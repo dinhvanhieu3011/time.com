@@ -113,7 +113,13 @@ namespace BookingApp.DB.Classes.DB
         public int? PublicationYear { get; set; }
         [Required]
         public DateTime Registered { get; set; }
-
+        public int Year { get; set; }
+        public int Month { get; set; }
+        public int Day { get; set; }
+        public int Hours { get; set; }
+        public int Minute { get; set; }
+        public string fromDate { get; set; }
+        public string toDate { get; set; }
 
     }
 
