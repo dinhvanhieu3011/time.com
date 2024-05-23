@@ -1,0 +1,105 @@
+﻿@{
+    ViewData["Title"] = "Videos  ";
+}
+<div class="container" style="max-width: 1540px!important">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+
+                <div class="card-header">
+                    List Video
+                </div>
+                <div class="card-body">
+                    <div class="card-header">
+                        Search
+                        @using (Html.BeginForm("Index", "Video", FormMethod.Get))
+                        {
+                            <input type="text" name="id" value="" placeholder="Search!" />
+                            <input type="text" name="txtSearch" placeholder="Search!" />
+                            <button type="submit" class="btn btn-warning">Search</button>
+                        }
+                    </div>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Start</th>
+                                <th>End</th>
+                                <th>Keylog</th>
+                                <th>Apps</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int i = 1;
+
+                            }
+                            @foreach (var Video in ViewBag.Videos)
+                            {
+
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@Video.Start</td>
+                                    <td>@Video.End</td>
+                                    <td>@Video.Keylog</td>
+                                    <td>@Video.Apps</td>
+                                    <td><a href="@Url.Action("Detail","Video",new {id=Video.Id})" class="badge badge-warning">Xem</a></td>
+                                </tr>
+                                i++;
+                            }
+                        </tbody>
+
+                    </table>
+                    <div class="card-footer">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+
+                                @{
+                                    int position;
+                                    int pageCurrent = ViewBag.pageCurrent;
+                                    string txtSearch = ViewBag.txtSearch;
+                                    int channelId = ViewBag.channelId;
+                                    float numSize = ViewBag.numSize;
+                                    if (pageCurrent > 1)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="@Url.Action("Index", "Video", new { id = channelId, txtSearch = (txtSearch != "" ? txtSearch : null), page = pageCurrent-1 })" tabindex="-1">Previous</a>
+                                        </li>
+                                    }
+
+                                    for (position = 1; position <= numSize; position++)
+                                    {
+
+                                        if (position == pageCurrent)
+                                        {
+                                            <li class="page-item active"><a class="page-link" href="@Url.Action("Index", "Video", new {id = channelId, txtSearch = (txtSearch != "" ? txtSearch : null), page = position })">@position</a></li>
+                                        }
+
+                                        else
+                                        {
+                                            <li class="page-item"><a class="page-link" href="@Url.Action("Index", "Video", new {id = channelId, txtSearch = (txtSearch != "" ? txtSearch : null), page = position })">@position</a></li>
+                                        }
+
+                                    }
+                                    if (pageCurrent > 0 && pageCurrent < numSize)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="@Url.Action("Index", "Video", new {id = channelId, txtSearch = (txtSearch != "" ? txtSearch : null), page = pageCurrent+1 })" tabindex="-1">Next</a>
+                                        </li>
+                                    }
+
+                                }
+
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="~/lib/jquery-3.3.1.min.js"></script>
+

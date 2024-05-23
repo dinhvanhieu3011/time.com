@@ -6,26 +6,26 @@ using static System.Net.Mime.MediaTypeNames;
 namespace BookingApp.DB.Classes.DB
 {
 
-    [Table("CookaAccounts")]
-    public class CookaAccounts
+    [Table("Videos")]
+    public class Videos
     {
         [Key]
-        [Required]
         public int Id { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string Language { get; set; }
-        public bool IsStop { get; set; }
-        public int SleepTime { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
+        public string VideoPath { get; set; }
+        public string Keylog { get; set; }
+        public string Apps { get; set; }
+        public int ChannelId { get; set; }
+        public int Year { get; set; }
+        public int Month { get; set; }
+        public int Date { get; set; }
+        public int Hours { get; set; }
+        public int Minutes { get; set; }
+        public bool IsDelete { get; set; }
     }
-    [Table("Category")]
-    public class Category
-    {
-        [Key]
-        [Required]
-        public int Id { get; set; }
-        public string Name { get; set; }
-    }
+
 
     [Table("Users")]
     public class Users
@@ -55,39 +55,7 @@ namespace BookingApp.DB.Classes.DB
         public int CategoryId { get; set; }
     }
 
-    [Table("Files")]
-    public class Files
-    {
-        [Key]
-        [Required]
-        public int Id { get; set; }
-        public string UrlVideo { get; set; }
-        public string Title { get; set; }
-        public string VideoPath { get; set; }
-        public string FilePath { get; set; }
-        public string ChannelYoutubeName { get; set; }
-        public string Status { get; set; } = "Chưa lấy";
-        public DateTime GetedDate { get; set; } 
-        public DateTime CreatedDate { get; set; } 
-    }
-    [Table("News")]
-    public class News
-    {
-        [Key]
-        [Required]
-        public int Id { get; set; }
-        public string UrlVideo { get; set; }
-        public string Title { get; set; }
-        public string VideoPath { get; set; }
-        public string FilePath { get; set; }
-        public string ChannelYoutubeName { get; set; }
-        public string Status { get; set; } = "Chưa lấy";
-        public DateTime GetedDate { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public string Content { get; set; } 
-        public string Author { get; set; } 
-        public string Image { get; set; } 
-    }
+
 
     [Table("Accounts")]
     public class Accounts
@@ -99,81 +67,6 @@ namespace BookingApp.DB.Classes.DB
         public string Name { get; set; }
 
 
-    }
-    [Table("Books")]
-    public class Books
-    {
-        [Key]
-        [Required]
-        public int BookId { get; set; }
-        [Required]
-        public string Name { get; set; }
-        [Required]
-        public string Author { get; set; }
-        public int? PublicationYear { get; set; }
-        [Required]
-        public DateTime Registered { get; set; }
-        public int Year { get; set; }
-        public int Month { get; set; }
-        public int Day { get; set; }
-        public int Hours { get; set; }
-        public int Minute { get; set; }
-        public string fromDate { get; set; }
-        public string toDate { get; set; }
-
-    }
-
-    [Table("Channels")]
-    public class Channels
-    {
-        [Key]
-        [Required]
-        public int ChannelId { get; set; }
-        public int BookId { get; set; }
-        public string Name { get; set; }
-        public int Status { get; set; }
-        public int Action { get; set; }
-        public int VideoCount { get; set; }
-        public DateTime LastVideoCreatedDate { get; set; }
-        public int ViewCount { get; set; }
-        public int LikeCount { get; set; }
-        public DateTime CreatedDate { get; set; }
-
-    }
-
-    [Table("ReservedBook")]
-    public class ReservedBook
-    {
-        [Key]
-        [Required]
-        public int ReservedBookId { get; set; }
-        [Required]
-        public int UserId { get; set; }
-        [Required]
-        public int BookId { get; set; }
-        public int? BooksCopiesId { get; set; }
-        [Required]
-        public DateTime ReservedDate { get; set; }
-        public DateTime? CollectedDate { get; set; }
-        public DateTime? ReturnDate { get; set; }
-        public DateTime? ReturnedDate { get; set; }
-    }
-
-    [Table("BooksCopies")]
-    public class BooksCopies
-    {
-        [Key]
-        [Required]
-        public int BooksCopiesId { get; set; }
-        [Required]
-        public int BookId { get; set; }
-        [Required]
-        public string Barcode { get; set; }
-        [Required]
-        public int CanBeReserved { get; set; }
-        public string Notes { get; set; }
-        [Required]
-        public DateTime Registered { get; set; }
     }
 
     [Table("Settings")]

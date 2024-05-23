@@ -7,7 +7,7 @@
       "sslPort": 44319
     }
   },
-  "profiles": {
+  "proVideos": {
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,

