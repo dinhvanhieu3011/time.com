@@ -1,105 +1,116 @@
 ﻿@{
     ViewData["Title"] = "Videos  ";
 }
+@model List<BookingApp.DB.Classes.DB.Videos>
+
 <div class="container" style="max-width: 1540px!important">
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="card">
+    <div>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="#booksTab" data-toggle="tab">Videos </a>
+            </li>
+        </ul>
 
-                <div class="card-header">
-                    List Video
-                </div>
-                <div class="card-body">
-                    <div class="card-header">
-                        Search
-                        @using (Html.BeginForm("Index", "Video", FormMethod.Get))
-                        {
-                            <input type="text" name="id" value="" placeholder="Search!" />
-                            <input type="text" name="txtSearch" placeholder="Search!" />
-                            <button type="submit" class="btn btn-warning">Search</button>
-                        }
-                    </div>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>STT</th>
-                                <th>Start</th>
-                                <th>End</th>
-                                <th>Keylog</th>
-                                <th>Apps</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @{
-                                int i = 1;
+        <div class="tab-content clearfix">
+            <div class="tab-pane active" id="booksTab">
 
-                            }
-                            @foreach (var Video in ViewBag.Videos)
-                            {
-
+                <dl class="row">
+                    <dd class="col-sm-12">
+                        <table class="tblResponsive">
+                            <thead>
                                 <tr>
-                                    <td>@i</td>
-                                    <td>@Video.Start</td>
-                                    <td>@Video.End</td>
-                                    <td>@Video.Keylog</td>
-                                    <td>@Video.Apps</td>
-                                    <td><a href="@Url.Action("Detail","Video",new {id=Video.Id})" class="badge badge-warning">Xem</a></td>
+                                    <th>Start</th>
+                                    <th>End</th>
+                                    <th>Path </th>
+                                    <th></th>
+                  
                                 </tr>
-                                i++;
-                            }
-                        </tbody>
-
-                    </table>
-                    <div class="card-footer">
-                        <nav aria-label="Page navigation example">
-                            <ul class="pagination">
-
-                                @{
-                                    int position;
-                                    int pageCurrent = ViewBag.pageCurrent;
-                                    string txtSearch = ViewBag.txtSearch;
-                                    int channelId = ViewBag.channelId;
-                                    float numSize = ViewBag.numSize;
-                                    if (pageCurrent > 1)
-                                    {
-                                        <li class="page-item">
-                                            <a class="page-link" href="@Url.Action("Index", "Video", new { id = channelId, txtSearch = (txtSearch != "" ? txtSearch : null), page = pageCurrent-1 })" tabindex="-1">Previous</a>
-                                        </li>
-                                    }
-
-                                    for (position = 1; position <= numSize; position++)
-                                    {
-
-                                        if (position == pageCurrent)
-                                        {
-                                            <li class="page-item active"><a class="page-link" href="@Url.Action("Index", "Video", new {id = channelId, txtSearch = (txtSearch != "" ? txtSearch : null), page = position })">@position</a></li>
-                                        }
-
-                                        else
-                                        {
-                                            <li class="page-item"><a class="page-link" href="@Url.Action("Index", "Video", new {id = channelId, txtSearch = (txtSearch != "" ? txtSearch : null), page = position })">@position</a></li>
-                                        }
-
-                                    }
-                                    if (pageCurrent > 0 && pageCurrent < numSize)
-                                    {
-                                        <li class="page-item">
-                                            <a class="page-link" href="@Url.Action("Index", "Video", new {id = channelId, txtSearch = (txtSearch != "" ? txtSearch : null), page = pageCurrent+1 })" tabindex="-1">Next</a>
-                                        </li>
-                                    }
-
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Start)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.End)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.VideoPath)
+                                        </td>
+                                        <td>
+                                            @Html.ActionLink("Xem", "Detail", "Video", new { id = item.Id })
+                                        </td>
+                                    </tr>
                                 }
-
-                            </ul>
-                        </nav>
-                    </div>
-                </div>
+                            </tbody>
+                        </table>
+                    </dd>
+                </dl>
             </div>
         </div>
     </div>
-
 </div>
 
 <script src="~/lib/jquery-3.3.1.min.js"></script>
 
+<style>
+
+    h4 {
+        padding-top: 15px;
+        padding-bottom: 10px;
+    }
+
+    .pNew {
+        padding-top: 12px;
+    }
+
+    .col-right {
+        text-align: right;
+    }
+</style>
+<style>
+    /* Style for the table */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+
+    /* Style for table header */
+    th {
+        background-color: #f2f2f2;
+        color: #333;
+        padding: 8px;
+        text-align: left;
+    }
+
+    /* Style for table rows */
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    /* Style for table cells */
+    td {
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    /* Hover effect for table rows */
+    tr:hover {
+        background-color: #f2f2f2;
+    }
+</style>
+<link rel="stylesheet" type="text/css" href="~/lib/jquery.dataTables.css">
+
+<script type="text/javascript" charset="utf8" src="~/lib/jquery.dataTables.js"></script>
+<script>
+
+    $(function () {
+        $('.tblResponsive').DataTable({
+            responsive: true,
+            paginate: true
+        });
+    });
+</script>

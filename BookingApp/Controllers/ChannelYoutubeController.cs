@@ -48,10 +48,6 @@ namespace BookingApp.Controllers
         public IActionResult Create()
         {
             using var db = new AppDbContext();
-            var cookaccs = db.CookaAccounts.ToList();
-            var category = db.Categorys.ToList();
-            ViewBag.CategoryId = new SelectList(category, "Id", "Name");
-            ViewBag.CookaAccountId = new SelectList(cookaccs, "Id", "Language");
 
             return View();
         }
@@ -124,13 +120,9 @@ namespace BookingApp.Controllers
             if (book != null)
             {
                 var users = db.Users.ToList();
-                var cookaccs = db.CookaAccounts.ToList();
-                var category = db.Categorys.ToList();
+   
 
                 ViewBag.UserId = new SelectList(users, "UserId", "Username", book.UserId);
-                ViewBag.CategoryId = new SelectList(category, "Id", "Name", book.CategoryId);
-
-                ViewBag.CookaAccountId = new SelectList(cookaccs, "Id", "Language",book.CookaAccountId);
                 return View(book);
             }
             else

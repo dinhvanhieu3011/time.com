@@ -23,7 +23,7 @@ namespace BookingApp.DB.Classes.DB
         public int Date { get; set; }
         public int Hours { get; set; }
         public int Minutes { get; set; }
-        public bool IsDelete { get; set; }
+        public int IsDelete { get; set; }
     }
 
 

@@ -21,8 +21,6 @@
     <Content Remove="wwwroot\file\file_example_AVI_1920_2_3MG.avi" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="file\" />
-    <Folder Include="Views\Library\" />
     <Folder Include="Views\Settings\" />
     <Folder Include="Filters\" />
     <Folder Include="Filters\Authorization\" />

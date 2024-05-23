@@ -2,18 +2,20 @@
     ViewData["Title"] = "Videos ";
 }
 @model BookingApp.DB.Classes.DB.Videos
-<div class="container" style="font-size:18px!important">
+<div class="container">
     <div >
         <h4>Video </h4>
         <div class="row">
             <div class="col-8">
                 <video id="my-player"
-                       class="video-js vjs-default-skin vjs-16-9"
-                       @* style="width:90%!important;height:400px!important" *@
+                       class="video-js"
+                       style="width:90%!important;height:400px!important"
                        controls
                        preload="auto"
-                       data-setup='{ "playbackRates": [0.5, 1, 1.5, 2] }'>
-                    <source id="source" src="@ViewBag.filePath" type="video/mp4"></source>
+                       poster="//vjs.zencdn.net/v/oceans.png"
+                       @* data-setup='{ "playbackRates": [0.5, 1, 1.5, 2] }' *@
+                >
+                    <source src="@ViewBag.filePath" type="video/mp4"></source>
                     <p class="vjs-no-js">
                         To view this video please enable JavaScript, and consider upgrading to a
                         web browser that
@@ -26,33 +28,26 @@
                     <div class="video-stats">
                         <span> @ViewBag.channel</span>
                         <span>•</span>
-                        <span id="time">@Model.Start - @Model.End </span>
+                        <span>@Model.Start - @Model.End </span>
                     </div>
                     <div class="video-description">
-                        <p id="apps"> @Model.Apps</p>
-                        <p id="keylog"> @Model.Keylog</p>
+                        <p> @Model.Apps</p>
+                        <p> @Model.Keylog</p>
                     </div>
                 </div>
             </div>
             <div class="col-4">
                 <h2>Related Videos</h2>
-                <div class="video-list" style="font-size:16px">
-                    @foreach (var item in ViewBag.relatedVideo)
-                    {
-                        <!-- Each video item -->
-                        <div class="video-item" onclick="setVideo('@item.Id')" >
-                            <video style="width:60%!important;height:60%!important">
-                                <source src='/@item.VideoPath.Replace(@"\",@"/")' type="video/mp4">
-                            </video>
-                            <div class="video-title">@item.Start - @item.Apps</div>
-
-                        </div>
-                        <!-- Repeat for more videos -->
-                    }
+                <div class="video-list">
+                    <!-- Each video item -->
+                    <div class="video-item">
+                        <img src="//vjs.zencdn.net/v/oceans.png" alt="Video Thumbnail">
+                        <div class="video-title">Related Video Title</div>
+                    </div>
+                    <!-- Repeat for more videos -->
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 <style>
@@ -60,7 +55,6 @@
         display: flex;
         justify-content: space-between;
         padding: 20px;
-        font-size: 18px!important;
     }
 
     .video-player {
@@ -97,7 +91,6 @@
     .video-item {
         display: flex;
         margin-bottom: 10px;
-        box-shadow: 1px 1px 1px 1px #888888;
     }
 
         .video-item img {
@@ -135,7 +128,7 @@
 <link href="~/lib/video-js.min.css" rel="stylesheet">
 <script src="~/lib/video.min.js"></script>
 <script>
-@*     var myPlayer = videojs('my-player');
+    var myPlayer = videojs('my-player');
     myPlayer.ready(function () 
     { myPlayer.on('timeupdate', 
     function () 
@@ -144,27 +137,5 @@
         { console.log(whereYouAt); } 
         console.log(myPlayer.paused());
     }); 
-    }); *@
-    function setVideo(id) {
-        $.ajax({
-            url: "/api/Upload/Get",
-            dataType: "json",
-            type: "GET",
-            contentType: 'application/json; charset=utf-8', //define a contentType of your request
-            cache: false,
-            data: { id: id },
-            success: function (data) {
-                // data is your result from controller
-                console.log(data)
-                var player = videojs('my-player');
-                player.src({ type: 'video/mp4', src: data.videoPath });
-                document.getElementById("keylog").innerHTML = data.keylog;
-                document.getElementById("time").innerHTML = data.start + " - " + data.end;
-                document.getElementById("apps").innerHTML = data.apps;
-            },
-            error: function (xhr) {
-                alert('error');
-            }
-        });
-    }
+    });
 </script>
