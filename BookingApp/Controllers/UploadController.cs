@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,9 +20,11 @@ namespace BookingApp.Controllers
     public class UploadController : ControllerBase
     {
         private readonly IHostEnvironment _env;
-        public UploadController(IHostEnvironment env)
+        private readonly ILogger<UploadController> _logger;
+        public UploadController(IHostEnvironment env, ILogger<UploadController> logger)
         {
             _env = env;
+            _logger = logger;
         }
         public class VideoDto
         {
@@ -60,10 +63,11 @@ namespace BookingApp.Controllers
                 using (var stream = new FileStream(fPath, FileMode.Create))
                 {
                     await video.Video.CopyToAsync(stream);
+
                 }
                 DateTime from = convert(long.Parse(name.Split("_")[0]));
                 DateTime to = convert(long.Parse(name.Split("_")[1]));
-
+                
                 db.Add(new Videos()
                 {
                     VideoPath = Path.Combine("file", VideoName),
@@ -83,6 +87,7 @@ namespace BookingApp.Controllers
 
 
                 db.SaveChanges();
+                _logger.LogInformation("Tạo mới video: " + VideoName);
 
                 return Ok("Videos uploaded successfully");
             }

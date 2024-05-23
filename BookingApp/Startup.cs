@@ -16,7 +16,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-
+using Serilog;
 namespace BookingApp
 {
     public class Startup
@@ -24,7 +24,7 @@ namespace BookingApp
         public const string ADDRESS = "https://localhost:5001/";
         public const string JWT_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
         private const string DB_FIRST_TIME = "dbFirstTime.txt";
-        private string PushExpression = "*/10 * * * *";
+        private string PushExpression = "*/59 * * * *";
         private string DeleteNotifyExpression = "* * */1 * *";
         private string TimeZone = "SE Asia Standard Time";
         public Startup(IConfiguration configuration)
@@ -89,7 +89,10 @@ namespace BookingApp
                     ClockSkew = TimeSpan.Zero
                 };
             });
-
+            services.AddLogging((builder) =>
+            {
+                builder.AddSerilog(dispose: true);
+            });
             var hangfireSetting = Configuration
                       .GetSection("Hangfire")
                       .Get<HangfireSetting>();
@@ -179,16 +182,16 @@ namespace BookingApp
             });
 
             ///add hangfire
-            //app.UseHangfireDashboard("/cgis/hangfire");
-            //GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 3 });
-            //var options = new BackgroundJobServerOptions
-            //{
-            //    ServerName = string.Format("{0}.{1}", Environment.MachineName, Guid.NewGuid().ToString()),
-            //    WorkerCount = 1,
-            //    ServerTimeout = TimeSpan.FromMinutes(120)
-            //};
-            //RecurringJob.AddOrUpdate<ISchedulerService>(ms => ms.AutoTrecking(), PushExpression, TimeZoneInfo.FindSystemTimeZoneById(TimeZone));
-            //_ = app.UseHangfireServer(options);
+            app.UseHangfireDashboard("/dev/hangfire");
+            GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 3 });
+            var options = new BackgroundJobServerOptions
+            {
+                ServerName = string.Format("{0}.{1}", Environment.MachineName, Guid.NewGuid().ToString()),
+                WorkerCount = 1,
+                ServerTimeout = TimeSpan.FromMinutes(120)
+            };
+            RecurringJob.AddOrUpdate<ISchedulerService>(ms => ms.AutoTrecking(), PushExpression, TimeZoneInfo.FindSystemTimeZoneById(TimeZone));
+            _ = app.UseHangfireServer(options);
 
         }
     }

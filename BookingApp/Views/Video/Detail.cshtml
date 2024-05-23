@@ -24,9 +24,9 @@
                 </video>
                 <div class="video-info">
                     <div class="video-stats">
-                        <span> @ViewBag.channel</span>
+                        <span style="font-weight: bold;"> @ViewBag.channel</span>
                         <span>•</span>
-                        <span id="time">@Model.Start - @Model.End </span>
+                        <span id="time" style="font-weight: bold;">@Model.Start - @Model.End </span>
                     </div>
                     <div class="video-description">
                         <p id="apps"> @Model.Apps</p>
@@ -44,7 +44,7 @@
                             <video style="width:60%!important;height:60%!important">
                                 <source src='/@item.VideoPath.Replace(@"\",@"/")' type="video/mp4">
                             </video>
-                            <div class="video-title">@item.Start - @item.Apps</div>
+                            <div class="video-title">@item.Start - @item.End</div>
 
                         </div>
                         <!-- Repeat for more videos -->

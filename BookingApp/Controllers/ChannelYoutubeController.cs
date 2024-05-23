@@ -1,7 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.Xml;
+using System.Xml.Linq;
 using BookingApp.DB.Classes;
 using BookingApp.DB.Classes.DB;
 using BookingApp.Filters.Authorization;
@@ -9,15 +10,18 @@ using BookingApp.Models;
 using BookingApp.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
 
 namespace BookingApp.Controllers
 {
     [Authorize(Roles.ADMIN)]
     public class ChannelYoutubeController : Controller
     {
-        public ChannelYoutubeController()
-        {
+        private readonly ILogger<ChannelYoutubeController> _logger;
 
+        public ChannelYoutubeController(ILogger<ChannelYoutubeController> logger)
+        {
+            _logger = logger;
         }
 
         public IActionResult Index()
@@ -64,6 +68,7 @@ namespace BookingApp.Controllers
             switch (Insert(Name, Link, Category, CookaAccountId, UserId, CategoryId))
             {
                 case true:
+                    _logger.LogInformation("Tạo Máy " + Name + " thành công!");
                     return RedirectToAction("Index", "ChannelYoutube", new { msg = "added" });
                 case false:
                     return RedirectToAction("Index", "ChannelYoutube", new { error = "wrongName" });
@@ -120,8 +125,8 @@ namespace BookingApp.Controllers
             if (book != null)
             {
                 var users = db.Users.ToList();
-   
 
+                _logger.LogInformation("Chỉnh sửa Máy " + book.Id + " thành công!");
                 ViewBag.UserId = new SelectList(users, "UserId", "Username", book.UserId);
                 return View(book);
             }
@@ -205,6 +210,8 @@ namespace BookingApp.Controllers
 
                 db.Remove(new ChannelYoutubes() { Id = id });
                 db.SaveChanges();
+                _logger.LogInformation("Xoá Máy " + id + " thành công!");
+
                 return RedirectToAction("Index", "ChannelYoutube", new { msg = "Deleted" });
 
             }

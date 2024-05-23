@@ -24,6 +24,7 @@ namespace BookingApp.DB.Classes.DB
         public int Hours { get; set; }
         public int Minutes { get; set; }
         public int IsDelete { get; set; }
+        public int IsMerge { get; set; }
     }
 
 

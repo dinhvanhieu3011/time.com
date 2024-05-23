@@ -21,6 +21,7 @@
     <Content Remove="wwwroot\file\file_example_AVI_1920_2_3MG.avi" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="file\" />
     <Folder Include="Views\Settings\" />
     <Folder Include="Filters\" />
     <Folder Include="Filters\Authorization\" />
@@ -33,11 +34,16 @@
 
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.11" />
+    <PackageReference Include="Serilog" Version="3.1.1" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.6.1" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Classes\.DS_Store" />
+    <None Remove="file\1715826908_1715826918_1.mp4" />
   </ItemGroup>
   <ItemGroup>
     <None Include="wwwroot\file\file_example_AVI_1920_2_3MG.avi" />
