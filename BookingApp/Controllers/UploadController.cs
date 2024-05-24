@@ -106,15 +106,21 @@ namespace BookingApp.Controllers
 
                 string name = VideoNameWithoutExtension.Split(".")[0];
                 string VideoName = name + "_" + com.Id + ".mp4";
-
-                string fPath = Path.Combine(_env.ContentRootPath, "file", VideoName); // Or use your preferred storage location
+                DateTime from = convert(long.Parse(name.Split("_")[0]));
+                DateTime to = convert(long.Parse(name.Split("_")[1]));
+                string folder = from.Date.ToString("ddMMyyyy");
+                if (!Directory.Exists(Path.Combine(_env.ContentRootPath, folder)))
+                {
+                    // Nếu không tồn tại, tạo thư mục mới
+                    Directory.CreateDirectory(Path.Combine(_env.ContentRootPath, folder));
+                }
+                string fPath = Path.Combine(_env.ContentRootPath, "file", folder, VideoName); // Or use your preferred storage location
                 using (var stream = new FileStream(fPath, FileMode.Create))
                 {
                     await video.Video.CopyToAsync(stream);
 
                 }
-                DateTime from = convert(long.Parse(name.Split("_")[0]));
-                DateTime to = convert(long.Parse(name.Split("_")[1]));
+
                 
                 db.Add(new Videos()
                 {

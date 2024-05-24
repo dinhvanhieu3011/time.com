@@ -109,7 +109,13 @@ namespace BookingApp.Service
             var ffmpegPath = Path.Combine(rootPath, "ffmpeg.exe") ;
             ffmpegPath = "ffmpeg";
             var concatFilePath = Path.Combine(rootPath, "concat.txt") ;
-            string fPath = Path.Combine(rootPath, "file", videoMergeName); // Or use your preferred storage location
+            string folder = listVideo[0].Start.Date.ToString("ddMMyyyy");
+            if (!Directory.Exists(Path.Combine(rootPath, folder)))
+            {
+                // Nếu không tồn tại, tạo thư mục mới
+                Directory.CreateDirectory(Path.Combine(rootPath, folder));
+            }
+            string fPath = Path.Combine(rootPath, "file", folder, videoMergeName); // Or use your preferred storage location
             CreateConcatFile(rootPath,concatFilePath, listVideo);
             MergeVideosWithFFmpeg(ffmpegPath, concatFilePath, fPath + ".mp4");
         }
