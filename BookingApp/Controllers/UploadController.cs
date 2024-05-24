@@ -114,7 +114,12 @@ namespace BookingApp.Controllers
                     // Nếu không tồn tại, tạo thư mục mới
                     Directory.CreateDirectory(Path.Combine(_env.ContentRootPath, folder));
                 }
-                string fPath = Path.Combine(_env.ContentRootPath, "file", folder, VideoName); // Or use your preferred storage location
+                if (!Directory.Exists(Path.Combine(_env.ContentRootPath, folder, com.Id.ToString())))
+                {
+                    // Nếu không tồn tại, tạo thư mục mới
+                    Directory.CreateDirectory(Path.Combine(_env.ContentRootPath, folder, com.Id.ToString()));
+                }
+                string fPath = Path.Combine(_env.ContentRootPath, "file", folder, com.Id.ToString(), VideoName); // Or use your preferred storage location
                 using (var stream = new FileStream(fPath, FileMode.Create))
                 {
                     await video.Video.CopyToAsync(stream);

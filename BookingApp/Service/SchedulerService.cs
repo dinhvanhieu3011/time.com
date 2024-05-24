@@ -115,7 +115,12 @@ namespace BookingApp.Service
                 // Nếu không tồn tại, tạo thư mục mới
                 Directory.CreateDirectory(Path.Combine(rootPath, folder));
             }
-            string fPath = Path.Combine(rootPath, "file", folder, videoMergeName); // Or use your preferred storage location
+            if (!Directory.Exists(Path.Combine(rootPath, folder, listVideo[0].ChannelId.ToString())))
+            {
+                // Nếu không tồn tại, tạo thư mục mới
+                Directory.CreateDirectory(Path.Combine(rootPath, folder, listVideo[0].ChannelId.ToString()));
+            }
+            string fPath = Path.Combine(rootPath, "file", folder, listVideo[0].ChannelId.ToString(), videoMergeName); // Or use your preferred storage location
             CreateConcatFile(rootPath,concatFilePath, listVideo);
             MergeVideosWithFFmpeg(ffmpegPath, concatFilePath, fPath + ".mp4");
         }
