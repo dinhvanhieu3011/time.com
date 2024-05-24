@@ -6,7 +6,7 @@
     <div >
         <h4>Video </h4>
         <div class="row">
-            <div class="col-8">
+            <div class="col-9">
                 <video id="my-player"
                        class="video-js vjs-default-skin vjs-16-9"
                        @* style="width:90%!important;height:400px!important" *@
@@ -21,20 +21,23 @@
                             supports HTML5 video
                         </a>
                     </p>
-                </video>
-                <div class="video-info">
-                    <div class="video-stats">
-                        <span style="font-weight: bold;"> @ViewBag.channel</span>
-                        <span>•</span>
-                        <span id="time" style="font-weight: bold;">@Model.Start - @Model.End </span>
-                    </div>
-                    <div class="video-description">
-                        <p id="apps"> @Model.Apps</p>
-                        <p id="keylog"> @Model.Keylog</p>
+                </video> 
+                <div class="row">
+                    <div class="video-info col-12">
+                        <div class="row video-stats">
+                            <span style="font-weight: bold;"> @ViewBag.channel</span>
+                            <span>•</span>
+                            <span id="time" style="font-weight: bold;">@Model.Start - @Model.End </span>
+                        </div>
+                        <div class="row video-description col-12" style="padding-left: 0px!important">
+                            <p id="apps" style="font-size:14px!important;padding-left: 0px!important " class="multiline col-6"> @Model.Apps</p>
+                            <p id="keylog" style="font-size:14px!important;padding-left: 0px!important" class="multiline col-6"> @Model.Keylog</p>
+                        </div>
                     </div>
                 </div>
+
             </div>
-            <div class="col-4">
+            <div class="col-3">
                 <h2>Related Videos</h2>
                 <div class="video-list" style="font-size:16px">
                     @foreach (var item in ViewBag.relatedVideo)
@@ -56,11 +59,14 @@
     </div>
 </div>
 <style>
+    .multiline {
+        white-space: pre-line;
+    }
     main {
         display: flex;
         justify-content: space-between;
         padding: 20px;
-        font-size: 18px!important;
+        font-size: 13px!important;
     }
 
     .video-player {

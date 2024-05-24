@@ -25,7 +25,8 @@ namespace BookingApp
         public const string JWT_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
         private const string DB_FIRST_TIME = "dbFirstTime.txt";
         private string PushExpression = "*/59 * * * *";
-        private string DeleteNotifyExpression = "* * */1 * *";
+        private string EveryTwoHours = "0 */2 * * *";
+        private string SchedulerBackup = "0 0 * * 6";
         private string TimeZone = "SE Asia Standard Time";
         public Startup(IConfiguration configuration)
         {
@@ -96,6 +97,7 @@ namespace BookingApp
             var hangfireSetting = Configuration
                       .GetSection("Hangfire")
                       .Get<HangfireSetting>();
+            SchedulerBackup = hangfireSetting.SchedulerBackup;
             services.AddSingleton(hangfireSetting);
             ///add AddHangfire cron job
             services.AddHangfire(configuration => configuration
@@ -190,9 +192,10 @@ namespace BookingApp
                 WorkerCount = 1,
                 ServerTimeout = TimeSpan.FromMinutes(120)
             };
-            RecurringJob.AddOrUpdate<ISchedulerService>(ms => ms.AutoTrecking(), PushExpression, TimeZoneInfo.FindSystemTimeZoneById(TimeZone));
+            RecurringJob.AddOrUpdate<ISchedulerService>(ms => ms.AutoTrecking(), EveryTwoHours, TimeZoneInfo.FindSystemTimeZoneById(TimeZone));
             _ = app.UseHangfireServer(options);
-
+            RecurringJob.AddOrUpdate<ISchedulerService>(ms => ms.Backup(), SchedulerBackup, TimeZoneInfo.FindSystemTimeZoneById(TimeZone));
+            _ = app.UseHangfireServer(options);
         }
     }
 }

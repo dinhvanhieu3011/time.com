@@ -1,0 +1,42 @@
+﻿Ghi chú:nnThuong
+- Cấu hình trong file app: $(".select-opt").select2();
+(select-opt: là tên class đặt tùy ý)
+- Sử dụng select trên các trang như thông thường
+- Trường hợp sử dụng select này trên Modal:
++Xóa tabindex="-1" trên dòng lệnh html của Modal
++ Cấu hình lại css cho độ rộng là 100%: 
+select2-container{
+    width:100% !important;
+}
+- Trường hợp có sử dụng chage select để gọi đến select khác thì dùng lệnh sau:
+$('#DropTinh').on('change', function () {
+            var selectedValue = $(this).find('option:selected').val();
+            me.LayQuanHuyenTheoTinh(selectedValue, "");
+        });
+- Mỗi một sữ thay đổi mà khi chưa có <option> được sinh trước đó thì phải dùng lệnh sau để update dữ liệu:
+("#DropHuyen").val(huyen_id).trigger('change');
+
+
+/////////////////////////////////////////////////////
+ What events will Select2 trigger?
+
+Select2 will trigger a few different events when different actions are taken using the component, allowing you to add custom hooks and perform actions.
+
+change
+    Triggered whenever an option is selected or removed.
+select2:close
+    Triggered whenever the dropdown is closed.
+select2:closing
+    Triggered before the dropdown is closed. This event can be prevented.
+select2:open
+    Triggered whenever the dropdown is opened.
+select2:opening
+    Triggered before the dropdown is opened. This event can be prevented.
+select2:select
+    Triggered whenever a result is selected.
+select2:selecting
+    Triggered before a result is selected. This event can be prevented.
+select2:unselect
+    Triggered whenever a selection is removed.
+select2:unselecting
+    Triggered before a selection is removed. This event can be prevented. 

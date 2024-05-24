@@ -6,10 +6,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
+using static BookingApp.Controllers.VideoController;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -21,6 +23,19 @@ namespace BookingApp.Controllers
     {
         private readonly IHostEnvironment _env;
         private readonly ILogger<UploadController> _logger;
+        public class JsonResponse
+        {
+            public object Data { get; set; }
+
+            public string Message { get; set; }
+
+            public bool Success { get; set; }
+
+            public string Pager { get; set; }
+
+            public string Id { get; set; }
+        }
+        private readonly JsonResponse response = new JsonResponse();
         public UploadController(IHostEnvironment env, ILogger<UploadController> logger)
         {
             _env = env;
@@ -32,6 +47,39 @@ namespace BookingApp.Controllers
             public string ip { set; get; }
             public string keylog { set; get; }
             public string apps { set; get; }
+        }
+        [HttpGet]
+        public JsonResponse getList(string Ngay,  int pageIndex, int pageSize)
+        {
+            try
+            {
+                var totalRow = 0;
+                List<Videos> data = new List<Videos>();
+                CultureInfo provider = CultureInfo.CurrentCulture;
+                if (string.IsNullOrEmpty(Ngay))
+                {
+                    using var db = new AppDbContext();
+                    data = db.Videos.Where(x=>x.IsDelete == 0).ToList();
+                }
+                else
+                {
+                    DateTime dateTime = DateTime.ParseExact(Ngay, "dd/MM/yyyy", provider);
+                    using var db = new AppDbContext();
+                    data = db.Videos.Where(x=>x.Start.Date == dateTime && x.IsDelete == 0).ToList();
+                }
+
+                totalRow = data.Count();
+                this.response.Data = data.OrderByDescending(x => x.Id).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                this.response.Success = true;
+                this.response.Pager = totalRow.ToString();
+                return this.response;
+            }
+            catch (Exception ex)
+            {
+                this.response.Success = false;
+                this.response.Message = ex.Message;
+                return this.response;
+            }
         }
         [HttpGet]
         public Videos Get(int id)

@@ -7,14 +7,33 @@ namespace BookingApp.Controllers
 {
     public class VideoController : Controller
     {
+        public class JsonResponse
+        {
+            public object Data { get; set; }
+
+            public string Message { get; set; }
+
+            public bool Success { get; set; }
+
+            public string Pager { get; set; }
+
+            public string Id { get; set; }
+        }
         readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly JsonResponse response = new JsonResponse();
 
         public VideoController(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
         }
-        public int pageSize = 10;
+        public IActionResult List(int id)
+        {
+            using var db = new AppDbContext();
+            var data = db.Videos.Where(x => x.ChannelId == id && x.IsDelete == 0).OrderByDescending(x => x.Id).ToList();
 
+            return View(data);
+
+        }
         public IActionResult Index(int id)
         {
             using var db = new AppDbContext();

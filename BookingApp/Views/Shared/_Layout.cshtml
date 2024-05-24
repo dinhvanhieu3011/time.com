@@ -9,9 +9,132 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>  
+    <!-- Bootstrap 3.3.4 -->
+   @*  <link href="~/App_Themes/Cms/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" /> *@
+    <!-- FontAwesome CDN -->
+    <link href="~/App_Themes/Cms/bootstrap/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/App_Themes/plugins/validate/bootstrap-combined.min.css" rel="stylesheet" />
+    <!-- Ionicons 2.0.0 -->
+    <link href="~/App_Themes/Cms/dist/css/ionicons.min.css" rel="stylesheet" type="text/css" />
+    <!-- Theme style -->
+    <link href="~/App_Themes/Cms/dist/css/AdminLTE.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/App_Themes/CMS/dist/css/skins/_all-skins.min.css" rel="stylesheet" type="text/css" />
+    <!-- DATA TABLES -->
+    <link href="~/App_Themes/Plugins/datatables/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
+    <link href="~/App_Themes/Plugins/select2/dist/css/select2.min.css" rel="stylesheet" /><!--Plugin Select_option-->
+    <!--Start script cho Chart-->
+    <script src="~/App_Themes/Plugins/chartjs/ChartV2.js"></script>
+
+    <!-- Date Picker -->
+    <link rel="stylesheet" href="~/App_Themes/Plugins/jQueryUI/jquery-ui.css" />
+
+    <link href="~/App_Themes/Cms/userstylemain.css" rel="stylesheet" />
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="~/App_Themes/Plugins/jQuery/jQuery-2.1.4.min.js"></script>
+
+    <link rel="stylesheet" href="~/App_Themes/Plugins/jstree/dist/themes/default/style.min.css" />
+    <!-- jQuery UI 1.11.2 -->
+    <script src="~/App_Themes/Cms/dist/js/jquery-ui.min.js" type="text/javascript"></script>
+    <!-- Bootstrap 3.3.2 JS -->
+    <script src="~/App_Themes/Cms/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <!-- DATA TABES SCRIPT -->
+    <script src="~/App_Themes/Plugins/datatables/jquery.dataTables.min.js" type="text/javascript"></script>
+    <script src="~/App_Themes/Plugins/datatables/dataTables.bootstrap.min.js" type="text/javascript"></script>
+    <!-- AdminLTE App -->
+    <script src="~/App_Themes/Cms/dist/js/app.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="~/App_Themes/Plugins/select2/dist/js/select2.min.js"></script><!--select_option-->
+    <!--End script cho currency number-->
+    <!--Start Script cho validate bootstrap-->
+    <script src="~/App_Themes/Plugins/validate/lodash.min.js"></script>
+    <script src="~/App_Themes/Plugins/validate/scripts/setup.js"></script>
+    <script src="~/App_Themes/Plugins/validate/scripts/libs/i.js"></script>
+    <script src="~/App_Themes/Plugins/validate/scripts/locale/en.js"></script>
+    <script src="~/App_Themes/Plugins/validate/scripts/libs/jquery-dataentry.js"></script>
+    <!--Pagination-->
+    <link href="~/App_Themes/Plugins/Pagination/simplePagination.css" rel="stylesheet" />
+    <script src="~/App_Themes/Plugins/Pagination/jquery.simplePagination.js"></script>
+
+    <!-- Include Date Range Picker -->
+    <link rel="stylesheet" type="text/css" href="~/App_Themes/Plugins/daterangepicker2.0/daterangepicker-bs2.css" />
+    <script type="text/javascript" src="~/App_Themes/Plugins/daterangepicker2.0/moment.min.js"></script>
+    <script type="text/javascript" src="~/App_Themes/Plugins/daterangepicker2.0/daterangepicker.js"></script>
+    <!--script cho currency number-->
+    <script src="~/App_Themes/Plugins/currency/ax5core.min.js"></script>
+    <script src="~/App_Themes/Plugins/currency/ax5formatter.js"></script>
+    <!--automatically format number, phone, date, code when user input-->
+    <script src="~/App_Themes/Plugins/cleave.js-master/dist/cleave.min.js"></script>
+
+    <!-- editor -->
+    <script src="~/App_Themes/Plugins/ckeditor/ckeditor.js" type="text/javascript"></script>
+    <script src="~/App_Themes/Plugins/ckfinder/ckfinder.js" type="text/javascript"></script>
+    <!--client with js-->
+    <script type="text/javascript" src="~/Core/constant.js?v=1.0.0.2"></script>    <!--CORE JS-->
+    <script type="text/javascript" src="~/Core/systemroot.js?v=1.0.0.2"></script>  <!--CORE JS-->
+    <script type="text/javascript" src="~/Core/systemextend.js?v=1.0.0.2"></script><!--CORE JS-->
+    <script type="text/javascript" src="~/Core/utility.js?v=1.0.0.2"></script>
+    <script type="text/javascript">
+        function Init_Prammater() {
+            var root_path = '<%= System.Configuration.ConfigurationManager.AppSettings["QLDT.ROOT"].ToString() %>';
+            var root_urlAPIServer = '<%= System.Configuration.ConfigurationManager.AppSettings["QLDT.urlAPIServer"].ToString() %>';
+            var root_urlAPICommon = '<%= System.Configuration.ConfigurationManager.AppSettings["QLDT.urlAPICommon"].ToString() %>';
+            var root_StorageFolder = '<%= System.Configuration.ConfigurationManager.AppSettings["StorageFolder"].ToString() %>';
+            var userId = '<%=userId%>';
+            var userName = '<%=userName%>';
+            var fullName = '<%=fullName%>';
+            var strApp_Id = '<%=strApp_Id%>';
+            var langId = '<%=langId%>';
+            var roleId = '<%=roleId%>';
+            var unitId = '<%=unitId%>';
+            var unitCode = '<%=unitCode%>';
+            var unitName = '<%=unitName%>';
+            var unitParentId = '<%=unitParentId%>';
+            var unitParentCode = '<%=unitParentCode%>';
+            var unitParentName = '<%=unitParentName%>';
+
+            var arr_pra = [];
+            arr_pra.push(root_path);
+            arr_pra.push(root_urlAPIServer);
+            arr_pra.push(root_urlAPICommon);
+            arr_pra.push(root_StorageFolder);
+
+            arr_pra.push(userId);
+            arr_pra.push(userName);
+            arr_pra.push(fullName);
+            arr_pra.push(strApp_Id);
+            arr_pra.push(langId);
+            arr_pra.push(roleId);
+            arr_pra.push(unitId);
+            arr_pra.push(unitCode);
+            arr_pra.push(unitName);
+            arr_pra.push(unitParentId);
+            arr_pra.push(unitParentCode);
+            arr_pra.push(unitParentName);
+
+            return arr_pra;
+        }
+        var coreRoot = {};
+        coreRoot['systemroot'] = new systemroot();
+        coreRoot['systemextend'] = new systemextend();
+        coreRoot['utility'] = new utility();
+        $(document).ready(function () {
+            coreRoot.systemroot.startApp();
+            $(document).on('focus', ':input', function () {
+                $(this).attr('autocomplete', 'off');
+            });
+        });
+    </script>
+
 </head>
 <body style="font-size:12px!important">
+    <div class="overlay" id="overlay" style="display:none">
+        <i style="color:#007acc" class="fa fa-refresh fa-spin"></i>
+    </div>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">

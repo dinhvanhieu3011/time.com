@@ -1,0 +1,2 @@
+nnThuong
+format date when user input, it automaticaly format

@@ -3,6 +3,7 @@
     public class HangfireSetting
     {
         public string SchedulerSync { get; set; }
+        public string SchedulerBackup { get; set; }
         public bool EnableSync { get; set; }
         public string TimeZone { get; set; }
         public string SchedulerPushNotify { get; set; }

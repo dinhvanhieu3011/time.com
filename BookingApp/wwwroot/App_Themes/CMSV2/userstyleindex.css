@@ -1,0 +1,35 @@
+﻿.user-wrapper{
+    margin-top:60px;
+    width:80% !important;
+    min-height:120px !important;
+    max-height:120px !important;
+}
+.row{
+    height:auto !important;
+    border-bottom: 1.5px solid #cac9c9;
+}
+.title-content{
+    margin-bottom:50px;
+    margin-top:50px; 
+    padding-left:15px;
+    padding-right:15px;
+}
+.main-content{
+    height:auto;
+}
+.color-title, .title-content{
+    color:#696767;
+}
+.row-contact, .main-content{
+    background:#f3f3f6;
+}
+#comments{
+    height:50px !important;
+}
+#video-intr{
+    width:100% !important;
+    height:200px !important;
+}
+.main-content ul li{
+    border:none !important;
+}
