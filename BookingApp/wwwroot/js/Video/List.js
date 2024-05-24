@@ -62,6 +62,7 @@ List.prototype = {
         var pageIndex = coreRoot.systemroot.pageIndex_default;
         var pageSize = coreRoot.systemroot.pageSize_default;
         var strNgayChungTu = $('#ngay_nhapxuat').val();
+        var id = $('#channel_id').val();
         coreRoot.systemroot.beginLoading();
         $.ajax({
             type: 'GET',
@@ -70,6 +71,7 @@ List.prototype = {
             //headers: { 'token1': 'b1e813ee2638dcb3b1abd21b4085b0f4d76438ae37bc036225cf26340e945044' },
             data: {
                 'Ngay': strNgayChungTu,
+                'id' : id,
                 'pageIndex': pageIndex,
                 'pageSize': pageSize
             }, 

@@ -28,10 +28,8 @@ namespace BookingApp.Controllers
         }
         public IActionResult List(int id)
         {
-            using var db = new AppDbContext();
-            var data = db.Videos.Where(x => x.ChannelId == id && x.IsDelete == 0).OrderByDescending(x => x.Id).ToList();
-
-            return View(data);
+            ViewBag.id = id;
+            return View();
 
         }
         public IActionResult Index(int id)

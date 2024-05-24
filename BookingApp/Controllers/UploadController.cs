@@ -49,7 +49,7 @@ namespace BookingApp.Controllers
             public string apps { set; get; }
         }
         [HttpGet]
-        public JsonResponse getList(string Ngay,  int pageIndex, int pageSize)
+        public JsonResponse getList(string Ngay, int id,  int pageIndex, int pageSize)
         {
             try
             {
@@ -59,13 +59,13 @@ namespace BookingApp.Controllers
                 if (string.IsNullOrEmpty(Ngay))
                 {
                     using var db = new AppDbContext();
-                    data = db.Videos.Where(x=>x.IsDelete == 0).ToList();
+                    data = db.Videos.Where(x=>(x.ChannelId == id || id == 0) && x.IsDelete == 0).ToList();
                 }
                 else
                 {
                     DateTime dateTime = DateTime.ParseExact(Ngay, "dd/MM/yyyy", provider);
                     using var db = new AppDbContext();
-                    data = db.Videos.Where(x=>x.Start.Date == dateTime && x.IsDelete == 0).ToList();
+                    data = db.Videos.Where(x=> (x.ChannelId == id || id == 0) && x.Start.Date == dateTime && x.IsDelete == 0).ToList();
                 }
 
                 totalRow = data.Count();
