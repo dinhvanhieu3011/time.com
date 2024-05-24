@@ -109,15 +109,15 @@ namespace BookingApp.Controllers
                 DateTime from = convert(long.Parse(name.Split("_")[0]));
                 DateTime to = convert(long.Parse(name.Split("_")[1]));
                 string folder = from.Date.ToString("ddMMyyyy");
-                if (!Directory.Exists(Path.Combine(_env.ContentRootPath, folder)))
+                if (!Directory.Exists(Path.Combine(_env.ContentRootPath, "file", folder)))
                 {
                     // Nếu không tồn tại, tạo thư mục mới
-                    Directory.CreateDirectory(Path.Combine(_env.ContentRootPath, folder));
+                    Directory.CreateDirectory(Path.Combine(_env.ContentRootPath, "file", folder));
                 }
-                if (!Directory.Exists(Path.Combine(_env.ContentRootPath, folder, com.Id.ToString())))
+                if (!Directory.Exists(Path.Combine(_env.ContentRootPath, "file", folder, com.Id.ToString())))
                 {
                     // Nếu không tồn tại, tạo thư mục mới
-                    Directory.CreateDirectory(Path.Combine(_env.ContentRootPath, folder, com.Id.ToString()));
+                    Directory.CreateDirectory(Path.Combine(_env.ContentRootPath, "file", folder, com.Id.ToString()));
                 }
                 string fPath = Path.Combine(_env.ContentRootPath, "file", folder, com.Id.ToString(), VideoName); // Or use your preferred storage location
                 using (var stream = new FileStream(fPath, FileMode.Create))
