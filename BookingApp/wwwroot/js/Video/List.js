@@ -47,7 +47,7 @@ List.prototype = {
         $(document).delegate('.btnEdit', 'click', function () {
             var id = this.id;
             if (id != "") {
-                window.open("Detail/" + id, "_self");
+                window.open(window.location.origin +"/Video/Detail/" + id, "_blank");
             }
         });
         $(document).on("keypress", "input", function (event) {
