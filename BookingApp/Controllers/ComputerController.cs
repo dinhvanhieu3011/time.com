@@ -15,11 +15,11 @@ using Microsoft.Extensions.Logging;
 namespace BookingApp.Controllers
 {
     [Authorize(Roles.ADMIN)]
-    public class ChannelYoutubeController : Controller
+    public class ComputerController : Controller
     {
-        private readonly ILogger<ChannelYoutubeController> _logger;
+        private readonly ILogger<ComputerController> _logger;
 
-        public ChannelYoutubeController(ILogger<ChannelYoutubeController> logger)
+        public ComputerController(ILogger<ComputerController> logger)
         {
             _logger = logger;
         }
@@ -58,22 +58,22 @@ namespace BookingApp.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public IActionResult Create(string Name, string Link, string Category, int CookaAccountId, string UserId, int CategoryId)
+        public IActionResult Create(string Name, string Link, string UserId)
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("Index", "ChannelYoutube");
+                return RedirectToAction("Index", "Computer");
             }
 
-            switch (Insert(Name, Link, Category, CookaAccountId, UserId, CategoryId))
+            switch (Insert(Name, Link, "", 0, UserId, 0))
             {
                 case true:
                     _logger.LogInformation("Tạo Máy " + Name + " thành công!");
-                    return RedirectToAction("Index", "ChannelYoutube", new { msg = "added" });
+                    return RedirectToAction("Index", "Computer", new { msg = "added" });
                 case false:
-                    return RedirectToAction("Index", "ChannelYoutube", new { error = "wrongName" });
+                    return RedirectToAction("Index", "Computer", new { error = "wrongName" });
                 case null:
-                    return RedirectToAction("Index", "ChannelYoutube", new { error = "error" });
+                    return RedirectToAction("Index", "Computer", new { error = "error" });
             }
         }
         public bool? Insert(string Name, string Link, string Category, int CookaAccountId, string UserId, int CategoryId)
@@ -84,7 +84,6 @@ namespace BookingApp.Controllers
 
                 if (!db.ChannelYoutubes.Any(x => x.Link == Link) 
                     && !string.IsNullOrEmpty(Name) 
-                    && !string.IsNullOrEmpty(Category)
                     )
                 {
                     db.Add(new ChannelYoutubes()
@@ -132,7 +131,7 @@ namespace BookingApp.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "ChannelYoutube", new { error = "wrongData" });
+                return RedirectToAction("Index", "Computer", new { error = "wrongData" });
             }
         }
         public IActionResult Live(int id)
@@ -147,12 +146,12 @@ namespace BookingApp.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "ChannelYoutube", new { error = "wrongData" });
+                return RedirectToAction("Index", "Computer", new { error = "wrongData" });
             }
         }
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public IActionResult Update(int id, string Name, string Link, string Category, int CookaAccountId, string UserId, int CategoryId)
+        public IActionResult Update(int id, string Name, string Link, string UserId)
         {
             try
             {
@@ -163,22 +162,21 @@ namespace BookingApp.Controllers
 
                 using var db = new AppDbContext();
 
-                if (id > 0 &&  !string.IsNullOrEmpty(Name)
-                    && !string.IsNullOrEmpty(Category)
+                if (id > 0 &&  !string.IsNullOrEmpty(Name)   
                     )
                 {
 
-                    UpdateData(id, Name, Link, Category, CookaAccountId, UserId, CategoryId, db);
-                    return RedirectToAction("Update", "ChannelYoutube", new { id, msg = "updated" });
+                    UpdateData(id, Name, Link, "", 0, UserId, 0, db);
+                    return RedirectToAction("Update", "Computer", new { id, msg = "updated" });
                 }
                 else
                 {
-                    return RedirectToAction("Index", "ChannelYoutube", new { id, error = "error" });
+                    return RedirectToAction("Index", "Computer", new { id, error = "error" });
                 }
             }
             catch
             {
-                return RedirectToAction("Index", "ChannelYoutube", new { id, error = "error" });
+                return RedirectToAction("Index", "Computer", new { id, error = "error" });
             }
         }
 
@@ -203,7 +201,7 @@ namespace BookingApp.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return RedirectToAction("Index", "ChannelYoutube");
+                    return RedirectToAction("Index", "Computer");
                 }
 
                 using var db = new AppDbContext();
@@ -212,12 +210,12 @@ namespace BookingApp.Controllers
                 db.SaveChanges();
                 _logger.LogInformation("Xoá Máy " + id + " thành công!");
 
-                return RedirectToAction("Index", "ChannelYoutube", new { msg = "Deleted" });
+                return RedirectToAction("Index", "Computer", new { msg = "Deleted" });
 
             }
             catch
             {
-                return RedirectToAction("Index", "ChannelYoutube", new { error = "error" });
+                return RedirectToAction("Index", "Computer", new { error = "error" });
             }
         }
     }

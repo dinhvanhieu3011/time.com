@@ -76,7 +76,7 @@
                     </div>
                     <div class="col col-right">
                         <p class="pNew">
-                            @Html.ActionLink("Thêm mới", "Create", "ChannelYoutube")
+                            @Html.ActionLink("Thêm mới", "Create", "Computer")
                         </p>
                     </div>
                 </div>
@@ -114,16 +114,16 @@
                                              @Html.DisplayFor(modelItem => item.UserId)
                                         </td>
                                         <td>
-                                                @Html.ActionLink("Sửa", "Update", "ChannelYoutube", new { id = item.Id })
+                                                @Html.ActionLink("Sửa", "Update", "Computer", new { id = item.Id })
                                         </td>
                                         <td>
-                                                @Html.ActionLink("Xóa", "Delete", "ChannelYoutube", new { id = item.Id }, new { @onclick = "return confirm('Are you sure?')" })
+                                                @Html.ActionLink("Xóa", "Delete", "Computer", new { id = item.Id }, new { @onclick = "return confirm('Are you sure?')" })
                                         </td>
                                         <td>
                                             @Html.ActionLink("Lịch sử", "List", "Video", new { id = item.Id })
                                         </td>
                                         <td>
-                                            @Html.ActionLink("Live", "Live", "ChannelYoutube", new { id = item.Id })
+                                            @Html.ActionLink("Live", "Live", "Computer", new { id = item.Id })
                                         </td>
                                     </tr>
                                 }

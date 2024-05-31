@@ -34,7 +34,7 @@
             }
         </div>
         <div>
-            @using (Html.BeginForm("Update", "ChannelYoutube", FormMethod.Post, new { role = "form" }))
+            @using (Html.BeginForm("Update", "Computer", FormMethod.Post, new { role = "form" }))
             {
                 @Html.AntiForgeryToken()
 
@@ -46,25 +46,12 @@
                     <label for="author">IP</label>
                     <input type="text" class="form-control" value="@Model.Link" name="link" id="link" placeholder="" required>
                 </div>
-                <div class="form-group" hidden>
-                    <label for="author">Port</label>
-                    <input type="text" class="form-control" value="@Model.Category" name="category" id="category" placeholder="" required>
-                </div>
-                <div class="form-group" hidden>
-                    <label for="author">Category </label>
-                    <input type="text" class="form-control" value="@Model.Category" name="CategoryId" id="CategoryId" placeholder="" required>
-
-                </div>
-                <div class="form-group" hidden>
-                    <label for="author">Cooka Account </label>
-                    <input type="text" class="form-control" value="@Model.Category" name="CookaAccountId" id="CookaAccountId" placeholder="" required>
-                </div>
                 <div class="form-group">
                     <label for="author">Emmployee</label>
                     <input type="text" class="form-control" value="@Model.UserId" name="userid" id="userid" placeholder="" required>
                 </div>
                 <div class="actions">
-                    @Html.ActionLink("Back", "Index", "ChannelYoutube", new { }, new { @class = "btn btn-info" })
+                    @Html.ActionLink("Back", "Index", "Computer", new { }, new { @class = "btn btn-info" })
                     <button type="submit" class="btn btn-primary">Lưu</button>
                 </div>
             }

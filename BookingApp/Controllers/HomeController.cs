@@ -32,7 +32,7 @@ namespace BookingApp.Controllers
             var role = _httpContextAccessor.HttpContext.Session.GetInt32("role");
             if (role != null)
             {
-                return RedirectToAction("Index", "ChannelYoutube");
+                return RedirectToAction("Index", "Computer");
             }
 
             return View();
@@ -81,7 +81,7 @@ namespace BookingApp.Controllers
                 _httpContextAccessor.HttpContext.Session.SetString("user", username);
                 _httpContextAccessor.HttpContext.Session.SetInt32("role", user.Role);
 
-                return user.Role == 0 ? RedirectToAction("Index", "ChannelYoutube") : (IActionResult)RedirectToAction("Index", "File");
+                return user.Role == 0 ? RedirectToAction("Index", "Computer") : (IActionResult)RedirectToAction("Index", "File");
             }
 
             return RedirectToAction("Index", "Home", new { error = "password" });
