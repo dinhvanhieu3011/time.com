@@ -151,7 +151,15 @@ List.prototype = {
                                 "mDataProp": "videoPath"
                             },
                                 {
-                                    "mDataProp": "isMerge"
+                                    "mDataProp": "isMerge",
+                                    "mRender": function (data) {
+                                        if (data == 0) {
+                                            return "Video chưa gộp"
+                                        }
+                                        else {
+                                            return "Video gộp"
+                                        }
+                                    }
                                 },
                             {
                                 "mData": "id",

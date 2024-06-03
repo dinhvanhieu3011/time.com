@@ -19,6 +19,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Remove="wwwroot\file\file_example_AVI_1920_2_3MG.avi" />
+    <Content Remove="wwwroot\js\Video\Dashboard.js" />
     <Content Remove="wwwroot\js\Video\Detail.js" />
     <Content Remove="wwwroot\js\Video\List.js" />
   </ItemGroup>
@@ -1748,6 +1749,7 @@
     <None Include="wwwroot\Core\utility.js" />
     <None Include="wwwroot\file\file_example_AVI_1920_2_3MG.avi" />
     <None Include="wwwroot\js\Video\Detail.js" />
+    <None Include="wwwroot\js\Video\Dashboard.js" />
     <None Include="wwwroot\js\Video\List.js" />
   </ItemGroup>
   <ItemGroup>

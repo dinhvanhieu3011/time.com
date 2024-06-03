@@ -137,7 +137,7 @@ table .odd:hover {
 table.dataTable thead > tr > th
 {
     padding-right:0px !important;
-    text-align:center;
+   
 }
 table.table-bordered.dataTable
 {

@@ -43,11 +43,11 @@
                 <div class="actions">
                     @if (Context.Session.GetInt32("role") == 0)
                     {
-                        @Html.ActionLink("Back", "Index", "Library", new { }, new { @class = "btn btn-info" })
+                        @Html.ActionLink("Back", "Index", "Video", new { }, new { @class = "btn btn-info" })
                     }
                     else
                     {
-                        @Html.ActionLink("Back", "Index", "Booking", new { }, new { @class = "btn btn-info" })
+                        @Html.ActionLink("Back", "Dashboard", "Video", new { }, new { @class = "btn btn-info" })
                     }
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>

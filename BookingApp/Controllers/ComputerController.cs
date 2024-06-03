@@ -23,7 +23,10 @@ namespace BookingApp.Controllers
         {
             _logger = logger;
         }
-
+        public IActionResult Dashboard()
+        {
+            return View();
+        }
         public IActionResult Index()
         {
             using var db = new AppDbContext();
@@ -33,6 +36,7 @@ namespace BookingApp.Controllers
             if (list.Count > 0) {
                 foreach (var item in list)
                 {
+
                     lst.Add(new ChannelYoutubeModel
                     {
                         Id = item.Id,
@@ -41,6 +45,7 @@ namespace BookingApp.Controllers
                         Language = "",
                         UserId = item.UserId,
                         Category = item.Category,
+                        Status = item.CategoryId == 0 ? "Mất kết nối" : "Đang online"
                     });
 
                 }

@@ -1,0 +1,100 @@
+﻿@{
+    ViewData["Title"] = "Dashboard  ";
+}
+@model List<BookingApp.DB.Classes.DB.ChannelYoutubes>
+
+<div class="container" style="max-width: 1540px!important">
+    <div>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="#booksTab" data-toggle="tab">Dashboard(<span id="zone_soluong">0</span>) </a>
+            </li>
+        </ul>
+
+        <div class="tab-content clearfix">
+            <div class="tab-pane active" id="booksTab">
+                <div class="row">
+                    <div class="col-sm-12">
+                        
+                        <div class="tab-content">
+                            <div id="tab_1" class="tab-pane active">
+                                <div class="box">
+                                    <!-- Bộ tìm kiếm -->
+                                    <div class="box-body" id="zone_timkiem">
+                                        <div style="width: 100%">
+                                            <div style="width: 10%; float: left">
+                                                <label style="margin-top: 5px !important">Ngày </label>
+                                            </div>
+                                            <div style="width: 30%; float: left; padding-right: 10px;">
+                                                <input type="text" id="ngay_nhapxuat" placeholder="Chọn ngày" class="form-control" />
+                                            </div>
+
+                                            <div class="clear"></div>
+                                        </div>
+                                        <div style="width: 100%">
+                                            <div style="width: 10%; float: left">
+                                                <label style="margin-top: 5px !important">User </label>
+                                            </div>
+                                            <div style="width: 30%; float: left; padding-right: 10px;">
+                                                <select id="user" class="form-control">
+                                                    @foreach(var item in Model)
+                                                    {
+                                                        <option value="@item.Id">@item.Name</option>
+                                                    }
+                                                </select>
+                                            </div>
+
+                                            <div class="clear"></div>
+                                        </div>
+                                        <div style="width: 100%">
+                                            <div style="width: 10%; float: left">
+                                                <label style="margin-top: 0px !important"></label>
+                                            </div>
+                                            <div style="width: 70%; float: left; margin-right: 10px">
+                                                <div class="pull-left">
+                                                    <a class="btn btn-default" href="javascript:void(0)" id="btnTimKiem" title="Tìm kiếm"><i class="fa fa-search"></i> Tìm kiếm </a>
+                                                    <a title="Hủy tìm kiếm" class="btn btn-default" id="btnHuyTimKiem"><i class="fa fa-undo"></i> Hủy tìm kiếm </a>
+                                                </div>
+                                                <div class="pull-right" style="margin-top: 10px">
+                                                </div>
+                                            </div>
+                                            <div style="width: 20%; float: left">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--End Row 6-->
+                                    <!--Table-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <dl class="row">
+                    <dd class="col-sm-12">
+                        <table id="tbldata" class="table table-bordered table-hover tbl-pagination" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th style="width: 200px">Start</th>
+                                    <th style="width: 200px; text-align: center !important">End</th>
+                                    <th style="width: 399px; text-align: center !important">Total Time(s)</th>
+                                    <th style="width: 550px;text-align: center !important;">Windows</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/js/Video/Dashboard.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var main_doc = {};
+    main_doc['Dashboard'] = new Dashboard();
+    $(document).ready(function () {
+        main_doc.Dashboard.init();
+    });
+</script>

@@ -1,5 +1,5 @@
 ﻿function Detail() { };
-List.prototype = {
+Detail.prototype = {
     DonViId: -1,
     DonViTongHopId: -1,
     DonViCapHuyenId: -1,
@@ -8,25 +8,11 @@ List.prototype = {
     role: '',
     flag: '',
     CreatedBy: '',
+    VideoId:0,
     init: function () {
         var me = this;
-        $('#ngay_nhapxuat').datepicker({
-            dateFormat: 'dd/mm/yy',
-            changeMonth: true,
-            changeYear: true,
-            autoclose: true
-        });
-
-        $('#ngay_giaonhan').datepicker({
-            dateFormat: 'dd/mm/yy',
-            changeMonth: true,
-            changeYear: true,
-            autoclose: true
-        });
-
-        /*
-        Datetimepicker
-        */
+        var id = $('#video-id').val();
+        this.VideoId = id;
         me.list_DanhSach();
         $("#btnTimKiem").click(function (e) {
             $('#tbldata').dataTable().fnClearTable();
@@ -44,34 +30,23 @@ List.prototype = {
             me.list_DanhSach();
             e.preventDefault();
         });
-        $(document).delegate('.btnEdit', 'click', function () {
-            var id = this.id;
-            if (id != "") {
-                window.open(window.location.origin +"/Video/Detail/" + id, "_blank");
-            }
-        });
-        $(document).on("keypress", "input", function (event) {
-            if (event.which === 13) {
-                $('#tbldata').dataTable().fnClearTable();
-                me.list_DanhSach();
-            }
-        });
     },
     list_DanhSach: function () {
         var me = this;
+
         var pageIndex = coreRoot.systemroot.pageIndex_default;
         var pageSize = coreRoot.systemroot.pageSize_default;
-        var strNgayChungTu = $('#ngay_nhapxuat').val();
-        var id = $('#channel_id').val();
+        var keyword = $('#keyword').val();
+        var videoid = $('#video-id').val();
         coreRoot.systemroot.beginLoading();
         $.ajax({
             type: 'GET',
             crossDomain: true,
-            url: '/api/Upload/getList',
+            url: '/api/Upload/getListDataVideo',
             //headers: { 'token1': 'b1e813ee2638dcb3b1abd21b4085b0f4d76438ae37bc036225cf26340e945044' },
             data: {
-                'Ngay': strNgayChungTu,
-                'id' : id,
+                'KeyWord': keyword,
+                'id': videoid,
                 'pageIndex': pageIndex,
                 'pageSize': pageSize
             }, 
@@ -80,12 +55,10 @@ List.prototype = {
             dataType: "json",
             success: function (data) {
                 coreRoot.systemroot.endLoading();
-                console.log(data.success)
                 if (data.success) {
                     var mystring = JSON.stringify(data.data);
                     var json = $.parseJSON(mystring);
-                    console.log('data', json)
-                    coreRoot.systemroot.pagButtonRender("main_doc.List.list_DanhSach()", "tbldata", data.pager);
+                    coreRoot.systemroot.pagButtonRender("main_doc.Detail.list_DanhSach()", "tbldata", data.pager);
                     if (json != null) {
                         var mlen = json.length;
                         $("#zone_soluong").html(data.pager);
@@ -98,7 +71,7 @@ List.prototype = {
                             "processing": true,
                             "bSort": true,
                             "bInfo": false,
-                            "bAutoWidth": false,
+                            "bAutoWidth": true,
                             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "Tất cả"]],
                             "language": {
                                 "search": "Tìm kiếm theo từ khóa:",
@@ -118,7 +91,7 @@ List.prototype = {
                             },
                             "aoColumnDefs": [
                                 {
-                                    className: "dt-body-left", "targets": [6]
+                                    className: "dt-body-left", "targets": [4]
                                 }
                             ],
                             "order": [[1, "desc"]],
@@ -128,37 +101,23 @@ List.prototype = {
                             }
                                 ,
                             {
-                                "mDataProp": "start"
+                                "mDataProp": "time"
                             }
                                 ,
                             {
-                                "mDataProp": "end"
+                                "mDataProp": "userName"
                             }
                                 ,
                             {
-                                "mDataProp": "year"
+                                "mDataProp": "windows"
                             }
-                                ,
-                            {
-                                "mDataProp": "month"
-                            }
-                                ,
-                            {
-                                "mDataProp": "date"
-                            }
-                                ,
-                            {
-                                "mDataProp": "videoPath"
-                            },
-                                {
-                                    "mDataProp": "isMerge"
-                                },
-                            {
-                                "mData": "id",
-                                "mRender": function (data) {
-                                    return '<a title="Chỉnh sửa" id="' + data + '" class="btnEdit" href="javascript:void(0);"><i class="fa fa-edit fa-customer"></i></a>';
+                                , {
+
+                                    "mDataProp": "keys",
+                                    "mRender": function (data) {
+                                        return data.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                                    }
                                 }
-                            }
                             ],
                         });
                     }

@@ -17,6 +17,8 @@ using System.Diagnostics;
 using System.IO;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using BookingApp.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace BookingApp.Service
 {
@@ -24,6 +26,7 @@ namespace BookingApp.Service
     {
         Task AutoTrecking();
         Task Backup();
+        Task CheckConnection();
     }
 
     public class SchedulerService : ISchedulerService
@@ -31,13 +34,15 @@ namespace BookingApp.Service
         private readonly ILogger _logger;
         private readonly HangfireSetting _hangfireOption;
         private readonly IHostEnvironment _env;
+        readonly IHttpContextAccessor _httpContextAccessor;
 
         public SchedulerService(ILogger<SchedulerService> logger,
-            HangfireSetting hangfireOption, IHostEnvironment env)
+            HangfireSetting hangfireOption, IHostEnvironment env, IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
             _hangfireOption = hangfireOption;
             _env = env;
+            _httpContextAccessor = httpContextAccessor;
         }
         #region merge video
         public async Task AutoTrecking()
@@ -122,7 +127,7 @@ namespace BookingApp.Service
         }
 
 
-        private void MergeUserAction(List<Videos> listVideo, int id)
+private void MergeUserAction(List<Videos> listVideo, int id)
         {
             var db = new AppDbContext();
             var videoIds = listVideo.Select(x => x.Id).ToArray();
@@ -287,7 +292,6 @@ namespace BookingApp.Service
 
         }
         #endregion
-
         public async Task Backup()
         {
             //string sourceDirectory = @"C:\path\to\your\directory";
@@ -319,6 +323,57 @@ namespace BookingApp.Service
             //{
             //    Console.WriteLine($"Error during backup: {ex.Message}");
             //}
+        }
+        public async Task CheckConnection()
+        {
+            using var db = new AppDbContext();
+            var list = db.ChannelYoutubes.ToList();
+
+            if (list.Count > 0)
+            {
+                foreach (var item in list)
+                {
+                    var lastVideoTime = db.Videos.Where(x => x.ChannelId == item.Id).OrderByDescending(x => x.CreatedDate).FirstOrDefault().Start;
+                    TimeSpan difference = DateTime.Now - lastVideoTime;
+
+                    // Convert the difference to minutes
+                    double differenceInMinutes = difference.TotalMinutes;
+                    if(differenceInMinutes > 5)
+                    {
+                        if(item.CategoryId != 0)
+                        {
+                            item.CategoryId = 0;
+                            db.ChannelYoutubes.Update(item);
+                            db.SaveChanges();
+                            sendmessageTelegram("Mất kết nối tới máy :" + item.Name + " - " + item.UserId );
+                        }
+                    }
+                    else
+                    {
+                        item.CategoryId = 1;
+                    }
+
+                }
+            }
+        }
+        protected async void sendmessageTelegram(string message)
+        {
+            try
+            {
+                var username = _httpContextAccessor.HttpContext.Session.GetString("user");
+                using var db = new AppDbContext();
+                var user = db.Users.FirstOrDefault(x => x.Username == username);
+                string url = string.Format("https://api.telegram.org/bot{0}/sendMessage?chat_id={1}&text={2}", user.TeleToken, user.ChatId, message);
+                var client = new HttpClient();
+                var request = new HttpRequestMessage(HttpMethod.Get, url);
+                var response = await client.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                Console.WriteLine(await response.Content.ReadAsStringAsync());
+            }
+            catch { }
+
+
+
         }
     }
 }

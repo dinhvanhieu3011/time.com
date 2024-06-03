@@ -33,6 +33,13 @@ namespace BookingApp.Controllers
             return View();
 
         }
+        public IActionResult Dashboard()
+        {
+            using var db = new AppDbContext();
+            var coms = db.ChannelYoutubes.ToList();
+            return View(coms);
+
+        }
         public IActionResult Index(int id)
         {
             using var db = new AppDbContext();

@@ -1,5 +1,7 @@
 ﻿using BMBSOFT.GIS.CORE.Helper;
 using BookingApp.DB.Classes.DB;
+using BookingApp.Models;
+using Hangfire.MemoryStorage.Database;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing.Constraints;
@@ -8,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -50,6 +53,88 @@ namespace BookingApp.Controllers
             public IFormFile UserAction { set; get; }
             public IFormFile UserSession { set; get; }
             public string token { set; get; }
+        }
+        [HttpGet]
+        public JsonResponse getDashboard(string Ngay, int channelId, int pageIndex, int pageSize)
+        {
+            try
+            {
+                var totalRow = 0;
+                using var db = new AppDbContext();
+                CultureInfo provider = CultureInfo.CurrentCulture;
+                DateTime date = new DateTime(1970, 1, 1);
+                var data = new List<UserSession>();
+                var res = new List<UserSessionModel>();
+                if (string.IsNullOrEmpty(Ngay))
+                {
+                    var listVideo = db.Videos.Where(x => x.ChannelId == channelId).Select(x => x.Id).ToList();
+                    data = db.UserSessions.Where(x => listVideo.Contains(x.VideoId)).ToList();
+                }
+                else
+                {
+                    DateTime dateTime = DateTime.ParseExact(Ngay, "dd/MM/yyyy", provider);
+                    var listVideo = db.Videos.Where(x => x.ChannelId == channelId && x.Start.Date == dateTime.Date)
+                        .Select(x => x.Id).ToList();
+                    data = db.UserSessions.Where(x => listVideo.Contains(x.VideoId)).ToList();
+                }
+                var restul = data.OrderByDescending(x => x.Id).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                foreach ( var item in restul )
+                {
+                    var start = convert(item.StartTime);
+                    var end = convert(item.EndTime);
+
+                    res.Add(new UserSessionModel
+                    {
+                        Id  = item.Id,
+                        VideoId = item.VideoId,
+                        EndTime = item.EndTime,
+                        StartTime = item.StartTime,
+                        Windows = item.Windows,
+                        End = end,
+                        Start = start,
+                        UseTime = (end - start).TotalSeconds.ToString()
+                });
+                }
+                totalRow = data.Count();
+                this.response.Data = res;
+                this.response.Success = true;
+                this.response.Pager = totalRow.ToString();
+                return this.response;
+            }
+            catch (Exception ex)
+            {
+                this.response.Success = false;
+                this.response.Message = ex.Message;
+                return this.response;
+            }
+        }
+        [HttpGet]
+        public JsonResponse getListDataVideo(string KeyWord, int id, int pageIndex, int pageSize)
+        {
+            try
+            {
+                var totalRow = 0;
+                if(!string.IsNullOrEmpty(KeyWord))
+                    KeyWord = KeyWord.ToLower();
+                using var db = new AppDbContext();
+                var listUserActions = db.UserActions
+                    .Where(x => x.VideoId == id)
+                    .Where(x=> string.IsNullOrEmpty(KeyWord) || x.Keys.ToLower().Contains(KeyWord)
+                    || x.Windows.ToLower().Contains(KeyWord)
+                    || x.UserName.ToLower().Contains(KeyWord)
+                    ).OrderBy(x => x.Time);
+                totalRow = listUserActions.Count();
+                this.response.Data = listUserActions.OrderByDescending(x => x.Id).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                this.response.Success = true;
+                this.response.Pager = totalRow.ToString();
+                return this.response;
+            }
+            catch (Exception ex)
+            {
+                this.response.Success = false;
+                this.response.Message = ex.Message;
+                return this.response;
+            }
         }
         [HttpGet]
         public JsonResponse getList(string Ngay, int id,  int pageIndex, int pageSize)
@@ -130,7 +215,7 @@ namespace BookingApp.Controllers
                 }            
                 Videos videos = new Videos()
                 {
-                    VideoPath = Path.Combine("file", VideoName),
+                    VideoPath = Path.Combine("file", folder, com.Id.ToString(), VideoName),
                     //Keylog = video.keylog,
                     //Apps = video.apps,
                     ChannelId = com.Id,
@@ -158,7 +243,7 @@ namespace BookingApp.Controllers
                 {
                     item.VideoId = videos.Id;
                 }
-                db.AddRange(userSessions);
+                db.AddRange(userActions);
                 db.SaveChanges();
 
                 _logger.LogInformation("Tạo mới video: " + VideoName);

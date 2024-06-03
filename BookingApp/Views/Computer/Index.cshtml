@@ -88,7 +88,7 @@
                                     <th>Computer Name</th>
                                     <th>Computer Token</th>               
                                     <th>Employee </th>
-                        @*             <th>Employee</th> *@
+                                    <th>Status</th> 
                                     <th></th>
                                     <th></th>
                                     <th></th>
@@ -98,20 +98,21 @@
                             <tbody>
                                 @foreach (var item in Model)
                                 {
-                                    <tr>
+                                    <tr >
                                         <td>
                                             @Html.DisplayFor(modelItem => item.Name)
                                         </td>
                                         <td>
                                             @Html.DisplayFor(modelItem => item.Link)
                                         </td>
-                                   
-                              @*           <td>
-                                            @Html.DisplayFor(modelItem => item.Language)
-                                        </td> *@
+                     
                                         <td>
                                              @Html.DisplayFor(modelItem => item.UserId)
                                         </td>
+
+                                                  <td>
+                                    @Html.DisplayFor(modelItem => item.Status)
+                                    </td>
                                         <td>
                                                 @Html.ActionLink("Sửa", "Update", "Computer", new { id = item.Id })
                                         </td>

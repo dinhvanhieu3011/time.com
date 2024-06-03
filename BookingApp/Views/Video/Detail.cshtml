@@ -4,6 +4,7 @@
 @model BookingApp.Models.VideoModel
 <div class="container" style="font-size:18px!important">
     <div >
+        <input id="video-id" value="@Model.Video.Id" hidden />
         <h4>Video </h4>
         <div class="row">
             <div class="col-9">
@@ -28,10 +29,12 @@
                             <span style="font-weight: bold;"> @ViewBag.channel</span>
                             <span>•</span>
                             <span id="time" style="font-weight: bold;">@Model.Video.Start - @Model.Video.End </span>
+
                         </div>
-                        <div class="row video-description col-12" style="padding-left: 0px!important">
-                            <p id="apps" style="font-size:14px!important;padding-left: 0px!important " class="multiline col-6"> @Model.Video.Apps</p>
-                            <p id="keylog" style="font-size:14px!important;padding-left: 0px!important" class="multiline col-6"> @Model.Video.Keylog</p>
+                        <div class="row video-stats">
+                            <span id="time" style="font-weight: bold;">
+                                 DANH SÁCH KEYLOG
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -43,7 +46,7 @@
                     @foreach (var item in ViewBag.relatedVideo)
                     {
                         <!-- Each video item -->
-                        <div class="video-item" onclick="setVideo('@item.Id')" >
+                        <div class="video-item" id="@item.Id" onclick="setVideo('@item.Id')" >
                             <video style="width:60%!important;height:60%!important">
                                 <source src='/@item.VideoPath.Replace(@"\",@"/")' type="video/mp4">
                             </video>
@@ -52,6 +55,72 @@
                         </div>
                         <!-- Repeat for more videos -->
                     }
+                </div>
+            </div>
+            <div class="col-12" style="font-size:11px!important">
+                <div class="tab-content clearfix">
+                    <div class="tab-pane active" id="booksTab">
+                        <div class="row">
+                            <div class="col-sm-12">
+
+                                <div class="tab-content">
+                                    <div id="tab_1" class="tab-pane active">
+                                        <div class="box">
+                                            <!-- Bộ tìm kiếm -->
+                                            <div class="box-body" id="zone_timkiem">
+                                                <!--Row 1-->
+                                                <!--End Row 1-->
+                                                <!--Row 2-->
+                                                <div style="width: 100%">
+                                                    <div style="width: 10%; float: left">
+                                                        <label style="margin-top: 5px !important">Keyword </label>
+                                                    </div>
+                                                    <div style="width: 30%; float: left; padding-right: 10px;">
+                                                        <input type="text" id="keyword" placeholder="Nhập keyword" class="form-control" />
+                                                    </div>
+
+                                                    <div class="clear"></div>
+                                                </div>
+                                                <div style="width: 100%">
+                                                    <div style="width: 10%; float: left">
+                                                        <label style="margin-top: 0px !important"></label>
+                                                    </div>
+                                                    <div style="width: 70%; float: left; margin-right: 10px">
+                                                        <div class="pull-left">
+                                                            <a class="btn btn-default" href="javascript:void(0)" id="btnTimKiem" title="Tìm kiếm"><i class="fa fa-search"></i> Tìm kiếm </a>
+                                                            <a title="Hủy tìm kiếm" class="btn btn-default" id="btnHuyTimKiem"><i class="fa fa-undo"></i> Hủy tìm kiếm </a>
+                                                        </div>
+                                                        <div class="pull-right" style="margin-top: 10px">
+                                                        </div>
+                                                    </div>
+                                                    <div style="width: 20%; float: left">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--End Row 6-->
+                                            <!--Table-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <dl class="row">
+                            <dd class="col-sm-12">
+                                <table id="tbldata" class="table table-bordered table-hover tbl-pagination" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th style="display: none">Id</th>
+                                            <th style="width: 150px">Time</th>
+                                            <th style="width: 50px; text-align: center !important">UserName</th>
+                                            <th style="width: 150px; text-align: center !important">Windows</th>
+                                            <th style="width: 1000px;text-align: left !important">Keys</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </dd>
+                        </dl>
+                    </div>
                 </div>
             </div>
         </div>
@@ -150,6 +219,12 @@
     });
 
     function setVideo(id) {
+        console.log(id)
+        document.getElementById("video-id").value = id + '';
+        main_doc.Detail.list_DanhSach()
+        let lst = document.querySelectorAll(".video-item");
+        lst.forEach((element) => { element.style.backgroundColor = "white"; });
+        document.getElementById(id).style.backgroundColor = "beige";
         $.ajax({
             url: "/api/Upload/Get",
             dataType: "json",
@@ -161,10 +236,9 @@
                 // data is your result from controller
                 console.log(data)
                 var player = videojs('my-player');
-                    player.src({ type: 'video/mp4', src: data.Video.videoPath });
-                    document.getElementById("keylog").innerHTML = data.Video.keylog;
-                    document.getElementById("time").innerHTML = data.Video.start + " - " + data.Video.end;
-                    document.getElementById("apps").innerHTML = data.Video.apps;
+                    player.src({ type: 'video/mp4', src: data.videoPath });
+                    document.getElementById("time").innerHTML = data.start + " - " + data.end;
+
             },
             error: function (xhr) {
                 alert('error');
