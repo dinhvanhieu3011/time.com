@@ -140,7 +140,15 @@
 </style>
 <link href="~/lib/video-js.min.css" rel="stylesheet">
 <script src="~/lib/video.min.js"></script>
+<script src="/js/Video/Detail.js" type="text/javascript"></script>
+
 <script>
+    var main_doc = {};
+    main_doc['Detail'] = new Detail();
+    $(document).ready(function () {
+        main_doc.Detail.init();
+    });
+
     function setVideo(id) {
         $.ajax({
             url: "/api/Upload/Get",
