@@ -148,6 +148,13 @@ namespace BookingApp
            Path.Combine(Directory.GetCurrentDirectory(), @"file")),
                 RequestPath = new PathString("/file")
             });
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+
+                FileProvider = new PhysicalFileProvider(
+Path.Combine(Directory.GetCurrentDirectory(), @"live")),
+                RequestPath = new PathString("/live")
+            });
             app.UseRouting();
 
             app.UseAuthorization();
