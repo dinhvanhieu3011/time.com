@@ -55,8 +55,29 @@ namespace BookingApp.DB.Classes.DB
         public string UserId { get; set; }
         public int CategoryId { get; set; }
     }
-
-
+    [Table("UserAction")]
+    public class UserAction
+    {
+        [Key]
+        [Required]
+        public int Id { get; set; }
+        public DateTime Time { get; set; }
+        public string Windows { get; set; }
+        public string UserName { get; set; }
+        public string Keys { get; set; }
+        public int VideoId { get; set; }
+    }
+    [Table("UserSession")]
+    public class UserSession
+    {
+        [Key]
+        [Required]
+        public int Id { get; set; }
+        public int StartTime { get; set; }
+        public int EndTime { get; set; }
+        public string Windows { get; set; }
+        public int VideoId { get; set; }
+    }
 
     [Table("Accounts")]
     public class Accounts
@@ -64,9 +85,7 @@ namespace BookingApp.DB.Classes.DB
         [Key]
         [Required]
         public int BookId { get; set; }
-        [Required]
         public string Name { get; set; }
-
 
     }
 

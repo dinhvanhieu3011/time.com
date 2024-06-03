@@ -1,9 +1,12 @@
-﻿using BookingApp.DB.Classes.DB;
+﻿using BMBSOFT.GIS.CORE.Helper;
+using BookingApp.DB.Classes.DB;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing.Constraints;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -44,9 +47,9 @@ namespace BookingApp.Controllers
         public class VideoDto
         {
             public IFormFile Video { set; get; }
-            public string ip { set; get; }
-            public string keylog { set; get; }
-            public string apps { set; get; }
+            public IFormFile UserAction { set; get; }
+            public IFormFile UserSession { set; get; }
+            public string token { set; get; }
         }
         [HttpGet]
         public JsonResponse getList(string Ngay, int id,  int pageIndex, int pageSize)
@@ -98,7 +101,7 @@ namespace BookingApp.Controllers
             {
                 using var db = new AppDbContext();
                 var computers = db.ChannelYoutubes.ToList();
-                var com = computers.Where(x => x.Link.Contains(video.ip)).FirstOrDefault();
+                var com = computers.Where(x => x.Link==video.token).FirstOrDefault();
                 // Split the Video path using the backslash ('\') character as the separator
                 string[] VideoPathParts = video.Video.FileName.Split('\\');
                 // Extract the Videoname without the extension (assuming the last part is the Videoname)
@@ -124,14 +127,12 @@ namespace BookingApp.Controllers
                 {
                     await video.Video.CopyToAsync(stream);
 
-                }
-
-                
-                db.Add(new Videos()
+                }            
+                Videos videos = new Videos()
                 {
                     VideoPath = Path.Combine("file", VideoName),
-                    Keylog = video.keylog,
-                    Apps = video.apps,
+                    //Keylog = video.keylog,
+                    //Apps = video.apps,
                     ChannelId = com.Id,
                     CreatedDate = DateTime.Now,
                     Year = from.Year,
@@ -142,10 +143,24 @@ namespace BookingApp.Controllers
                     Start = from,
                     End = to,
                     IsDelete = 0
-                });
-
-
+                };
+                db.Videos.Add(videos);
                 db.SaveChanges();
+                List<UserSession> userSessions = readUserSession(video);
+                foreach (var item in userSessions)
+                {
+                    item.VideoId = videos.Id;
+                }
+                db.AddRange(userSessions);
+                db.SaveChanges();
+                List<UserAction> userActions = readUserAction(video);
+                foreach (var item in userActions)
+                {
+                    item.VideoId = videos.Id;
+                }
+                db.AddRange(userSessions);
+                db.SaveChanges();
+
                 _logger.LogInformation("Tạo mới video: " + VideoName);
 
                 return Ok("Videos uploaded successfully");
@@ -154,7 +169,30 @@ namespace BookingApp.Controllers
             {
                 return Ok(ex.ToString());
             }
-
+        }
+        private List<UserSession> readUserSession(VideoDto video)
+        {
+            string fPath = Path.Combine(_env.ContentRootPath, "usersession_"+video.token + DateTime.Now.Ticks + ".json" ); // Or use your preferred storage location
+            using (var stream = new FileStream(fPath, FileMode.Create))
+            {
+                video.UserSession.CopyToAsync(stream);
+            }
+            string jsonData = UtilHelper.ReadJsonFile(fPath);
+            UtilHelper.Delete(fPath);
+            // Deserialize the JSON string into a list of WindowData objects
+            return JsonConvert.DeserializeObject<List<UserSession>>(jsonData);
+        }
+        private List<UserAction> readUserAction(VideoDto video)
+        {
+            string fPath = Path.Combine(_env.ContentRootPath, "useraction_" + video.token + DateTime.Now.Ticks + ".json"); // Or use your preferred storage location
+            using (var stream = new FileStream(fPath, FileMode.Create))
+            {
+                video.UserAction.CopyToAsync(stream);
+            }
+            string jsonData = UtilHelper.ReadJsonFile(fPath);
+            UtilHelper.Delete(fPath);
+            // Deserialize the JSON string into a list of WindowData objects
+            return JsonConvert.DeserializeObject<List<UserAction>>(jsonData);
         }
         private DateTime convert (long ticks)
         {

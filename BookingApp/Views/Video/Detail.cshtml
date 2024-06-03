@@ -1,7 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Videos ";
 }
-@model BookingApp.DB.Classes.DB.Videos
+@model BookingApp.Models.VideoModel
 <div class="container" style="font-size:18px!important">
     <div >
         <h4>Video </h4>
@@ -27,11 +27,11 @@
                         <div class="row video-stats">
                             <span style="font-weight: bold;"> @ViewBag.channel</span>
                             <span>•</span>
-                            <span id="time" style="font-weight: bold;">@Model.Start - @Model.End </span>
+                            <span id="time" style="font-weight: bold;">@Model.Video.Start - @Model.Video.End </span>
                         </div>
                         <div class="row video-description col-12" style="padding-left: 0px!important">
-                            <p id="apps" style="font-size:14px!important;padding-left: 0px!important " class="multiline col-6"> @Model.Apps</p>
-                            <p id="keylog" style="font-size:14px!important;padding-left: 0px!important" class="multiline col-6"> @Model.Keylog</p>
+                            <p id="apps" style="font-size:14px!important;padding-left: 0px!important " class="multiline col-6"> @Model.Video.Apps</p>
+                            <p id="keylog" style="font-size:14px!important;padding-left: 0px!important" class="multiline col-6"> @Model.Video.Keylog</p>
                         </div>
                     </div>
                 </div>
@@ -141,16 +141,6 @@
 <link href="~/lib/video-js.min.css" rel="stylesheet">
 <script src="~/lib/video.min.js"></script>
 <script>
-@*     var myPlayer = videojs('my-player');
-    myPlayer.ready(function () 
-    { myPlayer.on('timeupdate', 
-    function () 
-    { var whereYouAt = myPlayer.currentTime(); 
-        if (!myPlayer.paused()) 
-        { console.log(whereYouAt); } 
-        console.log(myPlayer.paused());
-    }); 
-    }); *@
     function setVideo(id) {
         $.ajax({
             url: "/api/Upload/Get",
@@ -163,10 +153,10 @@
                 // data is your result from controller
                 console.log(data)
                 var player = videojs('my-player');
-                player.src({ type: 'video/mp4', src: data.videoPath });
-                document.getElementById("keylog").innerHTML = data.keylog;
-                document.getElementById("time").innerHTML = data.start + " - " + data.end;
-                document.getElementById("apps").innerHTML = data.apps;
+                    player.src({ type: 'video/mp4', src: data.Video.videoPath });
+                    document.getElementById("keylog").innerHTML = data.Video.keylog;
+                    document.getElementById("time").innerHTML = data.Video.start + " - " + data.Video.end;
+                    document.getElementById("apps").innerHTML = data.Video.apps;
             },
             error: function (xhr) {
                 alert('error');

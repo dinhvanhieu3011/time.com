@@ -14,6 +14,8 @@ namespace BookingApp.DB.Classes.DB
         public DbSet<ChannelYoutubes> ChannelYoutubes { get; set; }
         public DbSet<Videos> Videos { get; set; }
         public DbSet<Settings> Settings { get; set; }
+        public DbSet<UserAction> UserActions { get; set; }
+        public DbSet<UserSession> UserSessions { get; set; }
 
 #if UnitTest
         protected override void OnConfiguring(DbContextOptionsBuilder options)

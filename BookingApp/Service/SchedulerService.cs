@@ -74,16 +74,17 @@ namespace BookingApp.Service
                     }
 
                     //1. Create bản ghi mới
-               
 
-                    string keyLogString = CreateKeyLogString(listVideo);
-                    string appString = CreateAppsString(listVideo);
+
+                    //string keyLogString = CreateKeyLogString(listVideo);
+                    //string appString = CreateAppsString(listVideo);
+           
                     _logger.LogInformation("Tạo mới video: " + videoMergeName );
                     var video = new Videos()
                     {
                         VideoPath = Path.Combine("file", videoMergeName + ".mp4"),
-                        Keylog = keyLogString,
-                        Apps = appString,
+                        Keylog = "",
+                        Apps = "",
                         ChannelId = item,
                         CreatedDate = DateTime.Now,
                         Year = OneHoursAgo.Year,
@@ -99,11 +100,41 @@ namespace BookingApp.Service
 
                     db.Add(video);
                     db.SaveChanges();
+                    MergeUserSession(listVideo, video.Id);
+                    MergeUserAction(listVideo, video.Id);
                     UpdateStatusVideo(listVideo);
                 }    
             }
 
         }
+
+        private void MergeUserSession(List<Videos> listVideo, int id)
+        {
+            var db = new AppDbContext();
+            var videoIds = listVideo.Select(x=>x.Id).ToArray();
+            var sessions = db.UserSessions.Where(x=> videoIds.Contains(x.VideoId)).ToList();
+            foreach (var session in sessions)
+            {
+                session.VideoId = id;
+            }
+            db.UserSessions.UpdateRange(sessions);
+            db.SaveChanges();
+        }
+
+
+        private void MergeUserAction(List<Videos> listVideo, int id)
+        {
+            var db = new AppDbContext();
+            var videoIds = listVideo.Select(x => x.Id).ToArray();
+            var sessions = db.UserActions.Where(x => videoIds.Contains(x.VideoId)).ToList();
+            foreach (var session in sessions)
+            {
+                session.VideoId = id;
+            }
+            db.UserActions.UpdateRange(sessions);
+            db.SaveChanges();
+        }
+
         private static void MergeFile(string videoMergeName, List<Videos> listVideo, string rootPath)
         {
             var ffmpegPath = Path.Combine(rootPath, "ffmpeg.exe") ;

@@ -64,7 +64,7 @@ namespace BookingApp.Controllers
             {
                 return RedirectToAction("Index", "Computer");
             }
-
+            Link = Guid.NewGuid().ToString();
             switch (Insert(Name, Link, "", 0, UserId, 0))
             {
                 case true:
@@ -141,7 +141,7 @@ namespace BookingApp.Controllers
 
             if (book != null)
             {
-                ViewBag.Ip = book.Link+"/ScreenTask.jpg";
+                ViewBag.Ip = @"/live/" + book.Link+".jpg";
                 return View();
             }
             else

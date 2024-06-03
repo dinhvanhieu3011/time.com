@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using BookingApp.DB.Classes.DB;
+using BookingApp.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 namespace BookingApp.Controllers
@@ -35,32 +36,44 @@ namespace BookingApp.Controllers
         public IActionResult Index(int id)
         {
             using var db = new AppDbContext();
-            var data = db.Videos.Where(x=>x.ChannelId == id&& x.IsDelete == 0).OrderByDescending(x=>x.Id).ToList();
+            var data = db.Videos.Where(x=>x.ChannelId == id&& x.IsDelete == 0)
+                .OrderByDescending(x=>x.Id).ToList();
 
             return View(data);
 
         }
-        public Videos Get(int id)
+        public VideoModel Get(int id)
         {
             var db = new AppDbContext();
-
+            var model = new VideoModel();
             var book = db.Videos.Where(x => x.Id == id).FirstOrDefault();
             book.VideoPath = @"/" + book.VideoPath.Replace(@"\", @"/");
-            return book;
+            var userSession = db.UserSessions.Where(x => x.VideoId == id).ToList();
+            var userAction = db.UserActions.Where(x => x.VideoId == id).ToList();
+            model.userSessions = userSession;
+            model.Video = book;
+            model.userActions = userAction;
+            return model;
         }
         public IActionResult Detail(int id)
         {
             var db = new AppDbContext();
-  
+            var model = new VideoModel();   
             var book = db.Videos.Where(x => x.Id == id).FirstOrDefault();
             var channel = db.ChannelYoutubes.Where(x => x.Id == book.ChannelId).FirstOrDefault();
             var relatedVideo = db.Videos.Where(x => x.ChannelId == channel.Id && x.Year == book.Year 
             && x.Month == book.Month && x.Date == book.Date && x.IsDelete == 0 && x.Id != id)
-                .OrderByDescending(x => x.Id).Take(12).ToList();
+                .OrderByDescending(x => x.Id).Take(5).ToList();
+            var userSession = db.UserSessions.Where(x => x.VideoId == id).ToList();
+            var userAction = db.UserActions.Where(x => x.VideoId == id).ToList();
+            model.userSessions = userSession;
+            model.Video = book;
+            model.userActions = userAction;
+
             ViewBag.relatedVideo = relatedVideo;
             ViewBag.channel = channel.Name;
             ViewBag.filePath = @"/" + book.VideoPath.Replace(@"\",@"/");
-            return View(book);
+            return View(model);
         }
 
     }

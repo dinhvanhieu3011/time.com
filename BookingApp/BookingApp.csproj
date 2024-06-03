@@ -23,6 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="file\" />
+    <Folder Include="live\" />
     <Folder Include="Views\Settings\" />
     <Folder Include="Filters\" />
     <Folder Include="Filters\Authorization\" />

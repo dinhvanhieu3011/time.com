@@ -6,11 +6,21 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.IO;
 
 namespace BMBSOFT.GIS.CORE.Helper
 {
     public class UtilHelper
     {
+        public static string ReadJsonFile (string fullPath)
+        {
+            string jsonData = File.ReadAllText(fullPath);
+            return jsonData;
+        }
+        public static void Delete(string fullPath)
+        {
+            File.Delete(fullPath);
+        }
         public static string BuildPathWithParentPath(string targetFolder, string parentPath, string childPath)
         {
             return $"{targetFolder}/{parentPath}/{childPath}";
