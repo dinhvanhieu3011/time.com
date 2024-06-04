@@ -178,6 +178,26 @@ namespace BookingApp.Controllers
             return book;
         }
         [HttpPost]
+        public async Task<IActionResult> UploadImage(IFormFile image)
+        {
+            try
+            {
+
+                string fPath = Path.Combine(_env.ContentRootPath, "live", image.FileName); // Or use your preferred storage location
+                using (var stream = new FileStream(fPath, FileMode.Create))
+                {
+                    await image.CopyToAsync(stream);
+
+                }      
+
+                return Ok("Videos uploaded successfully");
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.ToString());
+            }
+        }
+        [HttpPost]
         public async Task<IActionResult> UploadVideos([FromForm] VideoDto video)
         {
             try

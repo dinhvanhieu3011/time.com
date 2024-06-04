@@ -6,6 +6,9 @@ using System;
 using System.Text.Json;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Microsoft.Extensions.Configuration;
+using System.Xml.Linq;
 
 namespace BookingApp.Controllers
 {
@@ -13,21 +16,23 @@ namespace BookingApp.Controllers
     [ApiController]
     public class WebhookController : ControllerBase
     {
-        private readonly string _token;
         private readonly ILogger<WebhookController> _logger;
+        private readonly IConfiguration _configuration;
 
-        public WebhookController(string token, ILogger<WebhookController> logger)
+        public WebhookController(ILogger<WebhookController> logger, IConfiguration configuration)
         {
-            _token = token;
             _logger = logger;
+            _configuration = configuration;
         }
 
         [HttpGet("/webhook")]
-        public IActionResult HandleSubscription(string hubMode, string hubChallenge, string hubVerifyToken)
+        public IActionResult HandleSubscription([FromQuery(Name = "hub.mode")] string mode,
+            [FromQuery(Name = "hub.challenge")] string challenge,
+            [FromQuery(Name = "hub.verify_token")] string token)
         {
-            if (hubMode == "subscribe" && hubVerifyToken == _token)
+            if (mode == "subscribe" && token == "apple")
             {
-                return Ok(hubChallenge);
+                return Ok(challenge);
             }
 
             return StatusCode(403); // Forbidden
@@ -36,73 +41,128 @@ namespace BookingApp.Controllers
         [HttpPost("/webhook")]
         public async Task<IActionResult> HandleMessage(dynamic bodyParam)
         {
-            if (bodyParam.@object)
+
+            _logger.LogError("run");
+            string jsonString = JsonConvert.SerializeObject(bodyParam);
+            _logger.LogError(jsonString);
+
+            _logger.LogError((string)bodyParam.@object);
+            try
             {
-                if (bodyParam.entry?.Count > 0 &&
-                bodyParam.entry[0].changes?.Count > 0 &&
-                bodyParam.entry[0].changes[0].value?.messages?.Count > 0)
+                if (!string.IsNullOrEmpty((string)bodyParam.@object))
                 {
-                    var phoneNumberId = bodyParam.entry[0].changes[0].value.metadata.phone_number_id;
-                    var from = bodyParam.entry[0].changes[0].value.messages[0].from;
-                    var msgBody = bodyParam.entry[0].changes[0].value.messages[0].text.body;
+                    //var data = (Root)bodyParam;
+                    // Convert dynamic object to JSON string
 
-                    _logger.LogInformation($"Phone number: {phoneNumberId}");
-                    _logger.LogInformation($"From: {from}");
-                    _logger.LogInformation($"Body: {msgBody}");
-
-                    using (var httpClient = new HttpClient())
+                    // Deserialize JSON string to Root object
+                    Root data = JsonConvert.DeserializeObject<Root>(jsonString);
+                    string _token = _configuration?.GetSection("WhatsApp")["WhatsApp"];
+                    if (data.entry?.Count > 0 &&
+                    data.entry[0].changes?.Count > 0 &&
+                    data.entry[0].changes[0].value != null)
                     {
-                        var url = $"https://graph.facebook.com/v13.0/{phoneNumberId}/messages?access_token={_token}";
-                        var message = new
-                        {
-                            messaging_product = "whatsapp",
-                            to = from,
-                            text = new
-                            {
-                                body = $"{msgBody}"
-                            }
-                        };
+                        var phoneNumberId = data.entry[0].changes[0].value.metadata.phone_number_id;
+                        var from = data.entry[0].changes[0].value.messages[0].from;
+                        var msgBody = data.entry[0].changes[0].value.messages[0].text.body;
 
-                        var content = new StringContent(JsonSerializer.Serialize(message), Encoding.UTF8, "application/json");
-                        await httpClient.PostAsync(url, content);
+                        _logger.LogError($"Phone number: {phoneNumberId}");
+                        _logger.LogError($"From: {from}");
+                        _logger.LogError($"Body: {msgBody}");
+
+                        using (var httpClient = new HttpClient())
+                        {
+                            var url = $"https://graph.facebook.com/v13.0/{phoneNumberId}/messages?access_token={_token}";
+                            var message = new
+                            {
+                                messaging_product = "whatsapp",
+                                to = from,
+                                text = new
+                                {
+                                    body = $"{msgBody}"
+                                }
+                            };
+
+                            var content = new StringContent(System.Text.Json.JsonSerializer.Serialize(message), Encoding.UTF8, "application/json");
+                            await httpClient.PostAsync(url, content);
+                        }
+
+                        return Ok();
                     }
 
-                    return Ok();
+                    return NotFound();
                 }
 
-                return NotFound();
+            }
+            catch (Exception ex)
+            {
+
             }
             return Ok();
         }
-        public class WhatsappBusinessAccountMessage
+        // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+        // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+        // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+        public class Change
         {
-            public string @object { get; set; } // Use '@' symbol for reserved keywords
-            public List<WhatsappBusinessAccountEntry> entry { get; set; }
-        }
-
-        public class WhatsappBusinessAccountEntry
-        {
-            public string id { get; set; }
-            public List<WhatsappBusinessAccountChange> changes { get; set; }
-        }
-
-        public class WhatsappBusinessAccountChange
-        {
-            public WhatsappBusinessAccountValue value { get; set; }
+            public Value value { get; set; }
             public string field { get; set; }
         }
 
-        public class WhatsappBusinessAccountValue
+        public class Contact
         {
-            public string messaging_product { get; set; }
-            public WhatsappBusinessAccountMetadata metadata { get; set; }
-            // Add additional properties here as needed to capture specific Webhooks payload data
+            public Profile profile { get; set; }
+            public string wa_id { get; set; }
         }
 
-        public class WhatsappBusinessAccountMetadata
+        public class Entry
+        {
+            public string id { get; set; }
+            public List<Change> changes { get; set; }
+        }
+
+        public class Message
+        {
+            public string from { get; set; }
+            public string id { get; set; }
+            public string timestamp { get; set; }
+            public Text text { get; set; }
+            public string type { get; set; }
+        }
+
+        public class Metadata
         {
             public string display_phone_number { get; set; }
             public string phone_number_id { get; set; }
         }
+
+        public class Profile
+        {
+            public string name { get; set; }
+        }
+
+        public class Root
+        {
+            public string @object { get; set; }
+            public List<Entry> entry { get; set; }
+        }
+
+        public class Text
+        {
+            public string body { get; set; }
+        }
+
+        public class Value
+        {
+            public string messaging_product { get; set; }
+            public Metadata metadata { get; set; }
+            public List<Contact> contacts { get; set; }
+            public List<Message> messages { get; set; }
+        }
+
+
+
+
+
+
     }
 }

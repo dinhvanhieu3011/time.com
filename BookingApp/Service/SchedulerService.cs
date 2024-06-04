@@ -294,35 +294,7 @@ private void MergeUserAction(List<Videos> listVideo, int id)
         #endregion
         public async Task Backup()
         {
-            //string sourceDirectory = @"C:\path\to\your\directory";
-            //string destinationDirectory = @"C:\path\to\backup\directory";
-            //string databaseFile = @"C:\path\to\your\directory\booking.db";
-            //string backupDatabaseFile = Path.Combine(destinationDirectory, "booking.db");
 
-            //try
-            //{
-            //    // Create backup directory if it doesn't exist
-            //    if (!Directory.Exists(destinationDirectory))
-            //    {
-            //        Directory.CreateDirectory(destinationDirectory);
-            //    }
-
-            //    // Copy files from the source directory to the backup directory
-            //    foreach (string file in Directory.GetFiles(sourceDirectory))
-            //    {
-            //        string destFile = Path.Combine(destinationDirectory, Path.GetFileName(file));
-            //        File.Copy(file, destFile, true);
-            //    }
-
-            //    // Copy the database file
-            //    File.Copy(databaseFile, backupDatabaseFile, true);
-
-            //    Console.WriteLine("Backup completed successfully.");
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine($"Error during backup: {ex.Message}");
-            //}
         }
         public async Task CheckConnection()
         {
