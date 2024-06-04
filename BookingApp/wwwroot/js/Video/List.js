@@ -128,11 +128,17 @@ List.prototype = {
                             }
                                 ,
                             {
-                                "mDataProp": "start"
+                                "mDataProp": "start",
+                                "mRender": function (data) {
+                                    return moment(data + '').format("DD/MM/YYYY h:mm:ss");
+                                }
                             }
                                 ,
                             {
-                                "mDataProp": "end"
+                                "mDataProp": "end",
+                                "mRender": function (data) {
+                                    return moment(data + '').format("DD/MM/YYYY h:mm:ss");
+                                }
                             }
                                 ,
                             {

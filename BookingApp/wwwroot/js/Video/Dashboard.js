@@ -50,7 +50,7 @@ Dashboard.prototype = {
         var pageIndex = coreRoot.systemroot.pageIndex_default;
         var pageSize = coreRoot.systemroot.pageSize_default;
         var strNgayChungTu = $('#ngay_nhapxuat').val();
-        var user = $('#user').val();
+        var user = $('#user').val() ? $('#user').val().toString() : "";
         coreRoot.systemroot.beginLoading();
         $.ajax({
             type: 'GET',
@@ -104,27 +104,35 @@ Dashboard.prototype = {
                                 }
                             },
                             "aoColumnDefs": [
-                                {
-                                    className: "dt-body-left", "targets": [3]
-                                }
+                                { orderable: true, "targets": [0,1,2,3]  },
                             ],
                             "order": [[0, "desc"]],
                             "aoColumns": [
+                                {
+                                    "mDataProp": "computerName"
+                                },
+                                {
+                                    "mDataProp": "windows"
+                                },
+
                             {
-                                "mDataProp": "start"
+                                "mDataProp": "start",
+                                "mRender": function (data) {
+                                    return moment(data + '').format("DD/MM/YYYY h:mm:ss");
+                                }
                             }
                                 ,
                             {
-                                "mDataProp": "end"
+                                "mDataProp": "end",
+                                "mRender": function (data) {
+                                    return moment(data + '').format("DD/MM/YYYY h:mm:ss");
+                                }
                             }
                                 ,
                             {
                                 "mDataProp": "useTime"
                             }
-                                ,
-                            {
-                                "mDataProp": "windows"
-                            }
+                        
                             ],
                         });
                     }

@@ -5,6 +5,7 @@ using Hangfire.MemoryStorage.Database;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing.Constraints;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -18,6 +19,8 @@ using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using static BookingApp.Controllers.VideoController;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static System.Collections.Specialized.BitVector32;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -55,48 +58,43 @@ namespace BookingApp.Controllers
             public string token { set; get; }
         }
         [HttpGet]
-        public JsonResponse getDashboard(string Ngay, int channelId, int pageIndex, int pageSize)
+        public JsonResponse getDashboard(string Ngay, string channelId, int pageIndex, int pageSize)
         {
             try
             {
                 var totalRow = 0;
+                var channelIds = new string[100];
+                if (!string.IsNullOrEmpty(channelId))
+                {
+                     channelIds = channelId.Split(',');
+
+                }
                 using var db = new AppDbContext();
                 CultureInfo provider = CultureInfo.CurrentCulture;
-                DateTime date = new DateTime(1970, 1, 1);
-                var data = new List<UserSession>();
-                var res = new List<UserSessionModel>();
-                if (string.IsNullOrEmpty(Ngay))
+                DateTime dateTime = DateTime.Now;
+                if (!string.IsNullOrEmpty(Ngay))
                 {
-                    var listVideo = db.Videos.Where(x => x.ChannelId == channelId).Select(x => x.Id).ToList();
-                    data = db.UserSessions.Where(x => listVideo.Contains(x.VideoId)).ToList();
+                    dateTime = DateTime.ParseExact(Ngay, "dd/MM/yyyy", provider);
                 }
-                else
-                {
-                    DateTime dateTime = DateTime.ParseExact(Ngay, "dd/MM/yyyy", provider);
-                    var listVideo = db.Videos.Where(x => x.ChannelId == channelId && x.Start.Date == dateTime.Date)
-                        .Select(x => x.Id).ToList();
-                    data = db.UserSessions.Where(x => listVideo.Contains(x.VideoId)).ToList();
-                }
-                var restul = data.OrderByDescending(x => x.Id).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
-                foreach ( var item in restul )
-                {
-                    var start = convert(item.StartTime);
-                    var end = convert(item.EndTime);
 
-                    res.Add(new UserSessionModel
-                    {
-                        Id  = item.Id,
-                        VideoId = item.VideoId,
-                        EndTime = item.EndTime,
-                        StartTime = item.StartTime,
-                        Windows = item.Windows,
-                        End = end,
-                        Start = start,
-                        UseTime = (end - start).TotalSeconds.ToString()
-                });
-                }
-                totalRow = data.Count();
-                this.response.Data = res;
+                var query = from session in db.UserSessions.OrderBy(s => s.StartTime)
+                            join video in db.Videos on session.VideoId equals video.Id
+                            join channel in db.ChannelYoutubes on video.ChannelId equals channel.Id
+                            where video.IsDelete == 0 
+                            && ( string.IsNullOrEmpty(Ngay) || dateTime.Date == video.Start.Date )
+                            && ( string.IsNullOrEmpty(channelId) || channelIds.Contains(channel.Id.ToString()))
+                            group session by new { channel.Name, session.Windows } into sessionGroup
+                            select new UserSessionModel
+                            {
+                                ComputerName = sessionGroup.Key.Name,
+                                Windows = sessionGroup.Key.Windows,
+                                UseTime = sessionGroup.Sum(s => s.EndTime - s.StartTime).ToString(),
+                                Start = convert(sessionGroup.Min(x=>x.StartTime)),
+                                End = convert(sessionGroup.Max(x => x.EndTime))
+                            };
+
+                totalRow = query.ToList().Count();
+                this.response.Data = query.ToList();
                 this.response.Success = true;
                 this.response.Pager = totalRow.ToString();
                 return this.response;
@@ -279,13 +277,27 @@ namespace BookingApp.Controllers
             // Deserialize the JSON string into a list of WindowData objects
             return JsonConvert.DeserializeObject<List<UserAction>>(jsonData);
         }
-        private DateTime convert (long ticks)
+        private static DateTime convert (long ticks)
         {
             var when = new DateTime(1970, 1, 1).AddSeconds(ticks);
 
             // Convert the UTC DateTime to the local time zone (Hanoi, Vietnam)
             DateTime localDateTime = when.ToLocalTime();
             return localDateTime;
+        }
+        private static long ConvertToTicks(DateTime localDateTime)
+        {
+            // Xác định múi giờ địa phương của Hà Nội, Việt Nam
+            TimeZoneInfo timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+
+            // Chuyển đổi thời gian từ giờ địa phương sang giờ UTC
+            DateTime utcDateTime = TimeZoneInfo.ConvertTimeToUtc(localDateTime, timeZoneInfo);
+
+            // Tính số giây từ Unix epoch (1/1/1970) đến thời điểm UTC
+            DateTime unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            long ticks = (long)(utcDateTime - unixEpoch).TotalSeconds;
+
+            return ticks;
         }
     }
 }

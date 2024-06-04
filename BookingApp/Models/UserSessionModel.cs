@@ -12,5 +12,6 @@ namespace BookingApp.Models
         public string UseTime { get; set; }
         public string Windows { get; set; }
         public int VideoId { get; set; }
+        public string ComputerName { get; set; }
     }
 }

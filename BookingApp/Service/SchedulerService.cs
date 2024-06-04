@@ -333,26 +333,36 @@ private void MergeUserAction(List<Videos> listVideo, int id)
             {
                 foreach (var item in list)
                 {
-                    var lastVideoTime = db.Videos.Where(x => x.ChannelId == item.Id).OrderByDescending(x => x.CreatedDate).FirstOrDefault().Start;
-                    TimeSpan difference = DateTime.Now - lastVideoTime;
-
-                    // Convert the difference to minutes
-                    double differenceInMinutes = difference.TotalMinutes;
-                    if(differenceInMinutes > 5)
+                    var lastVideoTime = db.Videos.Where(x => x.ChannelId == item.Id).OrderByDescending(x => x.CreatedDate);
+                    if (lastVideoTime != null)
                     {
-                        if(item.CategoryId != 0)
+                        TimeSpan difference = DateTime.Now - lastVideoTime.FirstOrDefault().Start;
+
+                        // Convert the difference to minutes
+                        double differenceInMinutes = difference.TotalMinutes;
+                        if (differenceInMinutes > 5)
                         {
-                            item.CategoryId = 0;
+                            if (item.CategoryId != 0)
+                            {
+                                item.CategoryId = 0;
+                                db.ChannelYoutubes.Update(item);
+                                db.SaveChanges();
+                                sendmessageTelegram("Mất kết nối tới máy :" + item.Name + " - " + item.UserId);
+                            }
+                        }
+                        else
+                        {
+                            item.CategoryId = 1;
                             db.ChannelYoutubes.Update(item);
                             db.SaveChanges();
-                            sendmessageTelegram("Mất kết nối tới máy :" + item.Name + " - " + item.UserId );
                         }
                     }
                     else
                     {
-                        item.CategoryId = 1;
+                        item.CategoryId = 0;
+                        db.ChannelYoutubes.Update(item);
+                        db.SaveChanges();
                     }
-
                 }
             }
         }

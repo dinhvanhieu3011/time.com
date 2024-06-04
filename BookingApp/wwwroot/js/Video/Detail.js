@@ -101,7 +101,10 @@ Detail.prototype = {
                             }
                                 ,
                             {
-                                "mDataProp": "time"
+                                "mDataProp": "time",
+                                "mRender": function (data) {
+                                    return moment(data+'').format("DD/MM/YYYY h:mm:ss"); 
+                                }
                             }
                                 ,
                             {
