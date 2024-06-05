@@ -26,7 +26,7 @@ namespace BookingApp
         private const string DB_FIRST_TIME = "dbFirstTime.txt";
         private string PushExpression = "*/59 * * * *";
         private string EveryTwoHours = "0 */2 * * *";
-        private string Every2Minute = "2 * * * *";
+        private string Every2Minute = "*/2 * * * *";
         private string SchedulerBackup = "0 0 * * 6";
         private string TimeZone = "SE Asia Standard Time";
         public Startup(IConfiguration configuration)
