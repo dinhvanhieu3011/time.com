@@ -44,6 +44,41 @@ namespace BookingApp.Controllers
 
             public string Id { get; set; }
         }
+        private bool? Insert(string Name, string Link, string Category, int CookaAccountId, string UserId, int CategoryId)
+        {
+            try
+            {
+                using var db = new AppDbContext();
+
+                if (!db.ChannelYoutubes.Any(x => x.Link == Link)
+                    && !string.IsNullOrEmpty(Name)
+                    )
+                {
+                    db.Add(new ChannelYoutubes()
+                    {
+                        Name = Name,
+                        Link = Link,
+                        Category = Category,
+                        CookaAccountId = CookaAccountId,
+                        UserId = UserId,
+                        CategoryId = CategoryId,
+                    });
+
+                    db.SaveChanges();
+
+
+                    return true;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
         private readonly JsonResponse response = new JsonResponse();
         public UploadController(IHostEnvironment env, ILogger<UploadController> logger)
         {
@@ -62,6 +97,25 @@ namespace BookingApp.Controllers
             public IFormFile UserAction { set; get; }
             public IFormFile UserSession { set; get; }
             public string token { set; get; }
+        }
+        [HttpPost]
+        public JsonResponse CreateComputer(string ComputerName, string Token, string EmployeeName)
+        {
+            if (!ModelState.IsValid)
+            {
+                this.response.Success = false; 
+            }
+            switch (Insert(ComputerName, Token, "", 0, EmployeeName, 0))
+            {
+                case true:
+                    this.response.Success = true; break;
+                case false:
+                    this.response.Success = false; break;
+                case null:
+                    this.response.Success = false; this.response.Message = "Đã tồn tại token"; break;   
+            }
+            return this.response;
+    
         }
         [HttpGet]
         public JsonResponse getDashboard(string Ngay, string channelId, int pageIndex, int pageSize)
