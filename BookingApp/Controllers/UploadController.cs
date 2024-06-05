@@ -53,6 +53,8 @@ namespace BookingApp.Controllers
         public class ImageDto
         {
             public IFormFile Image { set; get; }
+            public string token { set; get; }
+
         }
         public class VideoDto
         {
@@ -187,7 +189,7 @@ namespace BookingApp.Controllers
             try
             {
 
-                string fPath = Path.Combine(_env.ContentRootPath, "live", image.Image.FileName); // Or use your preferred storage location
+                string fPath = Path.Combine(_env.ContentRootPath, "live", image.token + ".png"); // Or use your preferred storage location
                 using (var stream = new FileStream(fPath, FileMode.Create))
                 {
                     await image.Image.CopyToAsync(stream);
