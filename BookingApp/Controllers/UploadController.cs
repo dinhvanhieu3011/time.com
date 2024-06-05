@@ -50,6 +50,10 @@ namespace BookingApp.Controllers
             _env = env;
             _logger = logger;
         }
+        public class ImageDto
+        {
+            public IFormFile Image { set; get; }
+        }
         public class VideoDto
         {
             public IFormFile Video { set; get; }
@@ -178,15 +182,15 @@ namespace BookingApp.Controllers
             return book;
         }
         [HttpPost]
-        public async Task<IActionResult> UploadImage(IFormFile image)
+        public async Task<IActionResult> UploadImage([FromForm] ImageDto image)
         {
             try
             {
 
-                string fPath = Path.Combine(_env.ContentRootPath, "live", image.FileName); // Or use your preferred storage location
+                string fPath = Path.Combine(_env.ContentRootPath, "live", image.Image.FileName); // Or use your preferred storage location
                 using (var stream = new FileStream(fPath, FileMode.Create))
                 {
-                    await image.CopyToAsync(stream);
+                    await image.Image.CopyToAsync(stream);
 
                 }      
 

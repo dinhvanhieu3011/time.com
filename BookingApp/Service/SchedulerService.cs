@@ -305,8 +305,8 @@ private void MergeUserAction(List<Videos> listVideo, int id)
             {
                 foreach (var item in list)
                 {
-                    var lastVideoTime = db.Videos.Where(x => x.ChannelId == item.Id).OrderByDescending(x => x.CreatedDate);
-                    if (lastVideoTime != null)
+                    var lastVideoTime = db.Videos.Where(x => x.ChannelId == item.Id).OrderByDescending(x => x.CreatedDate).ToList();
+                    if (lastVideoTime.Count > 0)
                     {
                         TimeSpan difference = DateTime.Now - lastVideoTime.FirstOrDefault().Start;
 
