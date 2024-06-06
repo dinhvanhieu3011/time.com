@@ -68,9 +68,10 @@ namespace BookingApp.Service
                     var firstVideo = listVideo.FirstOrDefault();
                     var lastVideo = listVideo.LastOrDefault();
                     var videoMergeName = ConvertToTicks(firstVideo.Start) + "_" + ConvertToTicks(lastVideo.End) + "_" + item;
+                    string fpath = "";
                     try
                     {
-                        MergeFile(videoMergeName, listVideo, _env.ContentRootPath);
+                        fpath = MergeFile(videoMergeName, listVideo, _env.ContentRootPath);
                     }
                     catch (Exception ex)
                     {
@@ -87,7 +88,7 @@ namespace BookingApp.Service
                     _logger.LogInformation("Tạo mới video: " + videoMergeName );
                     var video = new Videos()
                     {
-                        VideoPath = Path.Combine("file", videoMergeName + ".mp4"),
+                        VideoPath = fpath,
                         Keylog = "",
                         Apps = "",
                         ChannelId = item,
@@ -140,7 +141,7 @@ private void MergeUserAction(List<Videos> listVideo, int id)
             db.SaveChanges();
         }
 
-        private static void MergeFile(string videoMergeName, List<Videos> listVideo, string rootPath)
+        private static string MergeFile(string videoMergeName, List<Videos> listVideo, string rootPath)
         {
             var ffmpegPath = Path.Combine(rootPath, "ffmpeg.exe") ;
             ffmpegPath = "ffmpeg";
@@ -159,6 +160,7 @@ private void MergeUserAction(List<Videos> listVideo, int id)
             string fPath = Path.Combine(rootPath, "file", folder, listVideo[0].ChannelId.ToString(), videoMergeName); // Or use your preferred storage location
             CreateConcatFile(rootPath,concatFilePath, listVideo);
             MergeVideosWithFFmpeg(ffmpegPath, concatFilePath, fPath + ".mp4");
+            return Path.Combine( "file", folder, listVideo[0].ChannelId.ToString(), videoMergeName);
         }
         private static void CreateConcatFile(string rootPath, string filePath, List<Videos> videoFiles)
         {
