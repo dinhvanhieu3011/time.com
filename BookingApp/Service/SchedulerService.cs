@@ -54,7 +54,7 @@ namespace BookingApp.Service
         {
             var db = new AppDbContext();
             var OneHoursAgo = DateTime.Now.AddHours(-2);
-            var listComputer = db.Videos.Select(x=>x.ChannelId).Distinct().ToList(); 
+            var listComputer = db.Videos.Select(x => x.ChannelId).Distinct().ToList();
             foreach (var item in listComputer)
             {
                 // lấy tất cả video của 1 tiếng trước
@@ -83,8 +83,8 @@ namespace BookingApp.Service
 
                     //string keyLogString = CreateKeyLogString(listVideo);
                     //string appString = CreateAppsString(listVideo);
-           
-                    _logger.LogInformation("Tạo mới video: " + videoMergeName );
+
+                    _logger.LogInformation("Tạo mới video: " + videoMergeName);
                     var video = new Videos()
                     {
                         VideoPath = Path.Combine("file", videoMergeName + ".mp4"),
@@ -108,7 +108,7 @@ namespace BookingApp.Service
                     MergeUserSession(listVideo, video.Id);
                     MergeUserAction(listVideo, video.Id);
                     UpdateStatusVideo(listVideo);
-                }    
+                }
             }
 
         }
@@ -116,8 +116,8 @@ namespace BookingApp.Service
         private void MergeUserSession(List<Videos> listVideo, int id)
         {
             var db = new AppDbContext();
-            var videoIds = listVideo.Select(x=>x.Id).ToArray();
-            var sessions = db.UserSessions.Where(x=> videoIds.Contains(x.VideoId)).ToList();
+            var videoIds = listVideo.Select(x => x.Id).ToArray();
+            var sessions = db.UserSessions.Where(x => videoIds.Contains(x.VideoId)).ToList();
             foreach (var session in sessions)
             {
                 session.VideoId = id;
@@ -127,7 +127,7 @@ namespace BookingApp.Service
         }
 
 
-private void MergeUserAction(List<Videos> listVideo, int id)
+        private void MergeUserAction(List<Videos> listVideo, int id)
         {
             var db = new AppDbContext();
             var videoIds = listVideo.Select(x => x.Id).ToArray();
@@ -142,9 +142,9 @@ private void MergeUserAction(List<Videos> listVideo, int id)
 
         private static void MergeFile(string videoMergeName, List<Videos> listVideo, string rootPath)
         {
-            var ffmpegPath = Path.Combine(rootPath, "ffmpeg.exe") ;
+            var ffmpegPath = Path.Combine(rootPath, "ffmpeg.exe");
             ffmpegPath = "ffmpeg";
-            var concatFilePath = Path.Combine(rootPath, "concat.txt") ;
+            var concatFilePath = Path.Combine(rootPath, "concat.txt");
             string folder = listVideo[0].Start.Date.ToString("ddMMyyyy");
             if (!Directory.Exists(Path.Combine(rootPath, "file", folder)))
             {
@@ -157,7 +157,7 @@ private void MergeUserAction(List<Videos> listVideo, int id)
                 Directory.CreateDirectory(Path.Combine(rootPath, "file", folder, listVideo[0].ChannelId.ToString()));
             }
             string fPath = Path.Combine(rootPath, "file", folder, listVideo[0].ChannelId.ToString(), videoMergeName); // Or use your preferred storage location
-            CreateConcatFile(rootPath,concatFilePath, listVideo);
+            CreateConcatFile(rootPath, concatFilePath, listVideo);
             MergeVideosWithFFmpeg(ffmpegPath, concatFilePath, fPath + ".mp4");
         }
         private static void CreateConcatFile(string rootPath, string filePath, List<Videos> videoFiles)
@@ -166,7 +166,7 @@ private void MergeUserAction(List<Videos> listVideo, int id)
             {
                 foreach (var videoFile in videoFiles)
                 {
-                    writer.WriteLine($"file '{Path.Combine(rootPath, videoFile.VideoPath.Replace("/","\\"))}'");
+                    writer.WriteLine($"file '{Path.Combine(rootPath, videoFile.VideoPath.Replace("/", "\\"))}'");
                 }
             }
         }
@@ -306,7 +306,7 @@ private void MergeUserAction(List<Videos> listVideo, int id)
                 foreach (var item in list)
                 {
                     var lastVideoTime = db.Videos.Where(x => x.ChannelId == item.Id).OrderByDescending(x => x.CreatedDate).FirstOrDefault();
-                    if (lastVideoTime!= null)
+                    if (lastVideoTime != null)
                     {
                         TimeSpan difference = DateTime.Now - lastVideoTime.Start;
 
