@@ -26,7 +26,6 @@
   <ItemGroup>
     <Folder Include="file\" />
     <Folder Include="live\" />
-    <Folder Include="Views\Settings\" />
     <Folder Include="Filters\" />
     <Folder Include="Filters\Authorization\" />
   </ItemGroup>
@@ -50,6 +49,33 @@
     <None Remove="file\1715826908_1715826918_1.mp4" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Views\Account\Index.cshtml" />
+    <None Include="Views\Account\MutiAdd.cshtml" />
+    <None Include="Views\Account\Update.cshtml" />
+    <None Include="Views\ChangePassword\Index.cshtml" />
+    <None Include="Views\Computer\Create.cshtml" />
+    <None Include="Views\Computer\Index.cshtml" />
+    <None Include="Views\Computer\Live.cshtml" />
+    <None Include="Views\Computer\Update.cshtml" />
+    <None Include="Views\Home\Error.cshtml" />
+    <None Include="Views\Home\Error500.cshtml" />
+    <None Include="Views\Home\FirstTime.cshtml" />
+    <None Include="Views\Home\Index.cshtml" />
+    <None Include="Views\Home\Privacy.cshtml" />
+    <None Include="Views\Profile\Index.cshtml" />
+    <None Include="Views\Settings\Index.cshtml" />
+    <None Include="Views\Shared\Error.cshtml" />
+    <None Include="Views\Shared\_Layout.cshtml" />
+    <None Include="Views\Shared\_ValidationScriptsPartial.cshtml" />
+    <None Include="Views\User\Create.cshtml" />
+    <None Include="Views\User\Index.cshtml" />
+    <None Include="Views\User\Update.cshtml" />
+    <None Include="Views\Video\Dashboard.cshtml" />
+    <None Include="Views\Video\Detail.cshtml" />
+    <None Include="Views\Video\Index.cshtml" />
+    <None Include="Views\Video\List.cshtml" />
+    <None Include="Views\_ViewImports.cshtml" />
+    <None Include="Views\_ViewStart.cshtml" />
     <None Include="wwwroot\App_Themes\CMSV2\bootstrap\css\bootstrap.css.map" />
     <None Include="wwwroot\App_Themes\CMSV2\bootstrap\fonts\fontawesome-webfont.woff2" />
     <None Include="wwwroot\App_Themes\CMSV2\bootstrap\fonts\glyphicons-halflings-regular.svg" />

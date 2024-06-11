@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BookingApp.DB.Classes.DB;
 using BookingApp.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 namespace BookingApp.Controllers
 {
     public class VideoController : Controller
@@ -22,10 +24,11 @@ namespace BookingApp.Controllers
         }
         readonly IHttpContextAccessor _httpContextAccessor;
         private readonly JsonResponse response = new JsonResponse();
-
-        public VideoController(IHttpContextAccessor httpContextAccessor)
+        readonly IHostEnvironment _env;
+        public VideoController(IHostEnvironment env, IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
+            _env = env;
         }
         public IActionResult List(int id)
         {
@@ -54,7 +57,10 @@ namespace BookingApp.Controllers
             var db = new AppDbContext();
             var model = new VideoModel();
             var book = db.Videos.Where(x => x.Id == id).FirstOrDefault();
-            book.VideoPath = @"/" + book.VideoPath.Replace(@"\", @"/");
+            var list = new List<string>();
+            list.Add( book.VideoPath.Replace(@"\", @"/"));
+            string rootPath = _env.ContentRootPath;
+            var videoPath = Helper.CreateMasterM3U8(rootPath,list).Replace(@"\", @"/");
             var userSession = db.UserSessions.Where(x => x.VideoId == id).ToList();
             var userAction = db.UserActions.Where(x => x.VideoId == id).ToList();
             model.userSessions = userSession;
@@ -65,23 +71,43 @@ namespace BookingApp.Controllers
         public IActionResult Detail(int id)
         {
             var db = new AppDbContext();
-            var model = new VideoModel();   
-            var book = db.Videos.Where(x => x.Id == id).FirstOrDefault();
-            var channel = db.ChannelYoutubes.Where(x => x.Id == book.ChannelId).FirstOrDefault();
-            var relatedVideo = db.Videos.Where(x => x.ChannelId == channel.Id && x.Year == book.Year 
-            && x.Month == book.Month && x.Date == book.Date && x.IsDelete == 0 && x.Id != id)
-                .OrderByDescending(x => x.Id).Take(5).ToList();
-            var userSession = db.UserSessions.Where(x => x.VideoId == id).ToList();
-            var userAction = db.UserActions.Where(x => x.VideoId == id).ToList();
-            model.userSessions = userSession;
-            model.Video = book;
-            model.userActions = userAction;
+            var model = new VideoModel();  
+            if(id > 0)
+            {
+                var book = db.Videos.Where(x => x.Id == id).FirstOrDefault();
+                var channel = db.ChannelYoutubes.Where(x => x.Id == book.ChannelId).FirstOrDefault();
+                var relatedVideo = db.Videos.Where(x => x.ChannelId == channel.Id && x.Year == book.Year
+                && x.Month == book.Month && x.Date == book.Date && x.IsDelete == 0 && x.Id != id)
+                    .OrderByDescending(x => x.Id).Take(5).ToList();
+                var userSession = db.UserSessions.Where(x => x.VideoId == id).ToList();
+                var userAction = db.UserActions.Where(x => x.VideoId == id).ToList();
+                model.userSessions = userSession;
+                model.Video = book;
+                model.userActions = userAction;
+                if (book.IsMerge == 1)
+                {
+                    ViewBag.filePath = book.VideoPath.Replace(@"\", @"/");
 
-            ViewBag.relatedVideo = relatedVideo;
-            ViewBag.channel = channel.Name;
-            ViewBag.filePath = @"/" + book.VideoPath.Replace(@"\",@"/");
+                }
+                else
+                {
+                    var list = new List<string>();
+                    list.Add(book.VideoPath.Replace(@"\", @"/"));
+                    string rootPath = _env.ContentRootPath;
+                    var videoPath = Helper.CreateMasterM3U8(rootPath, list);
+                    ViewBag.filePath = videoPath.Replace(@"\", @"/");
+                }
+                ViewBag.relatedVideo = relatedVideo;
+                ViewBag.channel = channel.Name;
+            }    
+
             return View(model);
         }
 
+        private void createM3u8(string v)
+        {
+
+            throw new NotImplementedException();
+        }
     }
 }

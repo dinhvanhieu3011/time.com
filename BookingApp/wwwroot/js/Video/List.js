@@ -152,6 +152,10 @@ List.prototype = {
                             {
                                 "mDataProp": "date"
                             }
+                                   ,
+                            {
+                                "mDataProp": "hours"
+                            }
                                 ,
                             {
                                 "mDataProp": "videoPath"

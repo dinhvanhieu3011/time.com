@@ -49,70 +49,79 @@ namespace BookingApp.Service
         {
             await RunJob();
         }
-
         public async Task RunJob()
         {
             var db = new AppDbContext();
-            var OneHoursAgo = DateTime.Now.AddHours(-2);
-            var listComputer = db.Videos.Select(x => x.ChannelId).Distinct().ToList();
+            var OneHoursAgo = DateTime.Now.AddHours(-0.5);
+            var listComputer = db.ChannelYoutubes.Select(x => x.Id).ToList();
             foreach (var item in listComputer)
             {
-                // lấy tất cả video của 1 tiếng trước
-                var listVideo = db.Videos.Where(x => x.IsDelete == 0 && x.ChannelId == item
-                && x.Year == OneHoursAgo.Year && x.Month == OneHoursAgo.Month
-                && x.Date == OneHoursAgo.Day && x.Hours == OneHoursAgo.Hour
-                && x.IsMerge != 1).OrderBy(x => x.Id).ToList();
-
-                if (listVideo.Count > 1)
+                var lstVideo = db.Videos.Where(x => x.IsDelete == 0 && x.ChannelId == item && x.IsMerge == 0 && x.Start < OneHoursAgo).OrderBy(x => x.Id)
+                    .GroupBy(p => new { p.Year, p.Month, p.Date, p.Hours })
+                    .Select(g => new
+                    {
+                        Key = g.Key,
+                        Videos = g.Where(x => x.Year == g.Key.Year &&
+                        x.Year == g.Key.Year &&
+                        x.Month == g.Key.Month &&
+                        x.Date == g.Key.Date &&
+                        x.Hours == g.Key.Hours &&
+                        x.IsDelete == 0 && x.ChannelId == item && x.IsMerge == 0
+                        ).OrderBy(x => x.Id).ToList()
+                    }).ToList();
+                foreach (var a in lstVideo)
                 {
-                    var firstVideo = listVideo.FirstOrDefault();
-                    var lastVideo = listVideo.LastOrDefault();
-                    var videoMergeName = ConvertToTicks(firstVideo.Start) + "_" + ConvertToTicks(lastVideo.End) + "_" + item;
-                    string fpath = "";
-                    try
+                    var videos = a.Videos;
+                    string fullPath = "";
+                    if (videos.Count > 1)
                     {
-                        fpath = MergeFile(videoMergeName, listVideo, _env.ContentRootPath);
+                        var firstVideo = videos.FirstOrDefault();
+                        var lastVideo = videos.LastOrDefault();
+                        var videoMergeName = ConvertToTicks(firstVideo.Start) + "_" + ConvertToTicks(lastVideo.End) + "_" + item;
+                        try
+                        {
+                            var list = videos.Select(x => x.VideoPath).ToList();
+
+                            fullPath = Helper.CreateMasterM3U8(_env.ContentRootPath, list, videoMergeName + ".m3u8");
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex.ToString());
+                            return;
+                        }
+
+
+                        _logger.LogInformation("Tạo mới video: " + videoMergeName);
+                        var video = new Videos()
+                        {
+                            VideoPath = fullPath,
+                            Keylog = "",
+                            Apps = "",
+                            ChannelId = item,
+                            CreatedDate = DateTime.Now,
+                            Year = a.Key.Year,
+                            Month = a.Key.Month,
+                            Date = a.Key.Date,
+                            Hours = a.Key.Hours,
+                            Minutes = 0,
+                            Start = firstVideo.Start,
+                            End = lastVideo.End,
+                            IsDelete = 0,
+                            IsMerge = 1
+                        };
+
+                        db.Add(video);
+                        db.SaveChanges();
+                        MergeUserSession(videos, video.Id);
+                        MergeUserAction(videos, video.Id);
+                        UpdateStatusVideo(videos);
                     }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex.ToString());
-                        return;
-                    }
 
-                    //1. Create bản ghi mới
-
-
-                    //string keyLogString = CreateKeyLogString(listVideo);
-                    //string appString = CreateAppsString(listVideo);
-
-                    _logger.LogInformation("Tạo mới video: " + videoMergeName);
-                    var video = new Videos()
-                    {
-                        VideoPath = fpath,
-                        Keylog = "",
-                        Apps = "",
-                        ChannelId = item,
-                        CreatedDate = DateTime.Now,
-                        Year = OneHoursAgo.Year,
-                        Month = OneHoursAgo.Month,
-                        Date = OneHoursAgo.Day,
-                        Hours = OneHoursAgo.Hour,
-                        Minutes = 0,
-                        Start = firstVideo.Start,
-                        End = lastVideo.End,
-                        IsDelete = 0,
-                        IsMerge = 1
-                    };
-
-                    db.Add(video);
-                    db.SaveChanges();
-                    MergeUserSession(listVideo, video.Id);
-                    MergeUserAction(listVideo, video.Id);
-                    UpdateStatusVideo(listVideo);
                 }
             }
 
         }
+
 
         private void MergeUserSession(List<Videos> listVideo, int id)
         {

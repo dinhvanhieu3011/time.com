@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -142,19 +143,25 @@ namespace BookingApp
                     .AllowCredentials()); // allow credentials
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            var provider = new FileExtensionContentTypeProvider();
+            // Add new mappings
+            provider.Mappings[".m3u8"] = "application/x-mpegURL";
             app.UseStaticFiles(new StaticFileOptions()
             {
 
                 FileProvider = new PhysicalFileProvider(
            Path.Combine(Directory.GetCurrentDirectory(), @"file")),
-                RequestPath = new PathString("/file")
+                RequestPath = new PathString("/file"),
+                ContentTypeProvider = provider
+
             });
             app.UseStaticFiles(new StaticFileOptions()
             {
 
                 FileProvider = new PhysicalFileProvider(
 Path.Combine(Directory.GetCurrentDirectory(), @"live")),
-                RequestPath = new PathString("/live")
+                RequestPath = new PathString("/live"),
+                ContentTypeProvider = provider
             });
             app.UseRouting();
 

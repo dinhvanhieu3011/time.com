@@ -233,8 +233,19 @@ namespace BookingApp.Controllers
             var db = new AppDbContext();
 
             var book = db.Videos.Where(x => x.Id == id).FirstOrDefault();
-            book.VideoPath = @"/" + book.VideoPath.Replace(@"\", @"/");
+            if (book.IsMerge == 1)
+            {
+                book.VideoPath = book.VideoPath.Replace(@"\", @"/");
 
+            }
+            else
+            {
+                var list = new List<string>();
+                list.Add(book.VideoPath.Replace(@"\", @"/"));
+                string rootPath = _env.ContentRootPath;
+                var videoPath = Helper.CreateMasterM3U8(rootPath, list);
+                book.VideoPath = videoPath;
+            }
             return book;
         }
         [HttpPost]
@@ -271,7 +282,7 @@ namespace BookingApp.Controllers
                 string VideoNameWithoutExtension = VideoPathParts[VideoPathParts.Length - 1];
 
                 string name = VideoNameWithoutExtension.Split(".")[0];
-                string VideoName = name + "_" + com.Id + ".mp4";
+                string VideoName = name + "_" + com.Id + ".ts";
                 DateTime from = convert(long.Parse(name.Split("_")[0]));
                 DateTime to = convert(long.Parse(name.Split("_")[1]));
                 string folder = from.Date.ToString("ddMMyyyy");
