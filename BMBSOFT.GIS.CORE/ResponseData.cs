@@ -1,4 +1,4 @@
-﻿namespace BMBSOFT.GIS.CORE
+﻿namespace BASE.CORE
 {
     public class ResponseData
     {

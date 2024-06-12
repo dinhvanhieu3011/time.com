@@ -2,13 +2,12 @@
 using System.IO;
 using System.Net;
 using System.Net.Mail;
-using System.Net.Mime;
 using System.Text.RegularExpressions;
-using BMBSOFT.GIS.CORE.Helper;
-using BMBSOFT.GIS.CORE.Resource;
+using BASE.CORE.Helper;
+using BASE.CORE.Resource;
 using Microsoft.Extensions.Hosting;
 
-namespace BMBSOFT.GIS.CORE.SendMailService
+namespace BASE.CORE.SendMailService
 {
     public interface ISendMailService
     {
@@ -68,7 +67,7 @@ namespace BMBSOFT.GIS.CORE.SendMailService
                 var smtp = new SmtpClient();
                 var msg = new MailMessage
                 {
-                    From = new MailAddress(_emailConfig.EmailFrom, Constant.DisplayName),
+                    From = new MailAddress(_emailConfig.EmailFrom, ""),
                     Subject = subject
                 };
                 msg.To.Add(sendTo);

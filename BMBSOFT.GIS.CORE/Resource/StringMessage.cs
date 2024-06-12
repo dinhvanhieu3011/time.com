@@ -1,4 +1,4 @@
-﻿namespace BMBSOFT.GIS.CORE.Resource
+﻿namespace BASE.CORE.Resource
 {
     public class StringMessage
     {

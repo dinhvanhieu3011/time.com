@@ -1,9 +1,10 @@
 using System;
 using System.Linq;
-using BookingApp.DB.Classes;
-using BookingApp.DB.Classes.DB;
+using BASE.Data.Interfaces;
+using BASE.Data.Repository;
+using BASE.Entity.DexTrack;
 using BookingApp.Filters.Authorization;
-using BookingApp.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookingApp.Controllers
@@ -11,15 +12,17 @@ namespace BookingApp.Controllers
     [Authorize(Roles.ADMIN)]
     public class UserController : Controller
     {
-        public UserController()
+        private readonly IUsersDTRepository _usersDTRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        public UserController(IHttpContextAccessor httpContextAccessor, IUsersDTRepository usersDTRepository, IUnitOfWork unitOfWork)
         {
-
+            _usersDTRepository = usersDTRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
         {
-            using var db = new AppDbContext();
-            var list = db.Users.ToList();
+            var list = _usersDTRepository.GetAll().ToList();
             return View(list);
         }
         #region create
@@ -51,16 +54,15 @@ namespace BookingApp.Controllers
         {
             try
             {
-                using var db = new AppDbContext();
 
-                if (!db.Users.Any(x => x.Username == username) 
+                if (!_usersDTRepository.GetAll().Any(x => x.Username == username) 
                     && !string.IsNullOrEmpty(username) 
                     && !string.IsNullOrEmpty(password)
                     && !string.IsNullOrEmpty(teleToken)
                     && !string.IsNullOrEmpty(chatId)
                     )
                 {
-                    db.Add(new Users()
+                    _usersDTRepository.Insert(new Users()
                     {
                         Username = username,
                         Password = password,
@@ -71,7 +73,7 @@ namespace BookingApp.Controllers
                         ChatId = chatId,
                     });
 
-                    db.SaveChanges();
+                    _unitOfWork.Complete();
 
 
                     return true;
@@ -93,8 +95,7 @@ namespace BookingApp.Controllers
         #region update
         public IActionResult Update(int id)
         {
-            using var db = new AppDbContext();
-            var book = db.Users.FirstOrDefault(x => x.UserId == id);
+            var book = _usersDTRepository.GetAll().FirstOrDefault(x => x.UserId == id);
             if (book != null)
             {
 
@@ -116,7 +117,6 @@ namespace BookingApp.Controllers
                     return RedirectToAction("Index", "Library");
                 }
 
-                using var db = new AppDbContext();
 
                 if (id > 0 && !string.IsNullOrEmpty(username) 
                     && !string.IsNullOrEmpty(password)
@@ -126,7 +126,7 @@ namespace BookingApp.Controllers
                     )
                 {
 
-                    UpdateData(id, username, password, teleToken, chatId, db);
+                    UpdateData(id, username, password, teleToken, chatId);
                     return RedirectToAction("Update", "User", new { id, msg = "updated" });
                 }
                 else
@@ -141,16 +141,16 @@ namespace BookingApp.Controllers
         }
 
         //Can be rented could be a solution to the point of a stolen book
-        private static void UpdateData(int id, string username, string password, string teleToken, string chatId,  AppDbContext db)
+        private void UpdateData(int id, string username, string password, string teleToken, string chatId)
         {
-            var data = db.Users.FirstOrDefault(x => x.UserId == id);
+            var data = _usersDTRepository.GetAll().FirstOrDefault(x => x.UserId == id);
             data.Username = username;
             data.Password = password;
             data.TeleToken = teleToken;
             data.ChatId = chatId;
 
-            db.Update(data);
-            db.SaveChanges();
+            _usersDTRepository.Update(data);
+            _unitOfWork.Complete(); 
         }
         #endregion
         public IActionResult Delete(int id)
@@ -162,10 +162,8 @@ namespace BookingApp.Controllers
                     return RedirectToAction("Index", "User");
                 }
 
-                using var db = new AppDbContext();
-
-                db.Remove(new Users() { UserId = id });
-                db.SaveChanges();
+                _usersDTRepository.Delete(new Users() { UserId = id });
+                _unitOfWork.Complete();
                 return RedirectToAction("Index", "User", new { msg = "Deleted" });
 
             }

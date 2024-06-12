@@ -1,5 +1,4 @@
-﻿using BookingApp.DB.Classes.DB;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace BookingApp.Models
@@ -10,7 +9,7 @@ namespace BookingApp.Models
         public List<ReservedBooksModel> ReservedBooks = new();
         public List<UsersModel> Users = new();
         public List<ChannelModel> Channels = new();
-        public List<Accounts> Accounts = new();
+        //public List<Accounts> Accounts = new();
         public DateTime nextExcuteJob = new();
         public double remainingSeconds = 0;
     }

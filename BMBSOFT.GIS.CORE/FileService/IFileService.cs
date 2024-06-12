@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 //using Microsoft.AspNetCore.Mvc;
 
-namespace BMBSOFT.GIS.CORE.FileService
+namespace BASE.CORE.FileService
 {
     public interface IFileService
     {

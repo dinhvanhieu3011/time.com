@@ -1,9 +1,9 @@
-﻿using BMBSOFT.GIS.Infrastructure.Interface;
+﻿using BASE.Infrastructure.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BMBSOFT.GIS.Infrastructure.Implements
+namespace BASE.Infrastructure.Implements
 {
     public abstract class BasePagedList<TItem> : IPagedList<TItem>
     {

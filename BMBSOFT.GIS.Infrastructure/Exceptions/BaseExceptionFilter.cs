@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 
-namespace BMBSOFT.GIS.Infrastructure.Exceptions
+namespace BASE.Infrastructure.Exceptions
 {
     public class BaseExceptionFilter : IExceptionFilter
     {

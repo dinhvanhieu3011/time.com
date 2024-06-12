@@ -1,4 +1,4 @@
-﻿using BookingApp.DB.Classes.DB;
+﻿using BASE.Entity.DexTrack;
 using System.Collections.Generic;
 
 namespace BookingApp.Models

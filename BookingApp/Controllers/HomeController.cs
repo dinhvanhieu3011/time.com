@@ -1,28 +1,30 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
-using BookingApp.DB.Classes;
-using BookingApp.DB.Classes.DB;
+using BASE.Data.Interfaces;
+using BASE.Data.Repository;
 using BookingApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 //using Microsoft.Extensions.Logging;
 
 namespace BookingApp.Controllers
 {
     public class HomeController : Controller
     {
-        //private readonly ILogger<HomeController> _logger;
-
         private readonly IHttpContextAccessor _httpContextAccessor;
-
-        public HomeController(IHttpContextAccessor httpContextAccessor/*, ILogger<HomeController> logger*/)
+        private readonly IUsersDTRepository _usersDTRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        public HomeController(IHttpContextAccessor httpContextAccessor,
+            IUsersDTRepository usersDTRepository,
+            IUnitOfWork unitOfWork
+            /*, ILogger<HomeController> logger*/)
         {
             //_logger = logger;
 
             _httpContextAccessor = httpContextAccessor;
+            _usersDTRepository = usersDTRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
@@ -70,9 +72,7 @@ namespace BookingApp.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            using var db = new AppDbContext();
-
-            var user = db.Users.FirstOrDefault(x => x.Username == username && x.Password == password);
+            var user = _usersDTRepository.GetAll().FirstOrDefault(x => x.Username == username && x.Password == password);
 
             if (user != null)
             {

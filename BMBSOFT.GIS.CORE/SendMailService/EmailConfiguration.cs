@@ -1,4 +1,4 @@
-﻿namespace BMBSOFT.GIS.CORE.SendMailService
+﻿namespace BASE.CORE.SendMailService
 {
     public class EmailConfiguration
     {

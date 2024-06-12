@@ -1,13 +1,10 @@
 ﻿using System;
 using System.IO;
-using System.Reflection.Metadata;
 using System.Threading.Tasks;
-using BMBSOFT.GIS.CORE.Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
-using Constant = BMBSOFT.GIS.CORE.Helper.Constant;
 
-namespace BMBSOFT.GIS.CORE.FileService
+namespace BASE.CORE.FileService
 {
     public class FileService : IFileService
     {        

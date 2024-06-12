@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Reflection;
 
-namespace BMBSOFT.GIS.CORE.Extensions
+namespace BASE.CORE.Extensions
 {
     public static class SortExtensions
     {

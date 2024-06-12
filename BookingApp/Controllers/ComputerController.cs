@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.Xml;
-using System.Xml.Linq;
-using BookingApp.DB.Classes;
-using BookingApp.DB.Classes.DB;
+using BASE.Data.Interfaces;
+using BASE.Data.Repository;
+using BASE.Entity.DexTrack;
 using BookingApp.Filters.Authorization;
 using BookingApp.Models;
-using BookingApp.Service;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 
 namespace BookingApp.Controllers
@@ -18,10 +15,14 @@ namespace BookingApp.Controllers
     public class ComputerController : Controller
     {
         private readonly ILogger<ComputerController> _logger;
+        private readonly IComputerRepository _computerRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ComputerController(ILogger<ComputerController> logger)
+
+        public ComputerController(ILogger<ComputerController> logger, IComputerRepository computerRepository)
         {
             _logger = logger;
+            _computerRepository = computerRepository;
         }
         public IActionResult Dashboard()
         {
@@ -29,8 +30,7 @@ namespace BookingApp.Controllers
         }
         public IActionResult Index()
         {
-            using var db = new AppDbContext();
-            var list = db.ChannelYoutubes.ToList();
+            var list = _computerRepository.GetAll().ToList();
             List<ChannelYoutubeModel> lst = new List<ChannelYoutubeModel>();
 
             if (list.Count > 0) {
@@ -41,11 +41,11 @@ namespace BookingApp.Controllers
                     {
                         Id = item.Id,
                         Name = item.Name,
-                        Link = item.Link,
+                        Link = item.Token,
                         Language = "",
-                        UserId = item.UserId,
-                        Category = item.Category,
-                        Status = item.CategoryId == 0 ? "Mất kết nối" : "Đang online"
+                        UserId = item.EmployeeName,
+                        Category ="",
+                        Status = item.Status == "" ? "Mất kết nối" : "Đang online"
                     });
 
                 }
@@ -56,8 +56,6 @@ namespace BookingApp.Controllers
         #region create
         public IActionResult Create()
         {
-            using var db = new AppDbContext();
-
             return View();
         }
 
@@ -70,7 +68,7 @@ namespace BookingApp.Controllers
                 return RedirectToAction("Index", "Computer");
             }
             Link = Guid.NewGuid().ToString();
-            switch (Insert(Name, Link, "", 0, UserId, 0))
+            switch (Insert(Name, Link,UserId))
             {
                 case true:
                     _logger.LogInformation("Tạo Máy " + Name + " thành công!");
@@ -81,57 +79,35 @@ namespace BookingApp.Controllers
                     return RedirectToAction("Index", "Computer", new { error = "error" });
             }
         }
-        public bool? Insert(string Name, string Link, string Category, int CookaAccountId, string UserId, int CategoryId)
+        private bool? Insert(string ComputerName, string Token, string EmployeeName)
         {
             try
             {
-                using var db = new AppDbContext();
-
-                if (!db.ChannelYoutubes.Any(x => x.Link == Link) 
-                    && !string.IsNullOrEmpty(Name) 
-                    )
-                {
-                    db.Add(new ChannelYoutubes()
-                    {
-                        Name = Name,
-                        Link = Link,
-                        Category = Category,
-                        CookaAccountId = CookaAccountId,
-                        UserId = UserId,
-                        CategoryId = CategoryId,
-                    });
-
-                    db.SaveChanges();
-
-
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                ChannelYoutubes channel = new ChannelYoutubes();
+                channel.Name = ComputerName;
+                channel.Token = Token;
+                channel.Token = EmployeeName;
+                _computerRepository.Insert(channel);
+                _unitOfWork.Complete();
+                return true;
             }
             catch
             {
-                return null;
+                return false;
             }
         }
-
 
         #endregion
 
         #region update
         public IActionResult Update(int id)
         {
-            using var db = new AppDbContext();
-            var book = db.ChannelYoutubes.FirstOrDefault(x => x.Id == id);
+            var book = _computerRepository.GetAll().Where(x => x.Id == id).FirstOrDefault();
 
             if (book != null)
             {
-                var users = db.Users.ToList();
 
                 _logger.LogInformation("Chỉnh sửa Máy " + book.Id + " thành công!");
-                ViewBag.UserId = new SelectList(users, "UserId", "Username", book.UserId);
                 return View(book);
             }
             else
@@ -141,12 +117,11 @@ namespace BookingApp.Controllers
         }
         public IActionResult Live(int id)
         {
-            using var db = new AppDbContext();
-            var book = db.ChannelYoutubes.FirstOrDefault(x => x.Id == id);
+            var book = _computerRepository.GetAll().Where(x => x.Id == id).FirstOrDefault();
 
             if (book != null)
             {
-                ViewBag.Ip = @"/live/" + book.Link+".png";
+                ViewBag.Ip = @"/live/" + book.Token+".png";
                 return View();
             }
             else
@@ -164,14 +139,11 @@ namespace BookingApp.Controllers
                 {
                     return RedirectToAction("Index", "Library");
                 }
-
-                using var db = new AppDbContext();
-
                 if (id > 0 &&  !string.IsNullOrEmpty(Name)   
                     )
                 {
 
-                    UpdateData(id, Name, Link, "", 0, UserId, 0, db);
+                    UpdateData(id, Name, Link, UserId);
                     return RedirectToAction("Update", "Computer", new { id, msg = "updated" });
                 }
                 else
@@ -186,18 +158,14 @@ namespace BookingApp.Controllers
         }
 
         //Can be rented could be a solution to the point of a stolen book
-        private static void UpdateData(int id, string Name, string Link, string Category, int CookaAccountId, string UserId, int CategoryId, AppDbContext db)
+        private void UpdateData(int id, string Name, string Link, string UserId)
         {
-            var data = db.ChannelYoutubes.FirstOrDefault(x => x.Id == id);
+            var data = _computerRepository.GetAll().Where(x => x.Id == id).FirstOrDefault();
             data.Name = Name;
-            data.Link = Link;
-            data.Category = Category;
-            data.CookaAccountId = CookaAccountId;
-            data.UserId = UserId;
-            data.CategoryId = CategoryId;
-
-            db.Update(data);
-            db.SaveChanges();
+            data.Token = Link;
+            data.EmployeeName = UserId;
+            _computerRepository.Update(data);
+            _unitOfWork.Complete();
         }
         #endregion
         public IActionResult Delete(int id)
@@ -209,10 +177,8 @@ namespace BookingApp.Controllers
                     return RedirectToAction("Index", "Computer");
                 }
 
-                using var db = new AppDbContext();
-
-                db.Remove(new ChannelYoutubes() { Id = id });
-                db.SaveChanges();
+                _computerRepository.Delete(new ChannelYoutubes() { Id = id });
+                _unitOfWork.Complete();
                 _logger.LogInformation("Xoá Máy " + id + " thành công!");
 
                 return RedirectToAction("Index", "Computer", new { msg = "Deleted" });

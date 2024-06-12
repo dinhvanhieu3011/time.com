@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using BookingApp.DB.Classes.DB;
+using BASE.Data.Interfaces;
+using BASE.Data.Repository;
+using BASE.Model;
 using BookingApp.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,25 +12,24 @@ namespace BookingApp.Controllers
 {
     public class VideoController : Controller
     {
-        public class JsonResponse
-        {
-            public object Data { get; set; }
-
-            public string Message { get; set; }
-
-            public bool Success { get; set; }
-
-            public string Pager { get; set; }
-
-            public string Id { get; set; }
-        }
         readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IVideosRepository _videosRepository;
+        private readonly IUserSessionRepository _userSessionRepository;
+        private readonly IUserActionRepository _userActionRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IComputerRepository _computerRepository;
+
         private readonly JsonResponse response = new JsonResponse();
         readonly IHostEnvironment _env;
-        public VideoController(IHostEnvironment env, IHttpContextAccessor httpContextAccessor)
+        public VideoController(IHostEnvironment env, IHttpContextAccessor httpContextAccessor, IVideosRepository videosRepository, IUserSessionRepository userSessionRepository
+            , IUserActionRepository userActionRepository, IComputerRepository computerRepository )
         {
             _httpContextAccessor = httpContextAccessor;
             _env = env;
+            _videosRepository = videosRepository;
+            _userSessionRepository = userSessionRepository;
+            _userActionRepository = userActionRepository;
+            _computerRepository = computerRepository;
         }
         public IActionResult List(int id)
         {
@@ -38,49 +39,45 @@ namespace BookingApp.Controllers
         }
         public IActionResult Dashboard()
         {
-            using var db = new AppDbContext();
-            var coms = db.ChannelYoutubes.ToList();
+            var coms = _videosRepository.GetAll().ToList();
             return View(coms);
 
         }
         public IActionResult Index(int id)
         {
-            using var db = new AppDbContext();
-            var data = db.Videos.Where(x=>x.ChannelId == id&& x.IsDelete == 0)
+            var data = _videosRepository.GetAll().Where(x=>x.ChannelId == id&& x.IsDelete == 0)
                 .OrderByDescending(x=>x.Id).ToList();
 
             return View(data);
 
         }
-        public VideoModel Get(int id)
+        public VideoModel Get(string id)
         {
-            var db = new AppDbContext();
             var model = new VideoModel();
-            var book = db.Videos.Where(x => x.Id == id).FirstOrDefault();
+            var book = _videosRepository.GetAll().Where(x => x.Id == id).FirstOrDefault();
             var list = new List<string>();
             list.Add( book.VideoPath.Replace(@"\", @"/"));
             string rootPath = _env.ContentRootPath;
             var videoPath = Helper.CreateMasterM3U8(rootPath,list).Replace(@"\", @"/");
-            var userSession = db.UserSessions.Where(x => x.VideoId == id).ToList();
-            var userAction = db.UserActions.Where(x => x.VideoId == id).ToList();
+            var userSession = _userSessionRepository.GetAll().Where(x => x.VideoId == id).ToList();
+            var userAction = _userActionRepository.GetAll().Where(x => x.VideoId == id).ToList();
             model.userSessions = userSession;
             model.Video = book;
             model.userActions = userAction;
             return model;
         }
-        public IActionResult Detail(int id)
+        public IActionResult Detail(string id)
         {
-            var db = new AppDbContext();
             var model = new VideoModel();  
-            if(id > 0)
+            if(string.IsNullOrEmpty(id))
             {
-                var book = db.Videos.Where(x => x.Id == id).FirstOrDefault();
-                var channel = db.ChannelYoutubes.Where(x => x.Id == book.ChannelId).FirstOrDefault();
-                var relatedVideo = db.Videos.Where(x => x.ChannelId == channel.Id && x.Year == book.Year
+                var book = _videosRepository.GetAll().Where(x => x.Id == id).FirstOrDefault();
+                var channel = _computerRepository.GetAll().Where(x => x.Id == book.ChannelId).FirstOrDefault();
+                var relatedVideo = _videosRepository.GetAll().Where(x => x.ChannelId == channel.Id && x.Year == book.Year
                 && x.Month == book.Month && x.Date == book.Date && x.IsDelete == 0 && x.Id != id)
                     .OrderByDescending(x => x.Id).Take(5).ToList();
-                var userSession = db.UserSessions.Where(x => x.VideoId == id).ToList();
-                var userAction = db.UserActions.Where(x => x.VideoId == id).ToList();
+                var userSession = _userSessionRepository.GetAll().Where(x => x.VideoId == id).ToList();
+                var userAction = _userActionRepository.GetAll().Where(x => x.VideoId == id).ToList();
                 model.userSessions = userSession;
                 model.Video = book;
                 model.userActions = userAction;

@@ -1,4 +1,4 @@
-﻿namespace BMBSOFT.GIS.CORE.Helper
+﻿namespace BASE.CORE.Helper
 {
     public class RoleHelper
     {

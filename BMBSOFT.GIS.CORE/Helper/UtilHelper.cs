@@ -1,4 +1,4 @@
-﻿using BMBSOFT.GIS.CORE.Extensions;
+﻿using BASE.CORE.Extensions;
 using System.Collections.Generic;
 using System;
 using System.Collections.Immutable;
@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.IO;
 
-namespace BMBSOFT.GIS.CORE.Helper
+namespace BASE.CORE.Helper
 {
     public class UtilHelper
     {

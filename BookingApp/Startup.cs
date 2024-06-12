@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using BASE.Data.Repository;
 using BookingApp.Service;
 using Hangfire;
 using Hangfire.MemoryStorage;
@@ -9,14 +10,15 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using Serilog;
 namespace BookingApp
 {
@@ -25,7 +27,6 @@ namespace BookingApp
         public const string ADDRESS = "https://localhost:5001/";
         public const string JWT_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
         private const string DB_FIRST_TIME = "dbFirstTime.txt";
-        private string PushExpression = "*/59 * * * *";
         private string EveryTwoHours = "0 */2 * * *";
         private string Every2Minute = "*/2 * * * *";
         private string SchedulerBackup = "0 0 * * 6";
@@ -33,18 +34,6 @@ namespace BookingApp
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-
-            if (!System.IO.File.Exists(DB_FIRST_TIME))
-            {
-                try 
-                {
-                    using (FileStream fs = File.Create(DB_FIRST_TIME)) { }
-                }
-                catch { }
-
-                using var db = new DB.Classes.DB.AppDbContext();
-                System.IO.File.SetAttributes(DB_FIRST_TIME, System.IO.File.GetAttributes(DB_FIRST_TIME) | System.IO.FileAttributes.Hidden);
-            }
         }
 
         public IConfiguration Configuration { get; }
@@ -52,6 +41,12 @@ namespace BookingApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<AppDbContext>(option =>
+            {
+                var builder = new NpgsqlDbContextOptionsBuilder(option);
+                builder.SetPostgresVersion(9, 6);
+                option.UseNpgsql(Configuration.GetConnectionString("MyWebApiConection"));
+            });
             services.AddCors();
             services.AddControllersWithViews();
             services.AddSession(options => {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BMBSOFT.GIS.CORE
+﻿namespace BASE.CORE
 {
     public class HangfireSetting
     {

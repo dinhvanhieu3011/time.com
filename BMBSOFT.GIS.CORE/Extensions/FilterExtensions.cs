@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace BMBSOFT.GIS.CORE.Extensions
+namespace BASE.CORE.Extensions
 {
     public static class FilterExtensions
     {

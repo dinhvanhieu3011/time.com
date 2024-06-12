@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace BMBSOFT.GIS.Infrastructure.Exceptions
+namespace BASE.Infrastructure.Exceptions
 {
     public class SearchCoordinateException : Exception
     {

@@ -3,12 +3,10 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System;
-using System.Text.Json;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Configuration;
-using System.Xml.Linq;
 
 namespace BookingApp.Controllers
 {

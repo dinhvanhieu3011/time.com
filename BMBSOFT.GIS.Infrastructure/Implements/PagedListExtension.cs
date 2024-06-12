@@ -1,11 +1,11 @@
 ﻿using System;
-using BMBSOFT.GIS.Infrastructure.Interface;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BASE.Infrastructure.Interface;
 using Microsoft.EntityFrameworkCore;
 
-namespace BMBSOFT.GIS.Infrastructure.Implements
+namespace BASE.Infrastructure.Implements
 {
     public static class PagedListExtensions
     {

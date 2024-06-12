@@ -1,4 +1,4 @@
-﻿namespace BMBSOFT.GIS.Infrastructure.Interface
+﻿namespace BASE.Infrastructure.Interface
 {
     public interface IPagedList<TItem>
     {

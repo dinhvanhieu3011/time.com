@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace BookingApp.Models
+﻿namespace BookingApp.Models
 {
     public class ChannelYoutubeModel
     {

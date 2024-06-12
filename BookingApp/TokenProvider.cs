@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using BookingApp.DB.Classes.DB;
+using BASE.Entity.DexTrack;
 using BookingApp.Filters.Authorization;
 using Microsoft.IdentityModel.Tokens;
 

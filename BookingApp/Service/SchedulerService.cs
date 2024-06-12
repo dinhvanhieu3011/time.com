@@ -2,23 +2,16 @@
 using System.Net.Http;
 using System;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using BookingApp.Data;
 using System.Collections.Generic;
-using System.Text.Json;
-using BookingApp.DB.Classes.DB;
 using System.Linq;
-using System.Threading.Channels;
-using Hangfire;
-using System.Reflection;
-using Hangfire.Storage;
-using System.Xml.Linq;
 using System.Diagnostics;
 using System.IO;
 using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using BookingApp.Models;
 using Microsoft.AspNetCore.Http;
+using BASE.Data.Interfaces;
+using BASE.Data.Repository;
+using BookingApp.Controllers;
+using BASE.Entity.DexTrack;
 
 namespace BookingApp.Service
 {
@@ -35,14 +28,30 @@ namespace BookingApp.Service
         private readonly HangfireSetting _hangfireOption;
         private readonly IHostEnvironment _env;
         readonly IHttpContextAccessor _httpContextAccessor;
-
+        private readonly IComputerRepository _computerRepository;
+        private readonly IUsersDTRepository _usersDTRepository;
+        private readonly IUserSessionRepository _userSessionRepository;
+        private readonly IUserActionRepository _userActionRepository;
+        private readonly IVideosRepository _videosRepository;
+        private readonly IUnitOfWork _unitOfWork;
         public SchedulerService(ILogger<SchedulerService> logger,
-            HangfireSetting hangfireOption, IHostEnvironment env, IHttpContextAccessor httpContextAccessor)
+            HangfireSetting hangfireOption, IHostEnvironment env, IHttpContextAccessor httpContextAccessor, 
+            IComputerRepository computerRepository, IUsersDTRepository usersDTRepository,
+            IUserSessionRepository userSessionRepository, IUserActionRepository userActionRepository,
+            IVideosRepository videosRepository,   
+             IUnitOfWork unitOfWork)
         {
             _logger = logger;
             _hangfireOption = hangfireOption;
             _env = env;
             _httpContextAccessor = httpContextAccessor;
+            _computerRepository = computerRepository;
+            _usersDTRepository = usersDTRepository;
+            _userSessionRepository = userSessionRepository;
+            _userActionRepository = userActionRepository;
+            _videosRepository = videosRepository;
+            _unitOfWork = unitOfWork;
+
         }
         #region merge video
         public async Task AutoTrecking()
@@ -51,12 +60,12 @@ namespace BookingApp.Service
         }
         public async Task RunJob()
         {
-            var db = new AppDbContext();
             var OneHoursAgo = DateTime.Now.AddHours(-0.5);
-            var listComputer = db.ChannelYoutubes.Select(x => x.Id).ToList();
+            var listComputer = _computerRepository.GetAll().Select(x => x.Id).ToList();
             foreach (var item in listComputer)
             {
-                var lstVideo = db.Videos.Where(x => x.IsDelete == 0 && x.ChannelId == item && x.IsMerge == 0 && x.Start < OneHoursAgo).OrderBy(x => x.Id)
+                var lstVideo = _videosRepository.GetAll()
+                    .Where(x => x.IsDelete == 0 && x.ChannelId == item && x.IsMerge == 0 && x.Start < OneHoursAgo).OrderBy(x => x.Id)
                     .GroupBy(p => new { p.Year, p.Month, p.Date, p.Hours })
                     .Select(g => new
                     {
@@ -110,8 +119,8 @@ namespace BookingApp.Service
                             IsMerge = 1
                         };
 
-                        db.Add(video);
-                        db.SaveChanges();
+                        _videosRepository.Insert(video);
+                        _unitOfWork.Complete();
                         MergeUserSession(videos, video.Id);
                         MergeUserAction(videos, video.Id);
                         UpdateStatusVideo(videos);
@@ -123,31 +132,29 @@ namespace BookingApp.Service
         }
 
 
-        private void MergeUserSession(List<Videos> listVideo, int id)
+        private void MergeUserSession(List<Videos> listVideo, string id)
         {
-            var db = new AppDbContext();
             var videoIds = listVideo.Select(x => x.Id).ToArray();
-            var sessions = db.UserSessions.Where(x => videoIds.Contains(x.VideoId)).ToList();
+            var sessions = _userSessionRepository.GetAll().Where(x => videoIds.Contains(x.VideoId)).ToList();
             foreach (var session in sessions)
             {
                 session.VideoId = id;
             }
-            db.UserSessions.UpdateRange(sessions);
-            db.SaveChanges();
+            _userSessionRepository.UpdateMulti(sessions);
+            _unitOfWork.Complete();
         }
 
 
-        private void MergeUserAction(List<Videos> listVideo, int id)
+        private void MergeUserAction(List<Videos> listVideo, string id)
         {
-            var db = new AppDbContext();
             var videoIds = listVideo.Select(x => x.Id).ToArray();
-            var sessions = db.UserActions.Where(x => videoIds.Contains(x.VideoId)).ToList();
+            var sessions = _userSessionRepository.GetAll().Where(x => videoIds.Contains(x.VideoId)).ToList();
             foreach (var session in sessions)
             {
                 session.VideoId = id;
             }
-            db.UserActions.UpdateRange(sessions);
-            db.SaveChanges();
+            _userSessionRepository.UpdateMulti(sessions);
+            _unitOfWork.Complete();
         }
 
         private static string MergeFile(string videoMergeName, List<Videos> listVideo, string rootPath)
@@ -292,9 +299,8 @@ namespace BookingApp.Service
                 {
                     videoFile.IsDelete = 1;
                 }
-                var db = new AppDbContext();
-                db.UpdateRange(videoFiles);
-                db.SaveChanges();
+                _videosRepository.UpdateMulti(videoFiles);
+                _unitOfWork.Complete();
             }
             catch (Exception ex)
             {
@@ -309,14 +315,13 @@ namespace BookingApp.Service
         }
         public async Task CheckConnection()
         {
-            using var db = new AppDbContext();
-            var list = db.ChannelYoutubes.ToList();
+            var list =  _computerRepository.GetAll().ToList();
 
             if (list.Count > 0)
             {
                 foreach (var item in list)
                 {
-                    var lastVideoTime = db.Videos.Where(x => x.ChannelId == item.Id).OrderByDescending(x => x.CreatedDate).FirstOrDefault();
+                    var lastVideoTime = _videosRepository.GetAll().Where(x => x.ChannelId == item.Id).OrderByDescending(x => x.CreatedDate).FirstOrDefault();
                     if (lastVideoTime != null)
                     {
                         TimeSpan difference = DateTime.Now - lastVideoTime.Start;
@@ -325,26 +330,26 @@ namespace BookingApp.Service
                         double differenceInMinutes = difference.TotalMinutes;
                         if (differenceInMinutes > 5)
                         {
-                            if (item.CategoryId != 0)
+                            if (item.Status != "0")
                             {
-                                item.CategoryId = 0;
-                                db.ChannelYoutubes.Update(item);
-                                db.SaveChanges();
-                                sendmessageTelegram("Mất kết nối tới máy :" + item.Name + " - " + item.UserId);
+                                item.Status = "0";
+                                _computerRepository.Update(item);
+                                _unitOfWork.Complete(); 
+                                sendmessageTelegram("Mất kết nối tới máy :" + item.Name + " - " + item.Name);
                             }
                         }
                         else
                         {
-                            item.CategoryId = 1;
-                            db.ChannelYoutubes.Update(item);
-                            db.SaveChanges();
+                            item.Status = "1";
+                            _computerRepository.Update(item);
+                            _unitOfWork.Complete();
                         }
                     }
                     else
                     {
-                        item.CategoryId = 0;
-                        db.ChannelYoutubes.Update(item);
-                        db.SaveChanges();
+                        item.Status = "0";
+                        _computerRepository.Update(item);
+                        _unitOfWork.Complete();
                     }
                 }
             }
@@ -354,8 +359,7 @@ namespace BookingApp.Service
             try
             {
                 var username = _httpContextAccessor.HttpContext.Session.GetString("user");
-                using var db = new AppDbContext();
-                var user = db.Users.FirstOrDefault(x => x.Username == username);
+                var user = _usersDTRepository.GetAll().FirstOrDefault(x => x.Username == username);
                 string url = string.Format("https://api.telegram.org/bot{0}/sendMessage?chat_id={1}&text={2}", user.TeleToken, user.ChatId, message);
                 var client = new HttpClient();
                 var request = new HttpRequestMessage(HttpMethod.Get, url);

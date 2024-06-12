@@ -1,9 +1,6 @@
-﻿using BMBSOFT.GIS.Infrastructure.Interface;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using BASE.Infrastructure.Interface;
 
-namespace BMBSOFT.GIS.Infrastructure.Implements
+namespace BASE.Infrastructure.Implements
 {
     public class PagedList<TItem> : IPagedList<TItem>
     {

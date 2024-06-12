@@ -1,9 +1,4 @@
-﻿using BookingApp.DB.Classes.DB;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace BookingApp.Models
+﻿namespace BookingApp.Models
 {
     public class ChannelCreateModel : AbstractUChannelDefaults
     {

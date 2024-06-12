@@ -1,1 +1,0 @@
-ffmpeg -f concat -safe 0 -i "D:\Work\time.com\BookingApp\concat.txt" -c:v libx264 -an "D:\Work\time.com\BookingApp\r.mp4" 

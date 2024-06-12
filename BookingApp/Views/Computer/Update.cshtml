@@ -2,7 +2,7 @@
     ViewData["Title"] = "Computer Manager ";
 }
 
-@model BookingApp.DB.Classes.DB.ChannelYoutubes
+@model BASE.Entity.DexTrack.ChannelYoutubes
 
 <div class="container">
     <div class="div-center">
@@ -44,11 +44,11 @@
                 </div>
                 <div class="form-group">
                     <label for="author">Computer Token</label>
-                    <input type="text" readonly class="form-control" value="@Model.Link" name="link" id="link" placeholder="" required>
+                    <input type="text" readonly class="form-control" value="@Model.Token" name="link" id="link" placeholder="" required>
                 </div>
                 <div class="form-group">
                     <label for="author">Emmployee</label>
-                    <input type="text" class="form-control" value="@Model.UserId" name="userid" id="userid" placeholder="" required>
+                    <input type="text" class="form-control" value="@Model.EmployeeName" name="userid" id="userid" placeholder="" required>
                 </div>
                 <div class="actions">
                     @Html.ActionLink("Back", "Index", "Computer", new { }, new { @class = "btn btn-info" })

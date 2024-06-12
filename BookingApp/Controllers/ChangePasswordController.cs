@@ -1,5 +1,6 @@
-﻿using BookingApp.DB.Classes;
-using BookingApp.DB.Classes.DB;
+﻿using BASE.Data.Interfaces;
+using BASE.Data.Repository;
+using BookingApp.DB.Classes;
 using BookingApp.Filters.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,13 +17,17 @@ namespace BookingApp.Controllers
             return View();
         }
         private readonly ILogger<ChangePasswordController> _logger;
-
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUsersDTRepository _usersDTRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ChangePasswordController(IHttpContextAccessor httpContextAccessor, ILogger<ChangePasswordController> logger)
+        public ChangePasswordController(IHttpContextAccessor httpContextAccessor,
+            ILogger<ChangePasswordController> logger, IUsersDTRepository usersDTRepository, IUnitOfWork unitOfWork )
         {
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
+            _usersDTRepository = usersDTRepository;
+            _unitOfWork = unitOfWork;
         }
 
         [ValidateAntiForgeryToken]
@@ -41,17 +46,15 @@ namespace BookingApp.Controllers
                     return RedirectToAction("Index", "ChangePassword", new { error = "wrongPasswords" });
                 }
 
-                using var db = new AppDbContext();
-
                 var username = _httpContextAccessor.HttpContext.Session.GetString("user");
 
-                var user = db.Users.FirstOrDefault(x => x.Username == username);
+                var user = _usersDTRepository.GetAll().FirstOrDefault(x => x.Username == username);
 
                 if (Encryption.Encrypt(oldPassword).Equals(user.Password))
                 {
                     user.Password = Encryption.Encrypt(newPassword);
-                    db.Update(user);
-                    db.SaveChanges();
+                    _usersDTRepository.Update(user);
+                    _unitOfWork.Complete();
                     _logger.LogInformation("Tài khoản " + username + " đổi mật khẩu thành công!");
 
                     return RedirectToAction("Index", "ChangePassword", new { msg = "updated" });
