@@ -362,3 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 *.png
+/BookingApp/file/11062024/41/1718100489_1718100550_51_41.ts
+/BookingApp/file/1718140742_1718144342.ts
