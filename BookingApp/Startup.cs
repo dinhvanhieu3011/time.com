@@ -160,8 +160,7 @@ namespace BookingApp
 
                 FileProvider = new PhysicalFileProvider(
 Path.Combine(Directory.GetCurrentDirectory(), @"live")),
-                RequestPath = new PathString("/live"),
-                ContentTypeProvider = provider
+                RequestPath = new PathString("/live")
             });
             app.UseRouting();
 
