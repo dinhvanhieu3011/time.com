@@ -10,13 +10,13 @@ namespace BASE.Entity
         public string CreatedBy { get; set; }
 
         [Column("created_date")]
-        public DateTime CreatedDate { get; set; }
+        public DateTime CreatedDate { get; set; } = DateTime.Now.ToLocalTime();
 
         [Column("modified_by")]
         public string ModifiedBy { get; set; }
 
         [Column("modified_date")]
-        public DateTime ModifiedDate { get; set; }
+        public DateTime ModifiedDate { get; set; } = DateTime.Now.ToLocalTime();
     }
     public class BaseEntity<T>
     {

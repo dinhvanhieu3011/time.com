@@ -10,7 +10,7 @@ namespace BASE.Entity.DexTrack
         [Key]
         [Required]
         public string Id { get; set; }
-        public DateTime Time { get; set; }
+        public DateTime Time { get; set; } = DateTime.Now.ToLocalTime();
         public string Windows { get; set; }
         public string UserName { get; set; }
         public string Keys { get; set; }

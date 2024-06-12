@@ -5,6 +5,7 @@ using BASE.Entity.SecurityMatrix;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace BASE.Data.Repository
 {
@@ -13,7 +14,7 @@ namespace BASE.Data.Repository
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
 
         public override DbSet<User> Users { get; set; }
@@ -22,7 +23,7 @@ namespace BASE.Data.Repository
         public DbSet<UserRole> UserRole { get; set; }
         public DbSet<UserTokens> UserTokens { get; set; }
         public DbSet<BASE.Entity.SecurityMatrix.SecurityMatrix> SecurityMatrix { get; set; }
-        public DbSet<Action> Action { get; set; }
+        public DbSet<Entity.SecurityMatrix.Action> Action { get; set; }
         public DbSet<Screen> Screen { get; set; }
         public DbSet<LogHistoryEntity> LogHistoryEntities { get; set; }
         public DbSet<ChannelYoutubes> ChannelYoutubes { get; set; }
@@ -32,7 +33,8 @@ namespace BASE.Data.Repository
         public DbSet<Videos> Videos { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-         
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<User>()
                 .HasMany(e => e.UserRoles)
                 .WithOne()
@@ -53,6 +55,10 @@ namespace BASE.Data.Repository
             modelBuilder.Entity<UserClaim>()
                 .HasOne(e => e.User)
                 .WithMany(e => e.UserClaims).HasForeignKey(e => e.UserId);
+
+            modelBuilder.Entity<RoleClaim>()
+                .HasOne(e => e.Role)
+                .WithMany(e => e.RoleClaims).HasForeignKey(e => e.RoleId);
 
             modelBuilder.Entity<BASE.Entity.SecurityMatrix.SecurityMatrix>()
                 .HasOne(e => e.Action)

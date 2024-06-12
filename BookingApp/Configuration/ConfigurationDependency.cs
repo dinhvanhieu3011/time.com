@@ -3,6 +3,7 @@ using BASE.Data.Interfaces;
 using BASE.Data.Repository;
 using BASE.Services.Implements;
 using BASE.Services.Interfaces;
+using BookingApp.Service;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BMBSOFT.GIS.ApiGateway.Configuration
@@ -13,7 +14,7 @@ namespace BMBSOFT.GIS.ApiGateway.Configuration
         {
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ISchedulerService, SchedulerService>();
             // User
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserRepository, UserRepository>();

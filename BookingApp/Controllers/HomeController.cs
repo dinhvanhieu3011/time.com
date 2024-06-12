@@ -72,7 +72,7 @@ namespace BookingApp.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            var user = _usersDTRepository.GetAll().FirstOrDefault(x => x.Username == username && x.Password == password);
+            var user = _usersDTRepository.GetAll().Where(x => x.Username == username && x.Password == password).FirstOrDefault();
 
             if (user != null)
             {

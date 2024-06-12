@@ -1,7 +1,10 @@
 using System;
 using System.IO;
 using System.Text;
+using AutoMapper;
+using BASE.ApiGateway.Configuration;
 using BASE.Data.Repository;
+using BMBSOFT.GIS.ApiGateway.Configuration;
 using BookingApp.Service;
 using Hangfire;
 using Hangfire.MemoryStorage;
@@ -46,7 +49,9 @@ namespace BookingApp
                 var builder = new NpgsqlDbContextOptionsBuilder(option);
                 builder.SetPostgresVersion(9, 6);
                 option.UseNpgsql(Configuration.GetConnectionString("MyWebApiConection"));
+
             });
+
             services.AddCors();
             services.AddControllersWithViews();
             services.AddSession(options => {
@@ -54,8 +59,9 @@ namespace BookingApp
             });
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
-            services.AddScoped<ISchedulerService, SchedulerService>();
-
+            //services.AddScoped<ISchedulerService, SchedulerService>();
+            services.AddAutoMapper(typeof(AutoMapperProfile));
+            services.AddScoped<Mapper>();
             //Provide a secret key to Encrypt and Decrypt the Token
             var SecretKey = Encoding.ASCII.GetBytes(JWT_KEY);
 
@@ -115,11 +121,14 @@ namespace BookingApp
                 // Enable annotations for automatic documentation (optional but recommended)
                 // c.EnableAnnotations();
             });
+            ConfigurationDependency.Configuration(services);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, AppDbContext db)
         {
+            db.Database.Migrate();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

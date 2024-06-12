@@ -19,10 +19,11 @@ namespace BookingApp.Controllers
         private readonly IUnitOfWork _unitOfWork;
 
 
-        public ComputerController(ILogger<ComputerController> logger, IComputerRepository computerRepository)
+        public ComputerController(ILogger<ComputerController> logger, IComputerRepository computerRepository, IUnitOfWork unitOfWork )
         {
             _logger = logger;
             _computerRepository = computerRepository;
+            _unitOfWork = unitOfWork;
         }
         public IActionResult Dashboard()
         {
@@ -176,8 +177,8 @@ namespace BookingApp.Controllers
                 {
                     return RedirectToAction("Index", "Computer");
                 }
-
-                _computerRepository.Delete(new ChannelYoutubes() { Id = id });
+                var com = _computerRepository.GetAll().Where(x=>x.Id == id).FirstOrDefault();
+                _computerRepository.Delete(com);
                 _unitOfWork.Complete();
                 _logger.LogInformation("Xoá Máy " + id + " thành công!");
 

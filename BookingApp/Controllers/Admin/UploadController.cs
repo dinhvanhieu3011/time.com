@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -60,7 +61,7 @@ namespace BookingApp.Controllers
                 ChannelYoutubes channel = new ChannelYoutubes();
                 channel.Name = ComputerName;
                 channel.Token = Token;
-                channel.Token = EmployeeName;
+                channel.EmployeeName = EmployeeName;
                 _computerRepository.Insert(channel);
                 _unitOfWork.Complete();
                 return true;
@@ -243,73 +244,83 @@ namespace BookingApp.Controllers
             {
                 var computers = _computerRepository.GetAll().ToList();
                 var com = computers.Where(x => x.Token == video.token).FirstOrDefault();
-                // Split the Video path using the backslash ('\') character as the separator
-                string[] VideoPathParts = video.Video.FileName.Split('\\');
-                // Extract the Videoname without the extension (assuming the last part is the Videoname)
-                string VideoNameWithoutExtension = VideoPathParts[VideoPathParts.Length - 1];
+                if(com != null)
+                {
+                    // Split the Video path using the backslash ('\') character as the separator
+                    string[] VideoPathParts = video.Video.FileName.Split('\\');
+                    // Extract the Videoname without the extension (assuming the last part is the Videoname)
+                    string VideoNameWithoutExtension = VideoPathParts[VideoPathParts.Length - 1];
 
-                string name = VideoNameWithoutExtension.Split(".")[0];
-                string VideoName = name + "_" + com.Id + ".ts";
-                DateTime from = convert(long.Parse(name.Split("_")[0]));
-                DateTime to = convert(long.Parse(name.Split("_")[1]));
-                string folder = from.Date.ToString("ddMMyyyy");
-                if (!Directory.Exists(Path.Combine(_env.ContentRootPath, "file", folder)))
-                {
-                    // Nếu không tồn tại, tạo thư mục mới
-                    Directory.CreateDirectory(Path.Combine(_env.ContentRootPath, "file", folder));
-                }
-                if (!Directory.Exists(Path.Combine(_env.ContentRootPath, "file", folder, com.Id.ToString())))
-                {
-                    // Nếu không tồn tại, tạo thư mục mới
-                    Directory.CreateDirectory(Path.Combine(_env.ContentRootPath, "file", folder, com.Id.ToString()));
-                }
-                string fPath = Path.Combine(_env.ContentRootPath, "file", folder, com.Id.ToString(), VideoName); // Or use your preferred storage location
-                using (var stream = new FileStream(fPath, FileMode.Create))
-                {
-                    await video.Video.CopyToAsync(stream);
+                    string name = VideoNameWithoutExtension.Split(".")[0];
+                    string VideoName = name + "_" + com.Id + ".ts";
+                    DateTime from = convert(long.Parse(name.Split("_")[0]));
+                    DateTime to = convert(long.Parse(name.Split("_")[1]));
+                    string folder = from.Date.ToString("ddMMyyyy");
+                    if (!Directory.Exists(Path.Combine(_env.ContentRootPath, "file", folder)))
+                    {
+                        // Nếu không tồn tại, tạo thư mục mới
+                        Directory.CreateDirectory(Path.Combine(_env.ContentRootPath, "file", folder));
+                    }
+                    if (!Directory.Exists(Path.Combine(_env.ContentRootPath, "file", folder, com.Id.ToString())))
+                    {
+                        // Nếu không tồn tại, tạo thư mục mới
+                        Directory.CreateDirectory(Path.Combine(_env.ContentRootPath, "file", folder, com.Id.ToString()));
+                    }
+                    string fPath = Path.Combine(_env.ContentRootPath, "file", folder, com.Id.ToString(), VideoName); // Or use your preferred storage location
+                    using (var stream = new FileStream(fPath, FileMode.Create))
+                    {
+                        await video.Video.CopyToAsync(stream);
 
-                }
+                    }
 
-                Videos videos = new Videos()
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    VideoPath = Path.Combine("file", folder, com.Id.ToString(), VideoName),
-                    //Keylog = video.keylog,
-                    //Apps = video.apps,
-                    ChannelId = com.Id,
-                    CreatedDate = DateTime.Now,
+                    Videos videos = new Videos()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        VideoPath = Path.Combine("file", folder, com.Id.ToString(), VideoName),
+                        //Keylog = video.keylog,
+                        //Apps = video.apps,
+                        ChannelId = com.Id,
+                        CreatedDate =   DateTime.Now.ToLocalTime(),
                     Year = from.Year,
-                    Month = from.Month,
-                    Date = from.Day,
-                    Hours = from.Hour,
-                    Minutes = from.Minute,
-                    Start = from,
-                    End = to,
-                    IsDelete = 0
-                };
-                _videosRepository.Insert(videos);
-                _unitOfWork.Complete();
-                List<UserSession> userSessions = readUserSession(video);
-                foreach (var item in userSessions)
-                {
-                    item.VideoId = videos.Id;
-                    item.Id = Guid.NewGuid().ToString();
+                        Month = from.Month,
+                        Date = from.Day,
+                        Hours = from.Hour,
+                        Minutes = from.Minute,
+                        Start = from,
+                        End = to,
+                        IsDelete = 0,
+                        
+                    };
+                    _videosRepository.Insert(videos);
+                    _unitOfWork.Complete();
+                    List<UserSession> userSessions = readUserSession(video);
+                    foreach (var item in userSessions)
+                    {
+                        item.VideoId = videos.Id;
+                        item.Id = Guid.NewGuid().ToString();
+                    }
+                    _userSessionRepository.InsertMulti(userSessions);
+                    _unitOfWork.Complete();
+                    List<UserAction> userActions = new List<UserAction>();
+                    List<UserActionModel>  userActionModels = readUserAction(video);
+                    foreach (var item in userActionModels)
+                    {
+                        userActions.Add(new UserAction
+                        {
+                           VideoId = videos.Id,
+                           Id = Guid.NewGuid().ToString(),
+                            Windows = item.Windows,
+                            UserName = item.UserName,
+                            Keys = item.Keys,
+                            Time = convert(item.Time)
+                        });
+                    }
+                    _userActionRepository.InsertMulti(userActions);
+                    _unitOfWork.Complete();
+                    _logger.LogInformation("Tạo mới video: " + VideoName);
+                    return Ok("Videos uploaded successfully");
                 }
-                _userSessionRepository.InsertMulti(userSessions);
-                _unitOfWork.Complete();
-                List<UserAction> userActions = readUserAction(video);
-                foreach (var item in userActions)
-                {
-                    item.VideoId = videos.Id;
-                    item.Id = Guid.NewGuid().ToString();
-                }
-                _userActionRepository.InsertMulti(userActions);
-                _unitOfWork.Complete();
-                _logger.LogInformation("Tạo mới video: " + VideoName);
-
-
-
-                return Ok("Videos uploaded successfully");
+                return Ok("Fails");
             }
             catch (Exception ex)
             {
@@ -328,7 +339,7 @@ namespace BookingApp.Controllers
             // Deserialize the JSON string into a list of WindowData objects
             return JsonConvert.DeserializeObject<List<UserSession>>(jsonData);
         }
-        private List<UserAction> readUserAction(VideoDto video)
+        private List<UserActionModel> readUserAction(VideoDto video)
         {
             string fPath = Path.Combine(_env.ContentRootPath, "useraction_" + video.token + DateTime.Now.Ticks + ".json"); // Or use your preferred storage location
             using (var stream = new FileStream(fPath, FileMode.Create))
@@ -338,7 +349,16 @@ namespace BookingApp.Controllers
             string jsonData = UtilHelper.ReadJsonFile(fPath);
             UtilHelper.Delete(fPath);
             // Deserialize the JSON string into a list of WindowData objects
-            return JsonConvert.DeserializeObject<List<UserAction>>(jsonData);
+            return JsonConvert.DeserializeObject<List<UserActionModel>>(jsonData);
+        }
+        public class UserActionModel
+        {
+            public string Id { get; set; }
+            public int Time { get; set; }
+            public string Windows { get; set; }
+            public string UserName { get; set; }
+            public string Keys { get; set; }
+            public string VideoId { get; set; }
         }
         private static DateTime convert (long ticks)
         {

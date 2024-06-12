@@ -39,7 +39,7 @@ namespace BookingApp.Controllers
         }
         public IActionResult Dashboard()
         {
-            var coms = _videosRepository.GetAll().ToList();
+            var coms = _computerRepository.GetAll().ToList();
             return View(coms);
 
         }
@@ -69,7 +69,7 @@ namespace BookingApp.Controllers
         public IActionResult Detail(string id)
         {
             var model = new VideoModel();  
-            if(string.IsNullOrEmpty(id))
+            if(!string.IsNullOrEmpty(id))
             {
                 var book = _videosRepository.GetAll().Where(x => x.Id == id).FirstOrDefault();
                 var channel = _computerRepository.GetAll().Where(x => x.Id == book.ChannelId).FirstOrDefault();
