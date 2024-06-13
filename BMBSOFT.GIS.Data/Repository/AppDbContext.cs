@@ -31,6 +31,7 @@ namespace BASE.Data.Repository
         public DbSet<UserSession> UserSessions { get; set; }
         public DbSet<UserAction> UserActions { get; set; }
         public DbSet<Videos> Videos { get; set; }
+        public DbSet<WhatsAppChat> WhatsAppChats { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

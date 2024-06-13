@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Configuration;
+using BASE.Data.Interfaces.DexTrack;
+using BASE.Data.Repository;
 
 namespace BookingApp.Controllers
 {
@@ -16,11 +18,15 @@ namespace BookingApp.Controllers
     {
         private readonly ILogger<WebhookController> _logger;
         private readonly IConfiguration _configuration;
+        private readonly IWhatsAppChatRepository _repository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public WebhookController(ILogger<WebhookController> logger, IConfiguration configuration)
+        public WebhookController(ILogger<WebhookController> logger, IConfiguration configuration, IWhatsAppChatRepository repository, IUnitOfWork unitOfWork)
         {
             _logger = logger;
             _configuration = configuration;
+            _repository = repository;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet("/webhook")]
@@ -40,32 +46,35 @@ namespace BookingApp.Controllers
         public async Task<IActionResult> HandleMessage(dynamic bodyParam)
         {
 
-            _logger.LogError("run");
             string jsonString = JsonConvert.SerializeObject(bodyParam);
-            _logger.LogError(jsonString);
-
-            _logger.LogError((string)bodyParam.@object);
             try
             {
                 if (!string.IsNullOrEmpty((string)bodyParam.@object))
                 {
                     //var data = (Root)bodyParam;
-                    // Convert dynamic object to JSON string
-
-                    // Deserialize JSON string to Root object
                     Root data = JsonConvert.DeserializeObject<Root>(jsonString);
-                    string _token = _configuration?.GetSection("WhatsApp")["WhatsApp"];
+                    string _token = "EAAL9UWkg1NcBOygEY1nxHlHd1v44kr8XyFDoaRBKxQavFZCuBFg5lDZCL9g4ybhNN61jPXLubi9pxZAtjFtn6vJz8SUyZCKhzV3iBFFslKMhi4PVYekVo6LzYsTkzUf9ZBkmO0vGH2eGWSZBCQkNRma9S1bzZCv1zymsPw08JlEm858OSv091I5FEnpK77xEVlIZAZC43MD1ZBXUhAZCGalHRTD";
                     if (data.entry?.Count > 0 &&
                     data.entry[0].changes?.Count > 0 &&
                     data.entry[0].changes[0].value != null)
                     {
+                        _repository.Insert(new BASE.Entity.DexTrack.WhatsAppChat
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            ChatId = data.entry[0].id,
+                            Timestamp =long.Parse(data.entry[0].changes[0].value.messages[0].timestamp),
+                            FromId = "",
+                            FromPhoneNumber = data.entry[0].changes[0].value.messages[0].from,
+                            ToId = data.entry[0].changes[0].value.metadata.phone_number_id,
+                            ToPhoneNumber = data.entry[0].changes[0].value.metadata.display_phone_number,
+                            Message = data.entry[0].changes[0].value.messages[0].text.body
+                        });
+                        _unitOfWork.Complete();
                         var phoneNumberId = data.entry[0].changes[0].value.metadata.phone_number_id;
                         var from = data.entry[0].changes[0].value.messages[0].from;
                         var msgBody = data.entry[0].changes[0].value.messages[0].text.body;
-
-                        _logger.LogError($"Phone number: {phoneNumberId}");
-                        _logger.LogError($"From: {from}");
-                        _logger.LogError($"Body: {msgBody}");
+                        _logger.LogError($"chat id: {data.entry[0].id}");
+   
 
                         using (var httpClient = new HttpClient())
                         {
@@ -93,13 +102,10 @@ namespace BookingApp.Controllers
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(ex.ToString());
             }
             return Ok();
         }
-        // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
-        // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
-        // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
         public class Change
         {
             public Value value { get; set; }

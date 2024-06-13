@@ -1,5 +1,7 @@
 ﻿using BASE.Data.Implements;
+using BASE.Data.Implements.DexTrack;
 using BASE.Data.Interfaces;
+using BASE.Data.Interfaces.DexTrack;
 using BASE.Data.Repository;
 using BASE.Services.Implements;
 using BASE.Services.Interfaces;
@@ -36,6 +38,7 @@ namespace BMBSOFT.GIS.ApiGateway.Configuration
             services.AddScoped<IComputerRepository, ComputerRepository>();
             services.AddScoped<IUserActionRepository, UserActionRepository>();
             services.AddScoped<IUserSessionRepository, UserSessionRepository>();
+            services.AddScoped<IWhatsAppChatRepository, WhatsAppChatRepository>();
             services.AddScoped<BASE.Data.Interfaces.IUsersDTRepository, BASE.Data.Implements.UsersDTRepository>();
         }
     }
