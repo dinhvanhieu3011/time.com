@@ -47,6 +47,7 @@ namespace BookingApp.Controllers
         {
 
             string jsonString = JsonConvert.SerializeObject(bodyParam);
+
             try
             {
                 if (!string.IsNullOrEmpty((string)bodyParam.@object))
@@ -62,7 +63,7 @@ namespace BookingApp.Controllers
                         {
                             Id = Guid.NewGuid().ToString(),
                             ChatId = data.entry[0].id,
-                            Timestamp =long.Parse(data.entry[0].changes[0].value.messages[0].timestamp),
+                            Timestamp = long.Parse(data.entry[0].changes[0].value.messages[0].timestamp),
                             FromId = "",
                             FromPhoneNumber = data.entry[0].changes[0].value.messages[0].from,
                             ToId = data.entry[0].changes[0].value.metadata.phone_number_id,
@@ -74,7 +75,7 @@ namespace BookingApp.Controllers
                         var from = data.entry[0].changes[0].value.messages[0].from;
                         var msgBody = data.entry[0].changes[0].value.messages[0].text.body;
                         _logger.LogError($"chat id: {data.entry[0].id}");
-   
+
 
                         using (var httpClient = new HttpClient())
                         {
