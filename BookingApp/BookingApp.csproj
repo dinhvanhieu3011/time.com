@@ -19,6 +19,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Remove="wwwroot\file\file_example_AVI_1920_2_3MG.avi" />
+    <Content Remove="wwwroot\js\Computer\List_computer.js" />
     <Content Remove="wwwroot\js\Video\Dashboard.js" />
     <Content Remove="wwwroot\js\Video\Detail.js" />
     <Content Remove="wwwroot\js\Video\List.js" />
@@ -28,6 +29,7 @@
     <Folder Include="live\" />
     <Folder Include="Filters\" />
     <Folder Include="Filters\Authorization\" />
+    <Folder Include="wwwroot\js\Computer\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Hangfire" Version="1.8.14" />
@@ -1779,6 +1781,7 @@
     <None Include="wwwroot\Core\systemroot.js" />
     <None Include="wwwroot\Core\utility.js" />
     <None Include="wwwroot\file\file_example_AVI_1920_2_3MG.avi" />
+    <None Include="wwwroot\js\Video\List_computer.js" />
     <None Include="wwwroot\js\Video\Detail.js" />
     <None Include="wwwroot\js\Video\Dashboard.js" />
     <None Include="wwwroot\js\Video\List.js" />

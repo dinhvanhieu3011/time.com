@@ -5,62 +5,6 @@
 @model List<BookingApp.Models.ChannelYoutubeModel>
 
 <div class="container">
-    <div id="divMsgs" class="row">
-        @{
-            Microsoft.Extensions.Primitives.StringValues queryVal;
-
-            if (Context.Request.Query.TryGetValue("error", out queryVal) &&
-                queryVal.FirstOrDefault() == "reserved")
-            {
-                <p class="text-danger">There is reservation linked. Cancel it before.</p>
-            }
-            else if (Context.Request.Query.TryGetValue("error", out queryVal) &&
-                queryVal.FirstOrDefault() == "oneAdmin")
-            {
-                <p class="text-danger">There is only one admin.</p>
-            }
-            else if (Context.Request.Query.TryGetValue("error", out queryVal) &&
-               queryVal.FirstOrDefault() == "sameUser")
-            {
-                <p class="text-danger">You cannot delete yourself.</p>
-            }
-            else if (Context.Request.Query.TryGetValue("error", out queryVal) &&
-               queryVal.FirstOrDefault() == "wrongUser")
-            {
-                <p class="text-danger">You cannot edit unexisting users.</p>
-            }
-            else if (Context.Request.Query.TryGetValue("error", out queryVal) &&
-            queryVal.FirstOrDefault() == "wrongData")
-            {
-                <p class="text-danger">You cannot edit unexisting datas.</p>
-            }
-            else if (Context.Request.Query.TryGetValue("error", out queryVal) &&
-               queryVal.FirstOrDefault() == "error")
-            {
-                <p class="text-danger">Try again later.</p>
-            }
-            else if (Context.Request.Query.TryGetValue("msg", out queryVal) &&
-              queryVal.FirstOrDefault() == "bookDeleted")
-            {
-                <p class="text-success">The data was deleted.</p>
-            }
-            else if (Context.Request.Query.TryGetValue("msg", out queryVal) &&
-              queryVal.FirstOrDefault() == "reservationCanceled")
-            {
-                <p class="text-success">The reservation was canceled.</p>
-            }
-            else if (Context.Request.Query.TryGetValue("msg", out queryVal) &&
-              queryVal.FirstOrDefault() == "collected")
-            {
-                <p class="text-success">The data was collected.</p>
-            }
-            else if (Context.Request.Query.TryGetValue("msg", out queryVal) &&
-              queryVal.FirstOrDefault() == "returned")
-            {
-                <p class="text-success">The data was returned.</p>
-            }
-        }
-    </div>
     <div>
         <ul class="nav nav-tabs">
             <li class="nav-item">
@@ -81,7 +25,81 @@
                     </div>
                 </div>
                 <dl class="row">
-                    <dd class="col-sm-12">
+                    <div class="tab-content clearfix">
+                        <div class="tab-pane active" id="booksTab">
+                            <div class="row">
+                                <div class="col-sm-12">
+
+                                    <div class="tab-content">
+                                        <div id="tab_1" class="tab-pane active">
+                                            <div class="box">
+                                                <!-- Bộ tìm kiếm -->
+                                                <div class="box-body" id="zone_timkiem">
+                                                    <!--Row 1-->
+                                                    <!--End Row 1-->
+                                                    <!--Row 2-->
+                                                    <div style="width: 100%">
+                                                        <div style="width: 10%; float: left">
+                                                            <label style="margin-top: 5px !important">Từ khoá </label>
+                                                        </div>
+                                                        <div style="width: 30%; float: left; padding-right: 10px;">
+                                                            <input type="text" id="ngay_nhapxuat"  class="form-control" />
+                                                        </div>
+
+                                                        <div class="clear"></div>
+                                                    </div>
+                                                    <!--End Row 2-->
+                                                    <!--Row 3-->
+                                                    <!--End Row 3-->
+                                                    <!--Row 4-->
+                                                    <div style="width: 100%">
+                                                        <div style="width: 10%; float: left">
+                                                            <label style="margin-top: 0px !important"></label>
+                                                        </div>
+                                                        <div style="width: 70%; float: left; margin-right: 10px">
+                                                            <div class="pull-left">
+                                                                <a class="btn btn-default" href="javascript:void(0)" id="btnTimKiem" title="Tìm kiếm"><i class="fa fa-search"></i> Tìm kiếm </a>
+                                                                <a title="Hủy tìm kiếm" class="btn btn-default" id="btnHuyTimKiem"><i class="fa fa-undo"></i> Hủy tìm kiếm </a>
+                                                            </div>
+                                                            <div class="pull-right" style="margin-top: 10px">
+                                                            </div>
+                                                        </div>
+                                                        <div style="width: 20%; float: left">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--End Row 6-->
+                                                <!--Table-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <dl class="row">
+                                <dd class="col-sm-12">
+                                    <table id="tbldata" class="table table-bordered table-hover tbl-pagination" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th style="display: none">Id</th>
+                                                <th style="width: 200px; text-align: center !important">Computer Name</th>
+                                                <th style="width: 350px; text-align: center !important">Computer Token</th>
+                                                <th style="width: 250px;text-align: center !important">Employee</th>
+                                                <th style="width: 100px;text-align: center !important;">Status</th>
+                                                <th style="width: 70px;text-align: center !important;">Edit</th>
+                                                <th style="width: 70px;text-align: center !important;">Delete</th>
+
+                                                <th style="width: 70px;text-align: center !important;">History</th>
+                                                <th style="width: 70px;text-align: center !important;">Live</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+
+@*                     <dd class="col-sm-12">
                         <table class="tblResponsive">
                             <thead>
                                 <tr>
@@ -130,14 +148,11 @@
                             </tbody>
                         </table>
                     </dd>
-                </dl>
+ *@                </dl>
             </div>
         </div>
     </div>
 </div>
-
-<script src="~/lib/jquery-3.3.1.min.js"></script>
-
 <style>
 
     h4 {
@@ -185,16 +200,11 @@
         background-color: #f2f2f2;
     }
 </style>
-<link rel="stylesheet" type="text/css" href="~/lib/jquery.dataTables.css">
-
-<script type="text/javascript" charset="utf8" src="~/lib/jquery.dataTables.js"></script>
-<script>
-
-    $(function () {
-        $('.tblResponsive').DataTable({
-            responsive: true,
-            paginate: true,
-            pageSize: 100
-        });
+<script src="/js/Video/List_computer.js?v=1" type="text/javascript"></script>
+<script type="text/javascript">
+    var main_doc = {};
+    main_doc['List_computer'] = new List_computer();
+    $(document).ready(function () {
+        main_doc.List_computer.init();
     });
 </script>

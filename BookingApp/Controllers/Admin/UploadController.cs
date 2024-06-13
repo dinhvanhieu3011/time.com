@@ -58,13 +58,22 @@ namespace BookingApp.Controllers
         {
             try
             {
-                ChannelYoutubes channel = new ChannelYoutubes();
-                channel.Name = ComputerName;
-                channel.Token = Token;
-                channel.EmployeeName = EmployeeName;
-                _computerRepository.Insert(channel);
-                _unitOfWork.Complete();
-                return true;
+                var isExist = _computerRepository.GetAll().Where(x => x.Token == Token).Any();
+                if (isExist)
+                {
+                    ChannelYoutubes channel = new ChannelYoutubes();
+                    channel.Name = ComputerName;
+                    channel.Token = Token;
+                    channel.EmployeeName = EmployeeName;
+                    _computerRepository.Insert(channel);
+                    _unitOfWork.Complete();
+                    return true;
+                }
+                else
+                {
+                    return null;
+                }
+
             }
             catch
             {
@@ -155,6 +164,48 @@ namespace BookingApp.Controllers
                     ).OrderBy(x => x.Time);
                 totalRow = listUserActions.Count();
                 this.response.Data = listUserActions.OrderByDescending(x => x.Id).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                this.response.Success = true;
+                this.response.Pager = totalRow.ToString();
+                return this.response;
+            }
+            catch (Exception ex)
+            {
+                this.response.Success = false;
+                this.response.Message = ex.Message;
+                return this.response;
+            }
+        }
+        [HttpGet]
+        public JsonResponse getListComputer(string Ngay,  int pageIndex, int pageSize)
+        {
+            try
+            {
+                var totalRow = 0;
+                List<ChannelYoutubes> data = new List<ChannelYoutubes>();
+                CultureInfo provider = CultureInfo.CurrentCulture;
+                if (string.IsNullOrEmpty(Ngay))
+                {
+                    data = _computerRepository.GetAll().ToList();
+                }
+                else
+                {
+                    data = _computerRepository.GetAll()
+                        .Where(x => x.Name.Contains(Ngay) || x.EmployeeName.Contains(Ngay))
+                        .ToList();
+                }
+                foreach (var item in data)
+                {
+                    if(_videosRepository.GetAll().Where(x=>x.ChannelId == item.Id && x.CreatedDate.AddMinutes(2) > DateTime.Now).Any())
+                    {
+                        item.Status = "Đang online";
+                    }
+                    else
+                    {
+                        item.Status = "Mất kết nối";
+                    }
+                }
+                totalRow = data.Count();
+                this.response.Data = data.OrderByDescending(x => x.Id).ToList();
                 this.response.Success = true;
                 this.response.Pager = totalRow.ToString();
                 return this.response;

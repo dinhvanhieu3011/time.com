@@ -43,18 +43,25 @@ namespace BookingApp.Controllers
         }
 
         [HttpPost("/webhook")]
-        public async Task<IActionResult> HandleMessage(dynamic bodyParam)
+        public async Task<IActionResult> HandleMessage(Root bodyParam)
         {
 
-            string jsonString = JsonConvert.SerializeObject(bodyParam);
 
             try
             {
+                string jsonString1 = JsonConvert.SerializeObject(bodyParam);
+
+                _logger.LogError(jsonString1);
+
                 if (!string.IsNullOrEmpty((string)bodyParam.@object))
                 {
+                    //string jsonString = JsonConvert.SerializeObject(bodyParam);
+
+                    //_logger.LogError(jsonString);
+
                     //var data = (Root)bodyParam;
-                    Root data = JsonConvert.DeserializeObject<Root>(jsonString);
-                    string _token = "EAAL9UWkg1NcBOygEY1nxHlHd1v44kr8XyFDoaRBKxQavFZCuBFg5lDZCL9g4ybhNN61jPXLubi9pxZAtjFtn6vJz8SUyZCKhzV3iBFFslKMhi4PVYekVo6LzYsTkzUf9ZBkmO0vGH2eGWSZBCQkNRma9S1bzZCv1zymsPw08JlEm858OSv091I5FEnpK77xEVlIZAZC43MD1ZBXUhAZCGalHRTD";
+                    Root data = bodyParam;
+                    string _token = "EAAL9UWkg1NcBO0zpx77dv1d3VOpdDA93yBNc29UYGDJZCgkqCTNpfi8HnutZCzZBc4iY911j4zquokPZA6vE0HceZBs92d77qnqKhgTgiKj4z7EdZAeS0XW8ZC8wRtQvC6pG34MeMsStxsycgbfsK9itRfRbSKNudh2pwEKIooIzHyCa2KNzyKRypLFGvRvQSsxZB6gzelAZBH1fMignFaZCIZD";
                     if (data.entry?.Count > 0 &&
                     data.entry[0].changes?.Count > 0 &&
                     data.entry[0].changes[0].value != null)
