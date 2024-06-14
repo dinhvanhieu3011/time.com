@@ -8,6 +8,7 @@ using BASE.Entity.DexTrack;
 using BASE.Model;
 using BASE.Model.Dextrack;
 using BookingApp.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
@@ -39,12 +40,13 @@ namespace BookingApp.Controllers
         private readonly IVideosRepository _videosRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IWhatsAppChatRepository _whatsAppChatRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public UploadController(IComputerRepository computerRepository, IUsersDTRepository usersDTRepository,
             IUserSessionRepository userSessionRepository, IUserActionRepository userActionRepository,
             IVideosRepository videosRepository,
             IHostEnvironment env, ILogger<UploadController> logger,
-             IUnitOfWork unitOfWork, IWhatsAppChatRepository whatsAppChatRepository)
+             IUnitOfWork unitOfWork, IWhatsAppChatRepository whatsAppChatRepository, IHttpContextAccessor httpContextAccessor)
         {
             _env = env;
             _logger = logger;
@@ -55,8 +57,10 @@ namespace BookingApp.Controllers
             _videosRepository = videosRepository;
             _unitOfWork = unitOfWork;
 			_whatsAppChatRepository = whatsAppChatRepository;
+            _httpContextAccessor = httpContextAccessor;
 
-		}
+
+        }
 
 
 
@@ -185,8 +189,12 @@ namespace BookingApp.Controllers
         [HttpGet]
         public WhatsAppChatModel getChat(string chatId)
         {
+            var username = _httpContextAccessor.HttpContext.Session.GetString("user");
+
+            var user = _usersDTRepository.GetAll().FirstOrDefault(x => x.Username == username);
+
             var listChat = _whatsAppChatRepository.GetAll().Where(x => x.ChatId == chatId).ToList();
-			var myNum = _usersDTRepository.GetAll().Where(x => x.Username == "admin").FirstOrDefault().Email;
+			var myNum = user.Email;
             var data = new WhatsAppChatModel
             {
                 Key = chatId,

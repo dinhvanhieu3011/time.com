@@ -5,6 +5,7 @@ using BASE.Data.Migrations;
 using BASE.Data.Repository;
 using BASE.Entity.DexTrack;
 using BookingApp.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -23,22 +24,28 @@ namespace BookingApp.Controllers
 		private readonly IWhatsAppChatRepository _repository;
 		private readonly IUsersDTRepository _userRepository;
 		private readonly IUnitOfWork _unitOfWork;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-		public WhatsappController(ILogger<WhatsappController> logger, IConfiguration configuration, 
-			IWhatsAppChatRepository repository, IUnitOfWork unitOfWork, IUsersDTRepository userRepository)
+        public WhatsappController(ILogger<WhatsappController> logger, IConfiguration configuration, 
+			IWhatsAppChatRepository repository, IUnitOfWork unitOfWork, IUsersDTRepository userRepository, IHttpContextAccessor httpContextAccessor)
 		{
 			_logger = logger;
 			_configuration = configuration;
 			_repository = repository;
 			_unitOfWork = unitOfWork;
             _userRepository = userRepository;
+            _httpContextAccessor = httpContextAccessor;
 
         }
 		public IActionResult Index()
         {
 			var listMessage = _repository.GetAll().ToList();
-			var myNum = _userRepository.GetAll().Where(x => x.Username == "admin").FirstOrDefault().Email;
-			var listChat = listMessage.GroupBy(p => p.ChatId)
+            var username = _httpContextAccessor.HttpContext.Session.GetString("user");
+
+            var user = _userRepository.GetAll().FirstOrDefault(x => x.Username == username);
+            var myNum = user.Email;
+
+            var listChat = listMessage.GroupBy(p => p.ChatId)
 					.Select(g => new WhatsAppChatModel
 					{
 						Key = g.Key,
