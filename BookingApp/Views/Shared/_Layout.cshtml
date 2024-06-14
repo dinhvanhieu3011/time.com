@@ -160,6 +160,10 @@
                                 <li class="nav-item">@Html.ActionLink("User", "Index", "User")</li>
                                 <li class="nav-item">@Html.ActionLink("Computer", "Index", "Computer")</li>
                             }
+                            else
+                            {
+                                <li class="nav-item">@Html.ActionLink("Whatsapp", "Index", "Computer")</li>
+                            }
 
                             <li class="nav-item">
                                 @if (Context.Session.GetInt32("role") == 0)
