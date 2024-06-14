@@ -59,7 +59,7 @@ namespace BookingApp.Controllers
             try
             {
                 var isExist = _computerRepository.GetAll().Where(x => x.Token == Token).Any();
-                if (isExist)
+                if (!isExist)
                 {
                     ChannelYoutubes channel = new ChannelYoutubes();
                     channel.Name = ComputerName;
@@ -323,7 +323,10 @@ namespace BookingApp.Controllers
                         await video.Video.CopyToAsync(stream);
 
                     }
-
+                    if (_videosRepository.GetAll().Where(x => x.VideoPath.Contains(VideoName)).Any())
+                    {
+                        return Ok("Videos uploaded successfully");
+                    }
                     Videos videos = new Videos()
                     {
                         Id = Guid.NewGuid().ToString(),
