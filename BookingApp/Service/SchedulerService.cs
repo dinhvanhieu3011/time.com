@@ -76,7 +76,7 @@ namespace BookingApp.Service
                         x.Date == g.Key.Date &&
                         x.Hours == g.Key.Hours &&
                         x.IsDelete == 0 && x.ChannelId == item && x.IsMerge == 0
-                        ).OrderBy(x => x.Id).ToList()
+                        ).OrderBy(x => x.Start).ToList()
                     }).ToList();
                 foreach (var a in lstVideo)
                 {
@@ -103,6 +103,7 @@ namespace BookingApp.Service
                         _logger.LogInformation("Tạo mới video: " + videoMergeName);
                         var video = new Videos()
                         {
+                            Id = Guid.NewGuid().ToString(),
                             VideoPath = fullPath,
                             Keylog = "",
                             Apps = "",
@@ -358,14 +359,14 @@ namespace BookingApp.Service
         {
             try
             {
-                var username = _httpContextAccessor.HttpContext.Session.GetString("user");
-                var user = _usersDTRepository.GetAll().FirstOrDefault(x => x.Username == username);
-                string url = string.Format("https://api.telegram.org/bot{0}/sendMessage?chat_id={1}&text={2}", user.TeleToken, user.ChatId, message);
-                var client = new HttpClient();
-                var request = new HttpRequestMessage(HttpMethod.Get, url);
-                var response = await client.SendAsync(request);
-                response.EnsureSuccessStatusCode();
-                Console.WriteLine(await response.Content.ReadAsStringAsync());
+                //var username = _httpContextAccessor.HttpContext.Session.GetString("user");
+                //var user = _usersDTRepository.GetAll().FirstOrDefault(x => x.Username == username);
+                //string url = string.Format("https://api.telegram.org/bot{0}/sendMessage?chat_id={1}&text={2}", user.TeleToken, user.ChatId, message);
+                //var client = new HttpClient();
+                //var request = new HttpRequestMessage(HttpMethod.Get, url);
+                //var response = await client.SendAsync(request);
+                //response.EnsureSuccessStatusCode();
+                //Console.WriteLine(await response.Content.ReadAsStringAsync());
             }
             catch { }
 

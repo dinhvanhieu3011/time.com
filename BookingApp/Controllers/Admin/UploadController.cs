@@ -1,5 +1,8 @@
 ﻿using BASE.CORE.Helper;
+using BASE.Data.Implements;
+using BASE.Data.Implements.DexTrack;
 using BASE.Data.Interfaces;
+using BASE.Data.Interfaces.DexTrack;
 using BASE.Data.Repository;
 using BASE.Entity.DexTrack;
 using BASE.Model;
@@ -18,6 +21,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
+using static BookingApp.Controllers.WhatsappController;
 
 
 namespace BookingApp.Controllers
@@ -34,12 +38,13 @@ namespace BookingApp.Controllers
         private readonly IUserActionRepository _userActionRepository;
         private readonly IVideosRepository _videosRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IWhatsAppChatRepository _whatsAppChatRepository;
 
         public UploadController(IComputerRepository computerRepository, IUsersDTRepository usersDTRepository,
             IUserSessionRepository userSessionRepository, IUserActionRepository userActionRepository,
             IVideosRepository videosRepository,
             IHostEnvironment env, ILogger<UploadController> logger,
-             IUnitOfWork unitOfWork)
+             IUnitOfWork unitOfWork, IWhatsAppChatRepository whatsAppChatRepository)
         {
             _env = env;
             _logger = logger;
@@ -49,7 +54,9 @@ namespace BookingApp.Controllers
             _userActionRepository = userActionRepository;
             _videosRepository = videosRepository;
             _unitOfWork = unitOfWork;
-        }
+			_whatsAppChatRepository = whatsAppChatRepository;
+
+		}
 
 
 
@@ -176,6 +183,20 @@ namespace BookingApp.Controllers
             }
         }
         [HttpGet]
+        public WhatsAppChatModel getChat(string chatId)
+        {
+            var listChat = _whatsAppChatRepository.GetAll().Where(x => x.ChatId == chatId).ToList();
+			var myNum = _usersDTRepository.GetAll().Where(x => x.Username == "admin").FirstOrDefault().Email;
+            var data = new WhatsAppChatModel
+            {
+                Key = chatId,
+                PhoneNumer = listChat.Where(x => x.ToPhoneNumber != myNum).Take(1).FirstOrDefault().ToPhoneNumber,
+                LastMessage = listChat.OrderByDescending(p => p.Time).FirstOrDefault().Message,
+                whatsAppChats = listChat.OrderBy(x => x.Time).ToList()
+            };
+            return data;
+		}
+        [HttpGet]
         public JsonResponse getListComputer(string Ngay,  int pageIndex, int pageSize)
         {
             try
@@ -236,7 +257,7 @@ namespace BookingApp.Controllers
                 }
 
                 totalRow = data.Count();
-                this.response.Data = data.OrderByDescending(x => x.Id).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                this.response.Data = data.OrderByDescending(x => x.Start).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
                 this.response.Success = true;
                 this.response.Pager = totalRow.ToString();
                 return this.response;

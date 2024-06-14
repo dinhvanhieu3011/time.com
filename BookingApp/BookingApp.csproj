@@ -13,23 +13,26 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove=".venv\**" />
+    <Compile Remove="wwwroot\js\Computer\**" />
     <Content Remove=".venv\**" />
+    <Content Remove="wwwroot\js\Computer\**" />
     <EmbeddedResource Remove=".venv\**" />
+    <EmbeddedResource Remove="wwwroot\js\Computer\**" />
     <None Remove=".venv\**" />
+    <None Remove="wwwroot\js\Computer\**" />
   </ItemGroup>
   <ItemGroup>
-    <Content Remove="wwwroot\file\file_example_AVI_1920_2_3MG.avi" />
-    <Content Remove="wwwroot\js\Computer\List_computer.js" />
+    <Content Remove="Views\Whatsapp\Index.cshtml" />
     <Content Remove="wwwroot\js\Video\Dashboard.js" />
     <Content Remove="wwwroot\js\Video\Detail.js" />
     <Content Remove="wwwroot\js\Video\List.js" />
+    <Content Remove="wwwroot\js\Video\Whatsapp.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="file\" />
     <Folder Include="live\" />
     <Folder Include="Filters\" />
     <Folder Include="Filters\Authorization\" />
-    <Folder Include="wwwroot\js\Computer\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Hangfire" Version="1.8.14" />
@@ -81,6 +84,7 @@
     <None Include="Views\Video\Detail.cshtml" />
     <None Include="Views\Video\Index.cshtml" />
     <None Include="Views\Video\List.cshtml" />
+    <None Include="Views\Whatsapp\Index.cshtml" />
     <None Include="Views\_ViewImports.cshtml" />
     <None Include="Views\_ViewStart.cshtml" />
     <None Include="wwwroot\App_Themes\CMSV2\bootstrap\css\bootstrap.css.map" />
@@ -1780,7 +1784,7 @@
     <None Include="wwwroot\Core\systemextend.js" />
     <None Include="wwwroot\Core\systemroot.js" />
     <None Include="wwwroot\Core\utility.js" />
-    <None Include="wwwroot\file\file_example_AVI_1920_2_3MG.avi" />
+    <None Include="wwwroot\js\Video\Whatsapp.js" />
     <None Include="wwwroot\js\Video\List_computer.js" />
     <None Include="wwwroot\js\Video\Detail.js" />
     <None Include="wwwroot\js\Video\Dashboard.js" />

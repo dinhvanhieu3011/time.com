@@ -130,14 +130,14 @@ List.prototype = {
                             {
                                 "mDataProp": "start",
                                 "mRender": function (data) {
-                                    return moment(data + '').format("DD/MM/YYYY h:mm:ss");
+                                    return moment(data + '').format("DD/MM/YYYY hh:mm:ss");
                                 }
                             }
                                 ,
                             {
                                 "mDataProp": "end",
                                 "mRender": function (data) {
-                                    return moment(data + '').format("DD/MM/YYYY h:mm:ss");
+                                    return moment(data + '').format("DD/MM/YYYY hh:mm:ss");
                                 }
                             }
                                 ,

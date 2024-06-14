@@ -75,15 +75,13 @@ namespace BookingApp.Controllers
                             FromPhoneNumber = data.entry[0].changes[0].value.messages[0].from,
                             ToId = data.entry[0].changes[0].value.metadata.phone_number_id,
                             ToPhoneNumber = data.entry[0].changes[0].value.metadata.display_phone_number,
-                            Message = data.entry[0].changes[0].value.messages[0].text.body
+                            Message = data.entry[0].changes[0].value.messages[0].text.body,
+                            Time = new DateTime(long.Parse(data.entry[0].changes[0].value.messages[0].timestamp))
                         });
                         _unitOfWork.Complete();
                         var phoneNumberId = data.entry[0].changes[0].value.metadata.phone_number_id;
                         var from = data.entry[0].changes[0].value.messages[0].from;
                         var msgBody = data.entry[0].changes[0].value.messages[0].text.body;
-                        _logger.LogError($"chat id: {data.entry[0].id}");
-
-
                         using (var httpClient = new HttpClient())
                         {
                             var url = $"https://graph.facebook.com/v13.0/{phoneNumberId}/messages?access_token={_token}";

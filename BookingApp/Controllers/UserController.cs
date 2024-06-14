@@ -32,14 +32,14 @@ namespace BookingApp.Controllers
         }
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public IActionResult Create(string username, string password, string teleToken, string chatId)
+        public IActionResult Create(string username, string password, string phone, string teleToken, string chatId)
         {
             if (!ModelState.IsValid)
             {
                 return RedirectToAction("Index", "User");
             }
 
-            switch (Insert(username, password, teleToken, chatId))
+            switch (Insert(username, password, phone, teleToken, chatId))
             {
                 case true:
                     return RedirectToAction("Index", "User", new { msg = "added" });
@@ -50,7 +50,7 @@ namespace BookingApp.Controllers
             }
         }
 
-        public bool? Insert(string username, string password, string teleToken, string chatId)
+        public bool? Insert(string username, string password, string phone, string teleToken, string chatId)
         {
             try
             {
@@ -66,7 +66,7 @@ namespace BookingApp.Controllers
                     {
                         Username = username,
                         Password = password,
-                        Email = username+ "_email@gmail.com",
+                        Email = phone,
                         Role = 1,
                         Registered = DateTime.Now,
                         TeleToken = teleToken,
@@ -108,7 +108,7 @@ namespace BookingApp.Controllers
         }
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public IActionResult Update(int id, string username, string password, string teleToken, string chatId)
+        public IActionResult Update(int id, string username, string password, string phone, string teleToken, string chatId)
         {
             try
             {
@@ -126,7 +126,7 @@ namespace BookingApp.Controllers
                     )
                 {
 
-                    UpdateData(id, username, password, teleToken, chatId);
+                    UpdateData(id, username, password, phone, teleToken, chatId);
                     return RedirectToAction("Update", "User", new { id, msg = "updated" });
                 }
                 else
@@ -141,13 +141,14 @@ namespace BookingApp.Controllers
         }
 
         //Can be rented could be a solution to the point of a stolen book
-        private void UpdateData(int id, string username, string password, string teleToken, string chatId)
+        private void UpdateData(int id, string username, string password, string phone, string teleToken, string chatId)
         {
             var data = _usersDTRepository.GetAll().FirstOrDefault(x => x.UserId == id);
             data.Username = username;
             data.Password = password;
             data.TeleToken = teleToken;
             data.ChatId = chatId;
+            data.Email = phone;
 
             _usersDTRepository.Update(data);
             _unitOfWork.Complete(); 
