@@ -125,8 +125,9 @@ List_computer.prototype = {
                                 "mDataProp": "token"
                             }
                                 ,
-                            {
-                                "mDataProp": "employeeName"
+                                {
+                                    "mDataProp": "employeeName"
+                                }
                                     ,
                             {
                                     "mDataProp": "version"
