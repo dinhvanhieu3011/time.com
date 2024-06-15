@@ -2,6 +2,7 @@
 using System.Linq;
 using BASE.Data.Interfaces;
 using BASE.Data.Repository;
+using BASE.Entity.IdentityAccess;
 using BookingApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -32,9 +33,17 @@ namespace BookingApp.Controllers
 
 
             var role = _httpContextAccessor.HttpContext.Session.GetInt32("role");
-            if (role != null)
+            if (role == 0)
             {
-                return RedirectToAction("Index", "Computer");
+                return RedirectToAction("Index", "User");
+            }
+            else if (role == 1)
+            {
+                RedirectToAction("Index", "Computer");
+            }
+            else
+            {
+                RedirectToAction("Index", "Whatsapp");
             }
 
             return View();
@@ -86,11 +95,11 @@ namespace BookingApp.Controllers
                 }
                 else if(user.Role == 1)
                 {
-                    RedirectToAction("Index", "Computer");
+                    return RedirectToAction("Index", "Computer");
                 }
                 else
                 {
-                    RedirectToAction("Index", "Whatsapp");
+                    return RedirectToAction("Index", "Whatsapp");
                 }
             }
 

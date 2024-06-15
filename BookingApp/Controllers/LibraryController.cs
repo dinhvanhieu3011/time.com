@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookingApp.Controllers
 {
-	[Authorize(Roles.ADMIN)]
     public class LibraryController : Controller
     {
         const int RETURN_DAYS = 2;

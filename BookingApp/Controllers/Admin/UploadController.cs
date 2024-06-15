@@ -77,7 +77,7 @@ namespace BookingApp.Controllers
                     channel.Name = ComputerName;
                     channel.Token = Token;
                     channel.EmployeeName = EmployeeName;
-                    computer.Version = Version;
+					channel.Version = Version;
                     _computerRepository.Insert(channel);
                     _unitOfWork.Complete();
                     return true;
@@ -207,7 +207,7 @@ namespace BookingApp.Controllers
             var data = new WhatsAppChatModel
             {
                 Key = chatId,
-                PhoneNumer = listChat.Where(x => x.ToPhoneNumber != myNum).Take(1).FirstOrDefault().ToPhoneNumber,
+                PhoneNumer = listChat.FirstOrDefault().ToPhoneNumber != myNum ? listChat.FirstOrDefault().ToPhoneNumber : listChat.FirstOrDefault().FromPhoneNumber,
                 LastMessage = listChat.OrderByDescending(p => p.Time).FirstOrDefault().Message,
                 whatsAppChats = listChat.OrderByDescending(x => x.Time).ToList()
             };

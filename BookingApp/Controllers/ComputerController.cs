@@ -11,7 +11,6 @@ using Microsoft.Extensions.Logging;
 
 namespace BookingApp.Controllers
 {
-    [Authorize(Roles.ADMIN)]
     public class ComputerController : Controller
     {
         private readonly ILogger<ComputerController> _logger;

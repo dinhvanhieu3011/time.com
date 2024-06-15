@@ -17,6 +17,7 @@ using System.Linq.Dynamic.Core;
 
 namespace BookingApp.Controllers
 {
+
     public class WhatsappController : Controller
     {
 		private readonly ILogger<WhatsappController> _logger;
@@ -39,25 +40,38 @@ namespace BookingApp.Controllers
         }
 		public IActionResult Index()
         {
-			var listMessage = _repository.GetAll().ToList();
-            var username = _httpContextAccessor.HttpContext.Session.GetString("user");
+			try
+			{
+                var listMessage = _repository.GetAll().ToList();
+                var username = _httpContextAccessor.HttpContext.Session.GetString("user");
 
-            var user = _userRepository.GetAll().FirstOrDefault(x => x.Username == username);
-            var myNum = user.Email;
+                var user = _userRepository.GetAll().FirstOrDefault(x => x.Username == username);
+                var myNum = user.Email;
 
-            var listChat = listMessage.OrderByDescending(x => x.Time).GroupBy(p => p.ChatId)
-					.Select(g => new WhatsAppChatModel
-					{
-						Key = g.Key,
-						PhoneNumer = g.Where(x=>x.ToPhoneNumber!= myNum).Take(1).FirstOrDefault().ToPhoneNumber,
-						LastMessage = g.OrderByDescending(p => p.Time).FirstOrDefault().Message,
-						whatsAppChats = g.OrderBy(x => x.Time).ToList()
-					}).ToList();
+                var listChat = listMessage.OrderByDescending(x => x.Time).GroupBy(p => p.ChatId)
+                        .Select(g => new WhatsAppChatModel
+                        {
+                            Key = g.Key,
+                            PhoneNumer = g.FirstOrDefault().ToPhoneNumber != myNum ? g.FirstOrDefault().ToPhoneNumber : g.FirstOrDefault().FromPhoneNumber,
+                            LastMessage = g.OrderByDescending(p => p.Time).FirstOrDefault().Message,
+                            whatsAppChats = g.OrderBy(x => x.Time).ToList()
+                        }).ToList();
+                if (listChat.Count == 0)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                ViewBag.MyNumber = myNum;
 
-			ViewBag.MyNumber = myNum;
-			 
 
-			return View(listChat);
+                return View(listChat);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return RedirectToAction("Index", "Home");
+
+            }
+
         }
 		public class WhatsAppChatModel
 		{

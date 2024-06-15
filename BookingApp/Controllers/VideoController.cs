@@ -4,13 +4,14 @@ using System.Linq;
 using BASE.Data.Interfaces;
 using BASE.Data.Repository;
 using BASE.Model;
+using BookingApp.Filters.Authorization;
 using BookingApp.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 namespace BookingApp.Controllers
 {
-    public class VideoController : Controller
+	public class VideoController : Controller
     {
         readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IVideosRepository _videosRepository;
