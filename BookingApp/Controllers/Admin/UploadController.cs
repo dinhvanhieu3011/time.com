@@ -200,7 +200,7 @@ namespace BookingApp.Controllers
                 Key = chatId,
                 PhoneNumer = listChat.Where(x => x.ToPhoneNumber != myNum).Take(1).FirstOrDefault().ToPhoneNumber,
                 LastMessage = listChat.OrderByDescending(p => p.Time).FirstOrDefault().Message,
-                whatsAppChats = listChat.OrderBy(x => x.Time).ToList()
+                whatsAppChats = listChat.OrderByDescending(x => x.Time).ToList()
             };
             return data;
 		}

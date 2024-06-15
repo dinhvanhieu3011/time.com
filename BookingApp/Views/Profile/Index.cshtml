@@ -37,8 +37,8 @@
                     <input type="text" class="form-control" id="username" maxlength="50" aria-describedby="username" placeholder="Username" value="@Context.Session.GetString("user")" readonly required />
                 </div>
                 <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" class="form-control" name="email" id="email" maxlength="50" aria-describedby="email" placeholder="Email" value="@Model.Email" required />
+                    <label for="email">Phone</label>
+                    <input   class="form-control" name="email" id="email" maxlength="50" aria-describedby="email" placeholder="Email" value="@Model.Email" required />
                 </div>
                 <div class="actions">
                     @if (Context.Session.GetInt32("role") == 0)

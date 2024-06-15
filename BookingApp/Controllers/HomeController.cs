@@ -80,8 +80,18 @@ namespace BookingApp.Controllers
 
                 _httpContextAccessor.HttpContext.Session.SetString("user", username);
                 _httpContextAccessor.HttpContext.Session.SetInt32("role", user.Role);
-
-                return user.Role == 0 ? RedirectToAction("Index", "Computer") : (IActionResult)RedirectToAction("Index", "File");
+                if(user.Role == 0)
+                {
+                    return RedirectToAction("Index", "User");
+                }
+                else if(user.Role == 1)
+                {
+                    RedirectToAction("Index", "Computer");
+                }
+                else
+                {
+                    RedirectToAction("Index", "Whatsapp");
+                }
             }
 
             return RedirectToAction("Index", "Home", new { error = "password" });

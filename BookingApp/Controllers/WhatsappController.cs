@@ -45,7 +45,7 @@ namespace BookingApp.Controllers
             var user = _userRepository.GetAll().FirstOrDefault(x => x.Username == username);
             var myNum = user.Email;
 
-            var listChat = listMessage.GroupBy(p => p.ChatId)
+            var listChat = listMessage.OrderByDescending(x => x.Time).GroupBy(p => p.ChatId)
 					.Select(g => new WhatsAppChatModel
 					{
 						Key = g.Key,

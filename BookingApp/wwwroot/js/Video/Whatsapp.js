@@ -30,7 +30,8 @@ Whatsapp.prototype = {
                 for (let i = 0; i < data.whatsAppChats.length; i++) {
                     if (data.whatsAppChats[i].fromPhoneNumber === mynum) {
                         html = html + "<div class='chat-message-right pb-4'>   "
-                            +    "<div>                                                                                  "
+                            + "<div>                                                                                  "
+                            + "<div class='rounded-circle mr-1 profileImage' alt='" + data.whatsAppChats[i].FromPhoneNumber + "' width='40' height='40'>" + data.whatsAppChats[i].FromPhoneNumber.Substring(data.whatsAppChats[i].FromPhoneNumber.Length - 3, 3) + "</div>"
                             +  "<div class='text-muted small text-nowrap mt-2'>" + data.whatsAppChats[i].time +"</div>   "
                             +	"				</div>                                                                   "
                             +    "<div class='flex-shrink-1 bg-light rounded py-2 px-3 mr-3'>                              "
@@ -41,10 +42,12 @@ Whatsapp.prototype = {
                     }
                     else {
                         html = html + "									<div class='chat-message-left pb-4'>   "
-                        +"<div>                                                                                  "
+                            + "<div>                                                                                  "
+                            + "<div class='rounded-circle mr-1 profileImage' alt='" + data.whatsAppChats[i].FromPhoneNumber + "' width='40' height='40'>" + data.whatsAppChats[i].FromPhoneNumber.Substring(data.whatsAppChats[i].FromPhoneNumber.Length - 3, 3)+"</div>"
                         +"<div class='text-muted small text-nowrap mt-2'>" + data.whatsAppChats[i].time + "</div>                          "
                         +"				</div>                                                                   "
-                        +"<div class='flex-shrink-1 bg-light rounded py-2 px-3 mr-3'>                              "
+                            + "<div class='flex-shrink-1 bg-light rounded py-2 px-3 mr-3'>                              "
+                        +""
                             + "    <div class='font-weight-bold mb-1'>" + data.whatsAppChats[i].fromPhoneNumber + "</div>                       "
                             + data.whatsAppChats[i].message +
                                 "</div>"

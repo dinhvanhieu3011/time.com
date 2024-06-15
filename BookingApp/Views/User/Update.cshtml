@@ -34,7 +34,7 @@
             }
         </div>
         <div>
-            @using (Html.BeginForm("Update", "User", FormMethod.Post, new { role = "form" }))
+            @using (Html.BeginForm("Update", "User", FormMethod.Post))
             {
                 @Html.AntiForgeryToken()
                 <div class="form-group">
@@ -47,9 +47,37 @@
                 </div>
                 <div class="form-group">
                     <label for="author">Phone Number</label>
-                    <input type="text" class="form-control" value="@Model.Email"  name="" id="email" placeholder="" required>
+                    <input type="text" class="form-control" value="@Model.Email" name="phone" id="phone" placeholder="">
                 </div>
-
+                <div class="form-group">
+                    <label for="author">Role</label>
+                    <select class="form-control" name="role" id="role">
+                        @if(Model.Role == 0)
+                        {
+                            <option selected value="0">Admin</option>
+                        }
+                        else
+                        {
+                            <option value="0">Admin</option>
+                        }
+                        @if (Model.Role == 1)
+                        {
+                            <option selected value="1">DexTrack</option>
+                        }
+                        else
+                        {
+                            <option value="1">DexTrack</option>
+                        }
+                        @if (Model.Role == 2)
+                        {
+                            <option selected value="2">Whatsapp</option>
+                        }
+                        else
+                        {
+                            <option value="2">Whatsapp</option>
+                        }
+                    </select>
+                </div>
                 <div class="form-group">
                     <label for="author">Telegram Token</label>
                     <input type="text" class="form-control" value="@Model.TeleToken" name="teleToken" id="teleToken" aria-describedby="teleToken" placeholder="" required>

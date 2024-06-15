@@ -15,6 +15,7 @@
 						{
 							<div  id="@item.Key" class="card1 list-group-item list-group-item-action border-0">
 								<div class="d-flex align-items-start">
+									<div class="rounded-circle mr-1 profileImage" width="40" height="40">@item.PhoneNumer.Substring(@item.PhoneNumer.Length-3, 3)</div>
 									<div class="flex-grow-1 ml-3" style="font-weight:bold">
 										@item.PhoneNumer
 										<div class="small"> @item.LastMessage</div>
@@ -27,6 +28,7 @@
 					<div class="col-12 col-lg-7 col-xl-9">
 						<div class="py-2 px-4 border-bottom d-none d-lg-block">
 							<div class="d-flex align-items-center py-1">
+								<div class="rounded-circle mr-1 profileImage" alt="@Model.FirstOrDefault().PhoneNumer" width="40" height="40">@Model.FirstOrDefault().PhoneNumer.Substring(@Model.FirstOrDefault().PhoneNumer.Length - 3, 3)</div>
 								<div class="flex-grow-1 pl-3">
 									<strong id="curren_number"> @Model.FirstOrDefault().PhoneNumer </strong>
 								</div>
@@ -43,6 +45,7 @@
 									{
 										<div class="chat-message-right pb-4">
 											<div>
+												<div class="rounded-circle mr-1 profileImage" alt="@item.FromPhoneNumber" width="40" height="40">@item.FromPhoneNumber.Substring(@Model.FirstOrDefault().PhoneNumer.Length - 3, 3)</div>
 												<div class="text-muted small text-nowrap mt-2">@item.Time</div>
 											</div>
 											<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
@@ -55,6 +58,7 @@
 									{
 										<div class="chat-message-left pb-4">
 											<div>
+												<div class="rounded-circle mr-1 profileImage" alt="@item.FromPhoneNumber" width="40" height="40">@item.FromPhoneNumber.Substring(@Model.FirstOrDefault().PhoneNumer.Length - 3, 3)</div>
 												<div class="text-muted small text-nowrap mt-2">@item.Time</div>
 											</div>
 											<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
@@ -75,6 +79,16 @@
 	</main>
 </div>
 <style>
+	.profileImage {
+		width: 30px;
+		height: 30px;
+		border-radius: 50%;
+		background: #512DA8;
+		font-size: 14px;
+		color: #fff;
+		text-align: center;
+		line-height: 29px;
+	}
 	body {
 		margin-top: 20px;
 	}
