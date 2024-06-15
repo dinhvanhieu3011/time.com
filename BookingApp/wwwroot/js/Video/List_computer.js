@@ -127,7 +127,10 @@ List_computer.prototype = {
                                 ,
                             {
                                 "mDataProp": "employeeName"
-                            }
+                                    ,
+                            {
+                                    "mDataProp": "version"
+                                }
                                 , {
                                 "mDataProp": "status"
                             }

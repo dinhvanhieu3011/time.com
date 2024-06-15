@@ -14,5 +14,6 @@ namespace BASE.Entity.DexTrack
         public string Token { get; set; }
         public string EmployeeName { get; set; }
         public string Status { get; set; }
+        public string Version { get; set; }
     }
 }

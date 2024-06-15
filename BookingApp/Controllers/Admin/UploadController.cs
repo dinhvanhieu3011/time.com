@@ -21,6 +21,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Linq.Dynamic.Core;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using static BookingApp.Controllers.WhatsappController;
 
@@ -65,24 +66,32 @@ namespace BookingApp.Controllers
 
 
 
-        private bool? Insert(string ComputerName, string Token, string EmployeeName)
+        private bool? Insert(string ComputerName, string Token, string EmployeeName,string Version)
         {
             try
             {
-                var isExist = _computerRepository.GetAll().Where(x => x.Token == Token).Any();
-                if (!isExist)
+                var computer = _computerRepository.GetAll().Where(x => x.Token == Token).FirstOrDefault();
+                if (computer == null)
                 {
                     ChannelYoutubes channel = new ChannelYoutubes();
                     channel.Name = ComputerName;
                     channel.Token = Token;
                     channel.EmployeeName = EmployeeName;
+                    computer.Version = Version;
                     _computerRepository.Insert(channel);
                     _unitOfWork.Complete();
                     return true;
                 }
                 else
                 {
-                    return null;
+                    computer.Name = ComputerName;
+                    computer.Token = Token;
+                    computer.EmployeeName = EmployeeName;
+                    computer.Version = Version;
+                    _computerRepository.Update(computer);
+                    _unitOfWork.Complete();
+                    return true;
+
                 }
 
             }
@@ -93,13 +102,13 @@ namespace BookingApp.Controllers
         }
         private readonly JsonResponse response = new JsonResponse();
         [HttpPost]
-        public JsonResponse CreateComputer(string ComputerName, string Token, string EmployeeName)
+        public JsonResponse CreateComputer(string ComputerName, string Token, string EmployeeName,string Version)
         {
             if (!ModelState.IsValid)
             {
                 this.response.Success = false; 
             }
-            switch (Insert(ComputerName, Token,EmployeeName))
+            switch (Insert(ComputerName, Token,EmployeeName, Version))
             {
                 case true:
                     this.response.Success = true; break;
