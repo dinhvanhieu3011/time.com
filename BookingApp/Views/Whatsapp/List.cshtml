@@ -1,0 +1,144 @@
+﻿@{
+    ViewData["Title"] = "Chat Manager ";
+}
+
+
+<div class="container">
+    <div>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="#booksTab" data-toggle="tab">Chat whatsapp </a>
+            </li>
+        </ul>
+
+        <div class="tab-content clearfix">
+            <div class="tab-pane active" id="booksTab">
+                <dl class="row">
+                    <div class="tab-content clearfix">
+                        <div class="tab-pane active" id="booksTab">
+                            <div class="row">
+                                <div class="col-sm-12">
+
+                                    <div class="tab-content">
+                                        <div id="tab_1" class="tab-pane active">
+                                            <div class="box">
+                                                <!-- Bộ tìm kiếm -->
+                                                <div class="box-body" id="zone_timkiem">
+                                                    <!--Row 1-->
+                                                    <!--End Row 1-->
+                                                    <!--Row 2-->
+                                                    <div style="width: 100%">
+                                                        <div style="width: 10%; float: left">
+                                                            <label style="margin-top: 5px !important">Từ khoá </label>
+                                                        </div>
+                                                        <div style="width: 30%; float: left; padding-right: 10px;">
+                                                            <input type="text" id="ngay_nhapxuat"  class="form-control" />
+                                                        </div>
+
+                                                        <div class="clear"></div>
+                                                    </div>
+                                                    <!--End Row 2-->
+                                                    <!--Row 3-->
+                                                    <!--End Row 3-->
+                                                    <!--Row 4-->
+                                                    <div style="width: 100%">
+                                                        <div style="width: 10%; float: left">
+                                                            <label style="margin-top: 0px !important"></label>
+                                                        </div>
+                                                        <div style="width: 70%; float: left; margin-right: 10px">
+                                                            <div class="pull-left">
+                                                                <a class="btn btn-default" href="javascript:void(0)" id="btnTimKiem" title="Tìm kiếm"><i class="fa fa-search"></i> Tìm kiếm </a>
+                                                                <a title="Hủy tìm kiếm" class="btn btn-default" id="btnHuyTimKiem"><i class="fa fa-undo"></i> Hủy tìm kiếm </a>
+                                                            </div>
+                                                            <div class="pull-right" style="margin-top: 10px">
+                                                            </div>
+                                                        </div>
+                                                        <div style="width: 20%; float: left">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--End Row 6-->
+                                                <!--Table-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <dl class="row">
+                                <dd class="col-sm-12">
+                                    <table id="tbldata" class="table table-bordered table-hover tbl-pagination" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th style="display: none">Id</th>
+                                                <th style="width: 200px; text-align: center !important">From</th>
+                                                <th style="width: 350px; text-align: center !important">To</th>
+                                                <th style="width: 250px;text-align: center !important">Time</th>
+                                                <th style="width: 350px;text-align: center !important">Message</th>   
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                 </dl>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+
+    h4 {
+        padding-top: 15px;
+        padding-bottom: 10px;
+    }
+
+    .pNew {
+        padding-top: 12px;
+    }
+
+    .col-right {
+        text-align: right;
+    }
+</style>
+<style>
+    /* Style for the table */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+
+    /* Style for table header */
+    th {
+        background-color: #f2f2f2;
+        color: #333;
+        padding: 8px;
+        text-align: left;
+    }
+
+    /* Style for table rows */
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    /* Style for table cells */
+    td {
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    /* Hover effect for table rows */
+    tr:hover {
+        background-color: #f2f2f2;
+    }
+</style>
+<script src="/js/Video/List_chat.js?v=1" type="text/javascript"></script>
+<script type="text/javascript">
+    var main_doc = {};
+    main_doc['List_chat'] = new List_chat();
+    $(document).ready(function () {
+        main_doc.List_chat.init();
+    });
+</script>

@@ -8,6 +8,7 @@ using BASE.Entity.DexTrack;
 using BASE.Model;
 using BASE.Model.Dextrack;
 using BookingApp.Models;
+using Hangfire.MemoryStorage.Database;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -63,8 +64,45 @@ namespace BookingApp.Controllers
 
         }
 
+        [HttpPost]
+        public JsonResponse CreateMessage(string ChatId, long Timestamp, string FromPhoneNumber,
+            string FromId,string ToPhoneNumber,string ToId, string Message)
+        {
+            try
+            {
+                    WhatsAppChat channel = new WhatsAppChat();
+                    channel.Id = Guid.NewGuid().ToString();
+                    channel.ChatId = ChatId;
+                    channel.Timestamp = Timestamp;
+                    channel.FromPhoneNumber = FromPhoneNumber;
+                    channel.FromId = FromId;
+                    channel.ToPhoneNumber = ToPhoneNumber;
+                    channel.ToId = ToId;
+                    channel.Message = Message;
+                    channel.Time = UnixTimeStampToDateTime(Timestamp);
 
+                      _whatsAppChatRepository.Insert(channel);
+                    _unitOfWork.Complete();
+                    this.response.Success = true;
+                    return this.response;
+                
 
+            }
+            catch
+            {
+                this.response.Success = false;
+
+                return this.response;
+            }
+
+        }
+        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
+        {
+            // Unix timestamp is seconds past epoch
+            DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            dateTime = dateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+            return dateTime;
+        }
 
         private bool? Insert(string ComputerName, string Token, string EmployeeName,string Version)
         {
@@ -196,20 +234,17 @@ namespace BookingApp.Controllers
             }
         }
         [HttpGet]
-        public WhatsAppChatModel getChat(string chatId)
+        public WhatsAppChatModel getChat(string chatId, string myNum)
         {
-            var username = _httpContextAccessor.HttpContext.Session.GetString("user");
 
-            var user = _usersDTRepository.GetAll().FirstOrDefault(x => x.Username == username);
 
             var listChat = _whatsAppChatRepository.GetAll().Where(x => x.ChatId == chatId).ToList();
-			var myNum = user.Email;
             var data = new WhatsAppChatModel
             {
                 Key = chatId,
                 PhoneNumer = listChat.FirstOrDefault().ToPhoneNumber != myNum ? listChat.FirstOrDefault().ToPhoneNumber : listChat.FirstOrDefault().FromPhoneNumber,
-                LastMessage = listChat.OrderByDescending(p => p.Time).FirstOrDefault().Message,
-                whatsAppChats = listChat.OrderByDescending(x => x.Time).ToList()
+                LastMessage = listChat.OrderBy(p => p.Time).FirstOrDefault().Message,
+                whatsAppChats = listChat.OrderBy(x => x.Time).ToList()
             };
             return data;
 		}

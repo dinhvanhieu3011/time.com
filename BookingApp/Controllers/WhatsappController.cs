@@ -38,15 +38,19 @@ namespace BookingApp.Controllers
             _httpContextAccessor = httpContextAccessor;
 
         }
-		public IActionResult Index()
+        public IActionResult List()
+        {
+            return View();
+        }
+        public IActionResult Index(string myNum)
         {
 			try
 			{
                 var listMessage = _repository.GetAll().ToList();
-                var username = _httpContextAccessor.HttpContext.Session.GetString("user");
+                //var username = _httpContextAccessor.HttpContext.Session.GetString("user");
 
-                var user = _userRepository.GetAll().FirstOrDefault(x => x.Username == username);
-                var myNum = user.Email;
+                //var user = _userRepository.GetAll().FirstOrDefault(x => x.Username == username);
+                //var myNum = user.Email;
 
                 var listChat = listMessage.OrderByDescending(x => x.Time).GroupBy(p => p.ChatId)
                         .Select(g => new WhatsAppChatModel

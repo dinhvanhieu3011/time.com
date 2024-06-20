@@ -23,9 +23,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Remove="Views\Whatsapp\Index.cshtml" />
+    <Content Remove="Views\Whatsapp\List.cshtml" />
     <Content Remove="wwwroot\js\Video\Dashboard.js" />
     <Content Remove="wwwroot\js\Video\Detail.js" />
     <Content Remove="wwwroot\js\Video\List.js" />
+    <Content Remove="wwwroot\js\Video\List_chat.js" />
     <Content Remove="wwwroot\js\Video\Whatsapp.js" />
   </ItemGroup>
   <ItemGroup>
@@ -85,6 +87,7 @@
     <None Include="Views\Video\Index.cshtml" />
     <None Include="Views\Video\List.cshtml" />
     <None Include="Views\Whatsapp\Index.cshtml" />
+    <None Include="Views\Whatsapp\List.cshtml" />
     <None Include="Views\_ViewImports.cshtml" />
     <None Include="Views\_ViewStart.cshtml" />
     <None Include="wwwroot\App_Themes\CMSV2\bootstrap\css\bootstrap.css.map" />
@@ -1784,8 +1787,9 @@
     <None Include="wwwroot\Core\systemextend.js" />
     <None Include="wwwroot\Core\systemroot.js" />
     <None Include="wwwroot\Core\utility.js" />
+    <None Include="wwwroot\js\Video\List_chat.js" />
     <None Include="wwwroot\js\Video\Whatsapp.js" />
-    <None Include="wwwroot\js\Video\List_computer.js" />
+    <None Include="wwwroot\js\Video\List_chat.js" />
     <None Include="wwwroot\js\Video\Detail.js" />
     <None Include="wwwroot\js\Video\Dashboard.js" />
     <None Include="wwwroot\js\Video\List.js" />
