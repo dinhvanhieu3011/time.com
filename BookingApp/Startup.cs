@@ -53,7 +53,6 @@ namespace BookingApp
             });
 
             services.AddCors();
-            services.AddControllersWithViews();
             services.AddSession(options => {
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
             });

@@ -94,13 +94,13 @@ List_chat.prototype = {
                             {
                                 "mDataProp": "fromPhoneNumber",
                                 "mRender": function (data) {
-                                    return '<a  href="/Whatsapp/index/' + data +'">' + data + '</a>';
+                                    return '<a  href="/Profile/detail/' + data +'">' + data + '</a>';
                                 }
                             },
                                        {
                                            "mData": "toPhoneNumber",
                                     "mRender": function (data) {
-                                        return '<a  href="/Whatsapp/index/' + data +'">' + data +'</a>';
+                                        return '<a  href="/Profile/detail/' + data +'">' + data +'</a>';
                                     }
                                 },
                                 {

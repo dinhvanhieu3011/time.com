@@ -22,6 +22,7 @@
     <None Remove="wwwroot\js\Computer\**" />
   </ItemGroup>
   <ItemGroup>
+    <Content Remove="Views\Chats\List.cshtml" />
     <Content Remove="Views\Whatsapp\Index.cshtml" />
     <Content Remove="Views\Whatsapp\List.cshtml" />
     <Content Remove="wwwroot\js\Video\Dashboard.js" />
@@ -65,6 +66,7 @@
     <None Include="Views\Account\MutiAdd.cshtml" />
     <None Include="Views\Account\Update.cshtml" />
     <None Include="Views\ChangePassword\Index.cshtml" />
+    <None Include="Views\Chats\List.cshtml" />
     <None Include="Views\Computer\Create.cshtml" />
     <None Include="Views\Computer\Index.cshtml" />
     <None Include="Views\Computer\Live.cshtml" />

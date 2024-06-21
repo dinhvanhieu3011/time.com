@@ -43,7 +43,7 @@ namespace BookingApp.Controllers
             }
             else
             {
-                RedirectToAction("Index", "Whatsapp");
+                RedirectToAction("List", "Profile");
             }
 
             return View();
@@ -99,7 +99,7 @@ namespace BookingApp.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("List", "Whatsapp");
+                    return RedirectToAction("List", "Profile");
                 }
             }
 

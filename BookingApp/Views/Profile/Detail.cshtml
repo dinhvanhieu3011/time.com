@@ -1,0 +1,153 @@
+﻿@{
+	ViewData["Title"] = "Whatsapp ";
+}
+
+@model List<BookingApp.Controllers.ProfileController.WhatsAppChatModel>
+<div class="container">
+	<input id="my_num" value="@ViewBag.MyNumber" hidden />
+	<main class="content">
+		<div class="container p-0">
+			<div class="card">
+				<div class="row g-0">
+					<div class="col-12 col-lg-5 col-xl-3 border-right">
+
+						@foreach (var item in Model)
+						{
+							<div id="@item.Key" class="card1 list-group-item list-group-item-action border-0">
+								<div class="d-flex align-items-start">
+									<div class="rounded-circle mr-1 profileImage" width="40" height="40">@item.PhoneNumer.Substring(@item.PhoneNumer.Length - 3, 3)</div>
+									<div class="flex-grow-1 ml-3" style="font-weight:bold">
+										@item.PhoneNumer
+										<div class="small"> @item.LastMessage</div>
+									</div>
+								</div>
+							</div>
+						}
+						<hr class="d-block d-lg-none mt-1 mb-0">
+					</div>
+					<div class="col-12 col-lg-7 col-xl-9">
+						<div class="py-2 px-4 border-bottom d-none d-lg-block">
+							<div class="d-flex align-items-center py-1">
+								<div class="rounded-circle mr-1 profileImage" alt="@Model.FirstOrDefault().PhoneNumer" width="40" height="40">@Model.FirstOrDefault().PhoneNumer.Substring(@Model.FirstOrDefault().PhoneNumer.Length - 3, 3)</div>
+								<div class="flex-grow-1 pl-3">
+									<strong id="curren_number"> @Model.FirstOrDefault().PhoneNumer </strong>
+								</div>
+							</div>
+						</div>
+
+						<div class="position-relative">
+							<div class="chat-messages p-4" id="chat">
+
+								@foreach (var item in Model.FirstOrDefault().whatsAppChats)
+								{
+									//if (item.FromPhoneNumber == "84845050998")
+									if (item.FromPhoneNumber == ViewBag.MyNumber)
+									{
+										<div class="chat-message-right pb-4">
+											<div>
+												<div class="rounded-circle mr-1 profileImage" alt="@item.FromPhoneNumber" width="40" height="40">@item.FromPhoneNumber.Substring(@Model.FirstOrDefault().PhoneNumer.Length - 3, 3)</div>
+												<div class="text-muted small text-nowrap mt-2">@item.Time</div>
+											</div>
+											<div class="flex-shrink-1 bg-light rounded py-2 px-5 mr-5">
+												<div class="font-weight-bold mb-1">@item.FromPhoneNumber</div>
+												@item.Message
+											</div>
+										</div>
+									}
+									else
+									{
+										<div class="chat-message-left pb-4">
+											<div>
+												<div class="rounded-circle mr-1 profileImage" alt="@item.FromPhoneNumber" width="40" height="40">@item.FromPhoneNumber.Substring(@Model.FirstOrDefault().PhoneNumer.Length - 3, 3)</div>
+												<div class="text-muted small text-nowrap mt-2">@item.Time</div>
+											</div>
+											<div class="flex-shrink-1 bg-light rounded py-2 px-5 mr-5">
+												<div class="font-weight-bold mb-1">@item.FromPhoneNumber</div>
+												@item.Message
+											</div>
+										</div>
+									}
+
+								}
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</div>
+<style>
+	.profileImage {
+		width: 30px;
+		height: 30px;
+		border-radius: 50%;
+		background: #512DA8;
+		font-size: 14px;
+		color: #fff;
+		text-align: center;
+		line-height: 29px;
+	}
+
+	body {
+		margin-top: 20px;
+	}
+
+	.chat-online {
+		color: #34ce57
+	}
+
+	.chat-offline {
+		color: #e4606d
+	}
+
+	.chat-messages {
+		display: flex;
+		flex-direction: column;
+		max-height: 800px;
+		overflow-y: scroll
+	}
+
+	.chat-message-left,
+	.chat-message-right {
+		display: flex;
+		flex-shrink: 0
+	}
+
+	.chat-message-left {
+		margin-right: auto
+	}
+
+	.chat-message-right {
+		flex-direction: row-reverse;
+		margin-left: auto
+	}
+
+	.py-3 {
+		padding-top: 1rem !important;
+		padding-bottom: 1rem !important;
+	}
+
+	.px-4 {
+		padding-right: 1.5rem !important;
+		padding-left: 1.5rem !important;
+	}
+
+	.flex-grow-0 {
+		flex-grow: 0 !important;
+	}
+
+	.border-top {
+		border-top: 1px solid #dee2e6 !important;
+	}
+</style>
+
+<script src="/js/Video/Whatsapp.js?v=1" type="text/javascript"></script>
+<script type="text/javascript">
+	var main_doc = {};
+	main_doc['Whatsapp'] = new Whatsapp();
+	$(document).ready(function () {
+		main_doc.Whatsapp.init();
+	});
+</script>
