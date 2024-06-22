@@ -22,6 +22,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Linq.Dynamic.Core;
+using System.Net.Http;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using static BookingApp.Controllers.WhatsappController;
@@ -277,6 +278,7 @@ namespace BookingApp.Controllers
                         item.Status = "Mất kết nối";
                     }
                 }
+
                 totalRow = data.Count();
                 this.response.Data = data.OrderByDescending(x => x.Id).ToList();
                 this.response.Success = true;
@@ -289,6 +291,23 @@ namespace BookingApp.Controllers
                 this.response.Message = ex.Message;
                 return this.response;
             }
+        }
+        protected async void sendmessageTelegram(string message)
+        {
+            try
+            {
+                var user = _usersDTRepository.GetAll().FirstOrDefault(x => x.Username == "admin");
+                string url = string.Format("https://api.telegram.org/bot{0}/sendMessage?chat_id={1}&text={2}", user.TeleToken, user.ChatId, message);
+                var client = new HttpClient();
+                var request = new HttpRequestMessage(HttpMethod.Get, url);
+                var response = await client.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                Console.WriteLine(await response.Content.ReadAsStringAsync());
+            }
+            catch { }
+
+
+
         }
         [HttpGet]
         public JsonResponse getList(string Ngay, int id,  int pageIndex, int pageSize)

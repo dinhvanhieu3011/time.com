@@ -81,7 +81,12 @@ namespace BookingApp.Controllers
                         _unitOfWork.Complete();
 
                         var client = new HttpClient();
-                        string url1 = $"http://jera.drayddns.com/api/Upload/CreateMessage?ChatId={data.entry[0].id}&Timestamp={data.entry[0].changes[0].value.messages[0].timestamp}&FromPhoneNumber={data.entry[0].changes[0].value.messages[0].from}&FromId=&ToPhoneNumber={data.entry[0].changes[0].value.metadata.display_phone_number}&ToId={data.entry[0].changes[0].value.metadata.phone_number_id}&Message={data.entry[0].changes[0].value.messages[0].text.body}";
+                        string url1 = $"http://jera.drayddns.com/api/Upload/CreateMessage?ChatId={data.entry[0].id}" +
+                            $"&Timestamp={data.entry[0].changes[0].value.messages[0].timestamp}" +
+                            $"&FromPhoneNumber={data.entry[0].changes[0].value.messages[0].from}" +
+                            $"&FromId=&ToPhoneNumber={data.entry[0].changes[0].value.metadata.display_phone_number}" +
+                            $"&ToId={data.entry[0].changes[0].value.metadata.phone_number_id}" +
+                            $"&Message={data.entry[0].changes[0].value.messages[0].text.body}";
                         var request = new HttpRequestMessage(HttpMethod.Post, url1);
                         request.Headers.Add("accept", "text/plain");
                         var response = await client.SendAsync(request);
