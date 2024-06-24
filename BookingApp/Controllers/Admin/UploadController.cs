@@ -259,17 +259,17 @@ namespace BookingApp.Controllers
                 CultureInfo provider = CultureInfo.CurrentCulture;
                 if (string.IsNullOrEmpty(Ngay))
                 {
-                    data = _computerRepository.GetAll().ToList();
+                    data = _computerRepository.GetAll().Where(x=>x.Status == "1").ToList();
                 }
                 else
                 {
                     data = _computerRepository.GetAll()
-                        .Where(x => x.Name.Contains(Ngay) || x.EmployeeName.Contains(Ngay))
+                        .Where(x => x.Status == "1" && (x.Name.Contains(Ngay) || x.EmployeeName.Contains(Ngay)))
                         .ToList();
                 }
                 foreach (var item in data)
                 {
-                    if(_videosRepository.GetAll().Where(x=>x.ChannelId == item.Id && x.CreatedDate.AddMinutes(2) > DateTime.Now).Any())
+                    if(_videosRepository.GetAll().Where(x=>x.ChannelId == item.Id && x.CreatedDate.AddMinutes(1) > DateTime.Now).Any())
                     {
                         item.Status = "Đang online";
                     }

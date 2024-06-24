@@ -177,7 +177,8 @@ namespace BookingApp.Controllers
                     return RedirectToAction("Index", "Computer");
                 }
                 var com = _computerRepository.GetAll().Where(x=>x.Id == id).FirstOrDefault();
-                _computerRepository.Delete(com);
+                com.Status = "0";
+                _computerRepository.Update(com);
                 _unitOfWork.Complete();
                 _logger.LogInformation("Xoá Máy " + id + " thành công!");
 

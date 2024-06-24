@@ -61,7 +61,7 @@ namespace BookingApp.Service
         public async Task RunJob()
         {
             var OneHoursAgo = DateTime.Now.AddHours(-0.5);
-            var listComputer = _computerRepository.GetAll().Select(x => x.Id).ToList();
+            var listComputer = _computerRepository.GetAll().Where(x => x.Status == "1").Select(x => x.Id).ToList();
             foreach (var item in listComputer)
             {
                 var lstVideo = _videosRepository.GetAll()
@@ -87,44 +87,48 @@ namespace BookingApp.Service
                         var firstVideo = videos.FirstOrDefault();
                         var lastVideo = videos.LastOrDefault();
                         var videoMergeName = ConvertToTicks(firstVideo.Start) + "_" + ConvertToTicks(lastVideo.End) + "_" + item;
-                        try
+                        var isExist = _videosRepository.GetAll().Where(x=>x.VideoPath.Contains(videoMergeName)).Any();
+                        if (!isExist)
                         {
-                            var list = videos.Select(x => x.VideoPath).ToList();
+							try
+							{
+								var list = videos.Select(x => x.VideoPath).ToList();
 
-                            fullPath = Helper.CreateMasterM3U8(_env.ContentRootPath, list, videoMergeName + ".m3u8");
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError(ex.ToString());
-                            return;
-                        }
+								fullPath = Helper.CreateMasterM3U8(_env.ContentRootPath, list, videoMergeName + ".m3u8");
+							}
+							catch (Exception ex)
+							{
+								_logger.LogError(ex.ToString());
+								return;
+							}
 
 
-                        _logger.LogInformation("Tạo mới video: " + videoMergeName);
-                        var video = new Videos()
-                        {
-                            Id = Guid.NewGuid().ToString(),
-                            VideoPath = fullPath,
-                            Keylog = "",
-                            Apps = "",
-                            ChannelId = item,
-                            CreatedDate = DateTime.Now,
-                            Year = a.Key.Year,
-                            Month = a.Key.Month,
-                            Date = a.Key.Date,
-                            Hours = a.Key.Hours,
-                            Minutes = 0,
-                            Start = firstVideo.Start,
-                            End = lastVideo.End,
-                            IsDelete = 0,
-                            IsMerge = 1
-                        };
+							_logger.LogInformation("Tạo mới video: " + videoMergeName);
+							var video = new Videos()
+							{
+								Id = Guid.NewGuid().ToString(),
+								VideoPath = fullPath,
+								Keylog = "",
+								Apps = "",
+								ChannelId = item,
+								CreatedDate = DateTime.Now,
+								Year = a.Key.Year,
+								Month = a.Key.Month,
+								Date = a.Key.Date,
+								Hours = a.Key.Hours,
+								Minutes = 0,
+								Start = firstVideo.Start,
+								End = lastVideo.End,
+								IsDelete = 0,
+								IsMerge = 1
+							};
 
-                        _videosRepository.Insert(video);
-                        _unitOfWork.Complete();
-                        MergeUserSession(videos, video.Id);
-                        MergeUserAction(videos, video.Id);
-                        UpdateStatusVideo(videos);
+							_videosRepository.Insert(video);
+							_unitOfWork.Complete();
+							MergeUserSession(videos, video.Id);
+							MergeUserAction(videos, video.Id);
+							UpdateStatusVideo(videos);
+						}
                     }
 
                 }
