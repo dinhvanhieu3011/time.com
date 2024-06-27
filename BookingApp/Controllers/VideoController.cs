@@ -81,10 +81,10 @@ namespace BookingApp.Controllers
         {
             var model = new VideoModel();
             var book = _videosRepository.GetAll().Where(x => x.Id == id).FirstOrDefault();
-            var list = new List<string>();
-            list.Add( book.VideoPath.Replace(@"\", @"/"));
+            var list = new List<Videos>();
+            list.Add( book);
             string rootPath = _env.ContentRootPath;
-            var videoPath = Helper.CreateMasterM3U8(rootPath,list).Replace(@"\", @"/");
+            var videoPath = Helper.CreateMasterM3U8(rootPath, list).Replace(@"\", @"/");
             var userSession = _userSessionRepository.GetAll().Where(x => x.VideoId == id).ToList();
             var userAction = _userActionRepository.GetAll().Where(x => x.VideoId == id).ToList();
             model.userSessions = userSession;
@@ -97,31 +97,66 @@ namespace BookingApp.Controllers
             var model = new VideoModel();  
             if(!string.IsNullOrEmpty(id))
             {
-                var book = _videosRepository.GetAll().Where(x => x.Id == id).FirstOrDefault();
-                var channel = _computerRepository.GetAll().Where(x => x.Id == book.ChannelId).FirstOrDefault();
-                var relatedVideo = _videosRepository.GetAll().Where(x => x.ChannelId == channel.Id && x.Year == book.Year
-                && x.Month == book.Month && x.Date == book.Date && x.IsDelete == 0 && x.Id != id)
-                    .OrderByDescending(x => x.Id).Take(5).ToList();
-                var userSession = _userSessionRepository.GetAll().Where(x => x.VideoId == id).ToList();
-                var userAction = _userActionRepository.GetAll().Where(x => x.VideoId == id).ToList();
-                model.userSessions = userSession;
-                model.Video = book;
-                model.userActions = userAction;
-                if (book.IsMerge == 1)
+                Videos book = new Videos();
+                if (id.Contains("unmerge"))
                 {
-                    ViewBag.filePath = book.VideoPath.Replace(@"\", @"/");
+                    var arr = id.Split("-");
+                    //Id = "unmerge-" + g.Key.Year + "-" + g.Key.Month + "-" + g.Key.Date + "-" + g.Key.Hours + "-" + id
+                    var lstbook = _videosRepository.GetAll().Where(x => x.IsDelete == 0 && x.IsMerge == 0 &&
+                    x.ChannelId == int.Parse(arr[5]) && x.Year == int.Parse(arr[1])
+                && x.Month == int.Parse(arr[2]) && x.Date == int.Parse(arr[3]) && x.Hours == int.Parse(arr[4]) && x.IsDelete == 0 && x.Id != id);
+                    book = lstbook.FirstOrDefault();
+                    var lstId = lstbook.Select(x=>x.Id).ToList();
+                    //book = _videosRepository.GetAll().Where(x => x.Id == id).FirstOrDefault();
+                    var channel = _computerRepository.GetAll().Where(x => x.Id == book.ChannelId).FirstOrDefault();
+                    var relatedVideo = _videosRepository.GetAll().Where(x => x.ChannelId == channel.Id && x.Year == book.Year
+                    && x.Month == book.Month && x.Date == book.Date && x.IsDelete == 0 && x.Id != id)
+                        .OrderByDescending(x => x.Id).Take(5).ToList();
+                    var userSession = _userSessionRepository.GetAll().Where(x => lstId.Contains(x.VideoId)).ToList();
+                    var userAction = _userActionRepository.GetAll().Where(x => lstId.Contains(x.VideoId)).ToList();
+                    model.userSessions = userSession;
+                    model.Video = book;
+                    model.userActions = userAction;
 
+                    var list = lstbook.Select(x => x.VideoPath.Replace(@"\", @"/")).ToList();
+                        string rootPath = _env.ContentRootPath;
+                        var videoPath = Helper.CreateMasterM3U8(rootPath, lstbook.ToList());
+                        ViewBag.filePath = videoPath.Replace(@"\", @"/");
+                  
+                    ViewBag.relatedVideo = relatedVideo;
+                    ViewBag.channel = channel.Name;
                 }
                 else
                 {
-                    var list = new List<string>();
-                    list.Add(book.VideoPath.Replace(@"\", @"/"));
-                    string rootPath = _env.ContentRootPath;
-                    var videoPath = Helper.CreateMasterM3U8(rootPath, list);
-                    ViewBag.filePath = videoPath.Replace(@"\", @"/");
+                     book = _videosRepository.GetAll().Where(x => x.Id == id).FirstOrDefault();
+                    //book = _videosRepository.GetAll().Where(x => x.Id == id).FirstOrDefault();
+                    var channel = _computerRepository.GetAll().Where(x => x.Id == book.ChannelId).FirstOrDefault();
+                    var relatedVideo = _videosRepository.GetAll().Where(x => x.ChannelId == channel.Id && x.Year == book.Year
+                    && x.Month == book.Month && x.Date == book.Date && x.IsDelete == 0 && x.Id != id)
+                        .OrderByDescending(x => x.Id).Take(5).ToList();
+                    var userSession = _userSessionRepository.GetAll().Where(x => x.VideoId == id).ToList();
+                    var userAction = _userActionRepository.GetAll().Where(x => x.VideoId == id).ToList();
+                    model.userSessions = userSession;
+                    model.Video = book;
+                    model.userActions = userAction;
+                    if (book.IsMerge == 1)
+                    {
+                        ViewBag.filePath = book.VideoPath.Replace(@"\", @"/");
+
+                    }
+                    else
+                    {
+                        var list = new List<string>();
+                        list.Add(book.VideoPath.Replace(@"\", @"/"));
+                        string rootPath = _env.ContentRootPath;
+                        var videoPath = Helper.CreateMasterM3U8(rootPath, list);
+                        ViewBag.filePath = videoPath.Replace(@"\", @"/");
+                    }
+                    ViewBag.relatedVideo = relatedVideo;
+                    ViewBag.channel = channel.Name;
                 }
-                ViewBag.relatedVideo = relatedVideo;
-                ViewBag.channel = channel.Name;
+
+
             }    
 
             return View(model);

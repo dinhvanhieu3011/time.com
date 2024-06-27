@@ -60,7 +60,7 @@ namespace BookingApp.Service
         }
         public async Task RunJob()
         {
-            var OneHoursAgo = DateTime.Now.AddHours(-2);
+            var OneHoursAgo = DateTime.Now.AddHours(-1);
             var listComputer = _computerRepository.GetAll().Where(x => x.Status == "1").Select(x => x.Id).ToList();
             foreach (var item in listComputer)
             {
@@ -94,7 +94,7 @@ namespace BookingApp.Service
 							{
 								var list = videos.Select(x => x.VideoPath).ToList();
 
-								fullPath = Helper.CreateMasterM3U8(_env.ContentRootPath, list, videoMergeName + ".m3u8");
+								fullPath = Helper.CreateMasterM3U8(_env.ContentRootPath, videos, videoMergeName + ".m3u8");
 							}
 							catch (Exception ex)
 							{

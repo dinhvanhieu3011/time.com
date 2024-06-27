@@ -328,13 +328,62 @@ namespace BookingApp.Controllers
                 CultureInfo provider = CultureInfo.CurrentCulture;
                 if (string.IsNullOrEmpty(Ngay))
                 {
-                    data = _videosRepository.GetAll().Where(x=>(x.ChannelId == id || id == 0) && x.IsDelete == 0).ToList();
+                    DateTime dateTime = DateTime.Now;
+                   data = _videosRepository.GetAll().Where(x=>(x.ChannelId == id || id == 0) && x.IsMerge == 1 && x.IsDelete == 0).ToList();
+                    var lstVideo = _videosRepository.GetAll()
+.Where(x => x.IsDelete == 0 && x.ChannelId == id
+&& x.Start.Date == dateTime.Date
+&& x.IsMerge == 0)
+.OrderBy(x => x.Start)
+.GroupBy(p => new { p.Year, p.Month, p.Date, p.Hours })
+.Select(g => new Videos
+{
+Year = g.Key.Year,
+Month = g.Key.Month,
+Date = g.Key.Date,
+Hours = g.Key.Hours,
+Start = g.OrderBy(x => x.Start).FirstOrDefault().Start,
+End = g.OrderBy(x => x.Start).LastOrDefault().End,
+Thumbnail = g.FirstOrDefault().VideoPath,
+Id = "unmerge-" + g.Key.Year + "-" + g.Key.Month + "-" + g.Key.Date + "-" + g.Key.Hours + "-" + id
+})
+.OrderByDescending(x => x.Hours).ToList();
+                    if (lstVideo.Count > 0)
+                    {
+                        data.AddRange(lstVideo);
+                    }
                 }
                 else
                 {
                     DateTime dateTime = DateTime.ParseExact(Ngay, "dd/MM/yyyy", provider);
-                    data = _videosRepository.GetAll().Where(x=> (x.ChannelId == id || id == 0) && x.Start.Date == dateTime && x.IsDelete == 0).ToList();
+                    data = _videosRepository.GetAll().Where(x=> (x.ChannelId == id || id == 0) && x.Start.Date == dateTime
+                    && x.IsMerge == 1 && x.IsDelete == 0).ToList();
+
+                    var lstVideo = _videosRepository.GetAll()
+.Where(x => x.IsDelete == 0 && x.ChannelId == id
+&& x.Start.Date == dateTime.Date
+&& x.IsMerge == 0)
+.OrderBy(x => x.Start)
+.GroupBy(p => new { p.Year, p.Month, p.Date, p.Hours })
+.Select(g => new Videos
+{
+ Year = g.Key.Year,
+ Month = g.Key.Month,
+ Date = g.Key.Date,
+ Hours = g.Key.Hours,
+ Start = g.OrderBy(x => x.Start).FirstOrDefault().Start,
+ End = g.OrderBy(x => x.Start).LastOrDefault().End,
+ Thumbnail = g.FirstOrDefault().VideoPath,
+    Id = "unmerge-" + g.Key.Year + "-" + g.Key.Month + "-" + g.Key.Date + "-" + g.Key.Hours + "-" + id
+})
+.OrderByDescending(x => x.Hours).ToList();
+                    if (lstVideo.Count > 0)
+                    {
+                        data.AddRange(lstVideo);
+                    }
+
                 }
+
 
                 totalRow = data.Count();
                 var paged = data.OrderByDescending(x => x.Start).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
@@ -380,7 +429,8 @@ namespace BookingApp.Controllers
                                    Hours = g.Key.Hours,
                                    Start = g.OrderBy(x=>x.Start).FirstOrDefault().Start,
                                    End = g.OrderBy(x => x.Start).LastOrDefault().End,
-                                   Minutes = (int)(g.OrderBy(x => x.Start).LastOrDefault().End - g.OrderBy(x => x.Start).FirstOrDefault().Start).TotalMinutes,
+                                   Minutes = (int)g.Sum(x=> (x.End - x.Start).TotalMinutes),
+                                   //Minutes = (int)(g.OrderBy(x => x.Start).LastOrDefault().End - g.OrderBy(x => x.Start).FirstOrDefault().Start).TotalMinutes,
                                    Thumbnail = g.FirstOrDefault().VideoPath,
                                })
                                .OrderByDescending(x => x.Hours).ToList();
@@ -404,8 +454,8 @@ namespace BookingApp.Controllers
             }
             else
             {
-                var list = new List<string>();
-                list.Add(book.VideoPath.Replace(@"\", @"/"));
+                var list = new List<Videos>();
+                list.Add(book);
                 string rootPath = _env.ContentRootPath;
                 var videoPath = Helper.CreateMasterM3U8(rootPath, list);
                 book.VideoPath = videoPath;

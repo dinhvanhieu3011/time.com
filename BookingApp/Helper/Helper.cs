@@ -3,6 +3,8 @@ using System.Text.Json;
 using System;
 using System.Diagnostics;
 using System.IO;
+using BASE.Entity.DexTrack;
+using System.Linq;
 
 namespace BookingApp
 {
@@ -161,6 +163,36 @@ namespace BookingApp
                 {
                     writer.WriteLine("#EXTINF:9.0,");
                     writer.WriteLine(Path.GetFileName(tsFile));
+                }
+
+                writer.WriteLine("#EXT-X-ENDLIST");
+            }
+
+            return m3u8FilePath.Replace(root, "");
+        }
+        public static string CreateMasterM3U8(string root, List<Videos> tsFiles, string fileName = "master.m3u8", int targetDuration = 11, int version = 3, string playlistType = "VOD")
+        {
+            if (tsFiles == null || tsFiles.Count == 0)
+            {
+                throw new ArgumentException("Danh sách file TS trống.");
+            }
+
+            string firstTsFileDirectory = Path.GetDirectoryName(tsFiles[0].VideoPath.Replace(@"\", @"/"));
+            string firstName = Path.GetFileName(tsFiles[0].VideoPath.Replace(@"\", @"/"));
+
+            string m3u8FilePath = Path.Combine(root, firstTsFileDirectory, fileName);
+            tsFiles = tsFiles.OrderBy(x=>x.Start).ToList();
+            using (StreamWriter writer = new StreamWriter(m3u8FilePath, false)) // 'false' để ghi đè file nếu nó đã tồn tại
+            {
+                writer.WriteLine("#EXTM3U");
+                writer.WriteLine("#EXT-X-VERSION:" + version);
+                writer.WriteLine("#EXT-X-PLAYLIST-TYPE:" + playlistType);
+                writer.WriteLine("#EXT-X-TARGETDURATION:" + targetDuration);
+
+                foreach (Videos tsFile in tsFiles)
+                {
+                    writer.WriteLine("#EXTINF:"+(int)(tsFile.End - tsFile.Start).TotalSeconds+".0,");
+                    writer.WriteLine(Path.GetFileName(tsFile.VideoPath.Replace(@"\", @"/")));
                 }
 
                 writer.WriteLine("#EXT-X-ENDLIST");
