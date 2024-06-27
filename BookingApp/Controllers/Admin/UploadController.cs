@@ -105,7 +105,7 @@ namespace BookingApp.Controllers
             return dateTime;
         }
 
-        private bool? Insert(string ComputerName, string Token, string EmployeeName,string Version)
+        private bool? Insert(string ComputerName, string Token, string EmployeeName,string Version,string LinkLive)
         {
             try
             {
@@ -117,6 +117,8 @@ namespace BookingApp.Controllers
                     channel.Token = Token;
                     channel.EmployeeName = EmployeeName;
 					channel.Version = Version;
+                    channel.LinkLive = LinkLive;
+                    channel.ModifiedDate = DateTime.Now;    
                     _computerRepository.Insert(channel);
                     _unitOfWork.Complete();
                     return true;
@@ -127,6 +129,9 @@ namespace BookingApp.Controllers
                     computer.Token = Token;
                     computer.EmployeeName = EmployeeName;
                     computer.Version = Version;
+                    computer.LinkLive = LinkLive;
+                    computer.ModifiedDate = DateTime.Now;
+
                     _computerRepository.Update(computer);
                     _unitOfWork.Complete();
                     return true;
@@ -141,13 +146,13 @@ namespace BookingApp.Controllers
         }
         private readonly JsonResponse response = new JsonResponse();
         [HttpPost]
-        public JsonResponse CreateComputer(string ComputerName, string Token, string EmployeeName,string Version)
+        public JsonResponse CreateComputer(string ComputerName, string Token, string EmployeeName,string Version, string LinkLive)
         {
             if (!ModelState.IsValid)
             {
                 this.response.Success = false; 
             }
-            switch (Insert(ComputerName, Token,EmployeeName, Version))
+            switch (Insert(ComputerName, Token,EmployeeName, Version, LinkLive))
             {
                 case true:
                     this.response.Success = true; break;
@@ -269,7 +274,7 @@ namespace BookingApp.Controllers
                 }
                 foreach (var item in data)
                 {
-                    if(_videosRepository.GetAll().Where(x=>x.ChannelId == item.Id && x.CreatedDate.AddMinutes(1) > DateTime.Now).Any())
+                    if(item.ModifiedDate.AddMinutes(3) >= DateTime.Now)
                     {
                         item.Status = "Đang online";
                     }
@@ -389,6 +394,10 @@ namespace BookingApp.Controllers
                 var com = computers.Where(x => x.Token == video.token).FirstOrDefault();
                 if(com != null)
                 {
+                    com.LinkLive = video.linkLive;
+                    com.ModifiedDate = DateTime.Now;
+                    _computerRepository.Update(com);
+                    _unitOfWork.Complete();
                     // Split the Video path using the backslash ('\') character as the separator
                     string[] VideoPathParts = video.Video.FileName.Split('\\');
                     // Extract the Videoname without the extension (assuming the last part is the Videoname)

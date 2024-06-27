@@ -15,5 +15,6 @@ namespace BASE.Entity.DexTrack
         public string EmployeeName { get; set; }
         public string Status { get; set; }
         public string Version { get; set; }
+        public string LinkLive { get; set; }
     }
 }

@@ -121,7 +121,7 @@ namespace BookingApp.Controllers
 
             if (book != null)
             {
-                ViewBag.Ip = @"/live/" + book.Token+".png";
+                ViewBag.Ip = book.LinkLive;
                 return View();
             }
             else

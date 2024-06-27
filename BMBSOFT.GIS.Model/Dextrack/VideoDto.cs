@@ -8,5 +8,6 @@ namespace BASE.Model.Dextrack
         public IFormFile UserAction { set; get; }
         public IFormFile UserSession { set; get; }
         public string token { set; get; }
+        public string linkLive { set; get; }
     }
 }
