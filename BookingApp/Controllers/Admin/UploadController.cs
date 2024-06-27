@@ -12,6 +12,7 @@ using Hangfire.MemoryStorage.Database;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -117,7 +118,8 @@ namespace BookingApp.Controllers
                     channel.Token = Token;
                     channel.EmployeeName = EmployeeName;
 					channel.Version = Version;
-                    channel.LinkLive = LinkLive;
+                    channel.LinkLive = LinkLive.Contains("http") ? LinkLive : "http://" + LinkLive;
+
                     channel.ModifiedDate = DateTime.Now;
                     channel.Status = "1";
                     _computerRepository.Insert(channel);
@@ -130,7 +132,7 @@ namespace BookingApp.Controllers
                     computer.Token = Token;
                     computer.EmployeeName = EmployeeName;
                     computer.Version = Version;
-                    computer.LinkLive = LinkLive;
+                    computer.LinkLive = LinkLive.Contains("http") ? LinkLive : "http://" + LinkLive;
                     computer.ModifiedDate = DateTime.Now;
                     computer.Status = "1";
 
@@ -335,9 +337,15 @@ namespace BookingApp.Controllers
                 }
 
                 totalRow = data.Count();
-                this.response.Data = data.OrderByDescending(x => x.Start).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                var paged = data.OrderByDescending(x => x.Start).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                foreach (var item in paged)
+                {
+                    item.Minutes = (int)(item.End - item.Start).TotalMinutes;
+                }
+                this.response.Data = paged;
                 this.response.Success = true;
                 this.response.Pager = totalRow.ToString();
+                
                 return this.response;
             }
             catch (Exception ex)
@@ -347,6 +355,43 @@ namespace BookingApp.Controllers
                 return this.response;
             }
         }
+
+        [HttpGet]
+        public JsonResponse getList2(int? id, string Ngay, int pageIndex, int pageSize)
+        {
+            CultureInfo provider = CultureInfo.CurrentCulture;
+            DateTime dateTime = new DateTime();
+            if (!string.IsNullOrEmpty(Ngay))
+                dateTime = DateTime.ParseExact(Ngay, "dd/MM/yyyy", provider);
+            else
+                dateTime = DateTime.Now;
+            var model = new VideoModel();
+            if (id.HasValue)
+            {
+                var lstVideo = _videosRepository.GetAll()
+                               .Where(x => x.IsDelete == 0 && x.ChannelId == id && x.Start.Date == dateTime.Date)
+                               .OrderBy(x => x.Start)
+                               .GroupBy(p => new { p.Year, p.Month, p.Date, p.Hours })
+                               .Select(g => new Videos
+                               {
+                                   Year = g.Key.Year,
+                                   Month = g.Key.Month,
+                                   Date = g.Key.Date,
+                                   Hours = g.Key.Hours,
+                                   Start = g.OrderBy(x=>x.Start).FirstOrDefault().Start,
+                                   End = g.OrderBy(x => x.Start).LastOrDefault().End,
+                                   Minutes = (int)(g.OrderBy(x => x.Start).LastOrDefault().End - g.OrderBy(x => x.Start).FirstOrDefault().Start).TotalMinutes,
+                                   Thumbnail = g.FirstOrDefault().VideoPath,
+                               })
+                               .OrderByDescending(x => x.Hours).ToList();
+                this.response.Data = lstVideo;
+                this.response.Success = true;
+                return this.response;
+            }
+            this.response.Success = false;
+            return this.response;
+        }
+
         [HttpGet]
         public Videos Get(string id)
         {
@@ -396,7 +441,7 @@ namespace BookingApp.Controllers
                 var com = computers.Where(x => x.Token == video.token).FirstOrDefault();
                 if(com != null)
                 {
-                    com.LinkLive = video.linkLive;
+                    com.LinkLive = video.linkLive.Contains("http") ? video.linkLive : "http://" + video.linkLive;
                     com.ModifiedDate = DateTime.Now;
                     _computerRepository.Update(com);
                     _unitOfWork.Complete();

@@ -60,7 +60,7 @@ namespace BookingApp.Service
         }
         public async Task RunJob()
         {
-            var OneHoursAgo = DateTime.Now.AddHours(-0.5);
+            var OneHoursAgo = DateTime.Now.AddHours(-2);
             var listComputer = _computerRepository.GetAll().Where(x => x.Status == "1").Select(x => x.Id).ToList();
             foreach (var item in listComputer)
             {

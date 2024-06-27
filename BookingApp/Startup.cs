@@ -209,8 +209,8 @@ Path.Combine(Directory.GetCurrentDirectory(), @"live")),
                 WorkerCount = 1,
                 ServerTimeout = TimeSpan.FromMinutes(120)
             };
-            //RecurringJob.AddOrUpdate<ISchedulerService>(ms => ms.AutoTrecking(), EveryTwoHours, TimeZoneInfo.FindSystemTimeZoneById(TimeZone));
-            //_ = app.UseHangfireServer(options);
+            RecurringJob.AddOrUpdate<ISchedulerService>(ms => ms.AutoTrecking(), EveryTwoHours, TimeZoneInfo.FindSystemTimeZoneById(TimeZone));
+            _ = app.UseHangfireServer(options);
             //RecurringJob.AddOrUpdate<ISchedulerService>(ms => ms.Backup(), SchedulerBackup, TimeZoneInfo.FindSystemTimeZoneById(TimeZone));
             //_ = app.UseHangfireServer(options);
             //RecurringJob.AddOrUpdate<ISchedulerService>(ms => ms.CheckConnection(), Every2Minute, TimeZoneInfo.FindSystemTimeZoneById(TimeZone));

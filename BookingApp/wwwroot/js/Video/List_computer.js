@@ -81,7 +81,6 @@ List_computer.prototype = {
                     var mystring = JSON.stringify(data.data);
                     var json = $.parseJSON(mystring);
                     console.log('data', json)
-                    coreRoot.systemroot.pagButtonRender("main_doc.List.list_DanhSach()", "tbldata", data.pager);
                     if (json != null) {
                         var mlen = json.length;
                         $("#zone_soluong").html(data.pager);

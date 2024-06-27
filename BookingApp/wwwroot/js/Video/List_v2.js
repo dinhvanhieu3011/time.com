@@ -47,7 +47,7 @@ List.prototype = {
         $(document).delegate('.btnEdit', 'click', function () {
             var id = this.id;
             if (id != "") {
-                window.open(window.location.origin +"/Video/Detail/" + id, "_blank");
+                window.open(window.location.origin + "/Video/Detail/" + id, "_blank");
             }
         });
         $(document).on("keypress", "input", function (event) {
@@ -67,12 +67,14 @@ List.prototype = {
         $.ajax({
             type: 'GET',
             crossDomain: true,
-            url: '/api/VideoManager/getList',
+            url: '/api/Upload/getList2',
             //headers: { 'token1': 'b1e813ee2638dcb3b1abd21b4085b0f4d76438ae37bc036225cf26340e945044' },
             data: {
                 'Ngay': strNgayChungTu,
-                'id' : id
-            }, 
+                'id': id,
+                'pageIndex': pageIndex,
+                'pageSize': pageSize
+            },
             cache: false,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -83,6 +85,75 @@ List.prototype = {
                     var mystring = JSON.stringify(data.data);
                     var json = $.parseJSON(mystring);
                     console.log('data', json)
+                    coreRoot.systemroot.pagButtonRender("main_doc.List.list_DanhSach()", "tbldata", data.pager);
+                    if (json != null) {
+                        var mlen = json.length;
+                        $("#zone_soluong").html(data.pager);
+                        $('#tbldata').dataTable({
+                            "aaData": json,
+                            "destroy": true,
+                            "bPaginate": false,
+                            "bLengthChange": false,
+                            "bFilter": false,
+                            "processing": true,
+                            "bSort": true,
+                            "bInfo": false,
+                            "bAutoWidth": false,
+                            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "Tất cả"]],
+                            "language": {
+                                "search": "Tìm kiếm theo từ khóa:",
+                                "lengthMenu": "Hiển thị _MENU_ dữ liệu",
+                                "zeroRecords": "Không có dữ liệu nào được tìm thấy!",
+                                "info": "Hiển thị _START_ đến _END_ trong _TOTAL_ dữ liệu",
+                                "infoEmpty": "Hiển thị 0 đến 0 của 0 dữ liệu ",
+                                "infoFiltered": "(Dữ liệu tìm kiếm trong _MAX_ dữ liệu)",
+                                "processing": "Đang tải dữ liệu...",
+                                "emptyTable": "Không có dữ liệu nào được tìm thấy!",
+                                "paginate": {
+                                    "first": "Đầu",
+                                    "last": "Cuối",
+                                    "next": "Tiếp theo",
+                                    "previous": "Quay lại"
+                                }
+                            },
+                            "order": [[1, "desc"]],
+                            "aoColumns": [{
+                                "mDataProp": "id",
+                                "bVisible": false
+                            }
+                                ,
+                            {
+                                "mDataProp": "start",
+                                "mRender": function (data) {
+                                    return moment(data + '').format("DD/MM/YYYY hh:mm:ss");
+                                }
+                            }
+                                ,
+                            {
+                                "mDataProp": "end",
+                                "mRender": function (data) {
+                                    return moment(data + '').format("DD/MM/YYYY hh:mm:ss");
+                                }
+                            },
+                            {
+                                "mDataProp": "minutes"
+                            }
+                                ,
+                            {
+                                "mDataProp": "hours"
+                            }
+
+                                ,
+                            {
+                                "mData": "id",
+                                "mRender": function (data, type, full) {
+                                    return '<a href="/Video/Detail?id=' + id + '&date=' + full.date + '&month=' + full.month + '&year=' + full.year + '&hours=' + full.hours + '"><i class="fa fa-edit fa-customer"></i></a>';
+                                }
+                            }
+
+                            ],
+                        });
+                    }
                 }
                 else {
                     coreRoot.utility.alert("Thông báo", data.Message);
@@ -90,7 +161,7 @@ List.prototype = {
                 }
             },
             error: function (er) { coreRoot.systemroot.endLoading(); },
-            timeout:  3000000
+            timeout: 3000000
         });
     },
     common_huytimkiem: function () {

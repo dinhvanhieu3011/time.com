@@ -140,37 +140,14 @@ List.prototype = {
                                     return moment(data + '').format("DD/MM/YYYY hh:mm:ss");
                                 }
                             }
-                                ,
-                            {
-                                "mDataProp": "year"
-                            }
-                                ,
-                            {
-                                "mDataProp": "month"
-                            }
-                                ,
-                            {
-                                "mDataProp": "date"
-                            }
+,
+                                {
+                                    "mDataProp": "minutes"
+                                }
                                    ,
                             {
                                 "mDataProp": "hours"
-                            }
-                                ,
-                            {
-                                "mDataProp": "videoPath"
                             },
-                                {
-                                    "mDataProp": "isMerge",
-                                    "mRender": function (data) {
-                                        if (data == 0) {
-                                            return "Video chưa gộp"
-                                        }
-                                        else {
-                                            return "Video gộp"
-                                        }
-                                    }
-                                },
                             {
                                 "mData": "id",
                                 "mRender": function (data) {

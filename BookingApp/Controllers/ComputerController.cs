@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Channels;
 using BASE.Data.Interfaces;
+using BASE.Data.Migrations;
 using BASE.Data.Repository;
 using BASE.Entity.DexTrack;
 using BookingApp.Filters.Authorization;
@@ -121,7 +123,8 @@ namespace BookingApp.Controllers
 
             if (book != null)
             {
-                ViewBag.Ip = book.LinkLive;
+                ViewBag.Ip =  book.LinkLive.Contains("http") ? book.LinkLive : "http://" + book.LinkLive;
+
                 return View();
             }
             else
