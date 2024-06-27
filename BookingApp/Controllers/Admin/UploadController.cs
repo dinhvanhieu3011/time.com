@@ -118,7 +118,8 @@ namespace BookingApp.Controllers
                     channel.EmployeeName = EmployeeName;
 					channel.Version = Version;
                     channel.LinkLive = LinkLive;
-                    channel.ModifiedDate = DateTime.Now;    
+                    channel.ModifiedDate = DateTime.Now;
+                    channel.Status = "1";
                     _computerRepository.Insert(channel);
                     _unitOfWork.Complete();
                     return true;
@@ -131,6 +132,7 @@ namespace BookingApp.Controllers
                     computer.Version = Version;
                     computer.LinkLive = LinkLive;
                     computer.ModifiedDate = DateTime.Now;
+                    computer.Status = "1";
 
                     _computerRepository.Update(computer);
                     _unitOfWork.Complete();
