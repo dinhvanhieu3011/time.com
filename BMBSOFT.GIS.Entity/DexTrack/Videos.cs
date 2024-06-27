@@ -23,5 +23,6 @@ namespace BASE.Entity.DexTrack
         public int Minutes { get; set; }
         public int IsDelete { get; set; }
         public int IsMerge { get; set; }
+        public string Thumbnail { get; set; }
     }
 }

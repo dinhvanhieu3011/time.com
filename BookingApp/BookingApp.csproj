@@ -29,6 +29,7 @@
     <Content Remove="wwwroot\js\Video\Detail.js" />
     <Content Remove="wwwroot\js\Video\List.js" />
     <Content Remove="wwwroot\js\Video\List_chat.js" />
+    <Content Remove="wwwroot\js\Video\List_v2.js" />
     <Content Remove="wwwroot\js\Video\Whatsapp.js" />
   </ItemGroup>
   <ItemGroup>
@@ -1789,6 +1790,7 @@
     <None Include="wwwroot\Core\systemextend.js" />
     <None Include="wwwroot\Core\systemroot.js" />
     <None Include="wwwroot\Core\utility.js" />
+    <None Include="wwwroot\js\Video\List_v2.js" />
     <None Include="wwwroot\js\Video\List_chat.js" />
     <None Include="wwwroot\js\Video\Whatsapp.js" />
     <None Include="wwwroot\js\Video\List_chat.js" />

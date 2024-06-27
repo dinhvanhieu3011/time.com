@@ -9,4 +9,11 @@ namespace BookingApp.Models
         public List<UserAction>  userActions { get; set; }
         public List<UserSession>  userSessions { get; set; }
     }
+    public class VideoGroupHour
+    {
+        public string Video { get; set; }
+        public string Thumbnail { get; set; }
+        public string Hour { get; set; }
+        public string Date { get; set; }
+    }
 }

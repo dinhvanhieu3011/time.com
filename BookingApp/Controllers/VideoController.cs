@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using BASE.Data.Interfaces;
 using BASE.Data.Repository;
+using BASE.Entity.DexTrack;
 using BASE.Model;
 using BookingApp.Filters.Authorization;
 using BookingApp.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 namespace BookingApp.Controllers
 {
 	public class VideoController : Controller
@@ -35,6 +38,28 @@ namespace BookingApp.Controllers
         public IActionResult List(int id)
         {
             ViewBag.id = id;
+            return View();
+
+        }
+        public IActionResult List_v2(int? id)
+        {
+            CultureInfo provider = CultureInfo.CurrentCulture;
+            DateTime dateTime = DateTime.ParseExact("14/06/2024", "dd/MM/yyyy", provider);
+            var lstVideo = _videosRepository.GetAll()
+               .Where(x => x.IsDelete == 0 && x.ChannelId == id && x.Start.Date == dateTime.Date)
+               .OrderBy(x => x.Start)
+               .GroupBy(p => new { p.Year, p.Month, p.Date, p.Hours })
+               .Select(g => new Videos
+               {
+                   Year = g.Key.Year,
+                   Month = g.Key.Month,
+                   Date = g.Key.Date,
+                   Hours = g.Key.Hours,
+                   Thumbnail = g.FirstOrDefault().VideoPath
+               }).OrderByDescending(x=>x.Hours)
+               .ToList();
+            ViewBag.id = id;
+            ViewBag.relatedVideo = lstVideo;
             return View();
 
         }
