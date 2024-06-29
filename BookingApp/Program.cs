@@ -14,7 +14,7 @@ namespace BookingApp
             Host.CreateDefaultBuilder(args)
                 .UseSerilog((hostingContext, loggerConfiguration) =>
                     loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration)
-                        .MinimumLevel.Error()
+                        .MinimumLevel.Information()
                         .Enrich.FromLogContext()
                         .WriteTo.Console()
                         .WriteTo.File("Logs\\log-.txt", rollingInterval: RollingInterval.Day)

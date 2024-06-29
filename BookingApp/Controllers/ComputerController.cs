@@ -117,6 +117,20 @@ namespace BookingApp.Controllers
                 return RedirectToAction("Index", "Computer", new { error = "wrongData" });
             }
         }
+        public IActionResult Live_V2(int id)
+        {
+            var book = _computerRepository.GetAll().Where(x => x.Id == id).FirstOrDefault();
+
+            if (book != null)
+            {
+                ViewBag.Ip = @"/live/" + book.Token + ".png";
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Computer", new { error = "wrongData" });
+            }
+        }
         public IActionResult Live(int id)
         {
             var book = _computerRepository.GetAll().Where(x => x.Id == id).FirstOrDefault();

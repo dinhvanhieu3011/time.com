@@ -87,6 +87,7 @@
                                                 <th style="width: 250px;text-align: center !important">Employee</th>
                                                 <th style="width: 150px;text-align: center !important">Version</th>
                                                 <th style="width: 100px;text-align: center !important;">Status</th>
+                                                <th style="width: 100px;text-align: center !important;"></th>
                                                 <th style="width: 70px;text-align: center !important;">Edit</th>
                                                 <th style="width: 70px;text-align: center !important;">Delete</th>
 
@@ -100,56 +101,7 @@
                         </div>
                     </div>
 
-@*                     <dd class="col-sm-12">
-                        <table class="tblResponsive">
-                            <thead>
-                                <tr>
-                                    <th>Computer Name</th>
-                                    <th>Computer Token</th>               
-                                    <th>Employee </th>
-                                    <th>Status</th> 
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model)
-                                {
-                                    <tr >
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Name)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Link)
-                                        </td>
-                     
-                                        <td>
-                                             @Html.DisplayFor(modelItem => item.UserId)
-                                        </td>
-
-                                                  <td>
-                                    @Html.DisplayFor(modelItem => item.Status)
-                                    </td>
-                                        <td>
-                                                @Html.ActionLink("Sửa", "Update", "Computer", new { id = item.Id })
-                                        </td>
-                                        <td>
-                                                @Html.ActionLink("Xóa", "Delete", "Computer", new { id = item.Id }, new { @onclick = "return confirm('Are you sure?')" })
-                                        </td>
-                                        <td>
-                                            @Html.ActionLink("Lịch sử", "List", "Video", new { id = item.Id })
-                                        </td>
-                                        <td>
-                                            @Html.ActionLink("Live", "Live", "Computer", new { id = item.Id })
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </dd>
- *@                </dl>
+               </dl>
             </div>
         </div>
     </div>

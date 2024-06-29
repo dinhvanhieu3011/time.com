@@ -48,6 +48,12 @@ List_computer.prototype = {
                 window.open(window.location.origin + "/Computer/Live/" + id, "_blank");
             }
         });
+        $(document).delegate('.btnLive2', 'click', function () {
+            var id = this.id;
+            if (id != "") {
+                window.open(window.location.origin + "/Computer/Live_v2/" + id, "_blank");
+            }
+        });
         $(document).on("keypress", "input", function (event) {
             if (event.which === 13) {
                 $('#tbldata').dataTable().fnClearTable();
@@ -110,6 +116,7 @@ List_computer.prototype = {
                                     "previous": "Quay lại"
                                 }
                             },
+
                             "order": [[1, "desc"]],
                             "aoColumns": [{
                                 "mDataProp": "id",
@@ -124,15 +131,21 @@ List_computer.prototype = {
                                 "mDataProp": "token"
                             }
                                 ,
-                                {
-                                    "mDataProp": "employeeName"
-                                }
-                                    ,
                             {
-                                    "mDataProp": "version"
-                                }
+                                "mDataProp": "employeeName"
+                            }
+                                ,
+                            {
+                                "mDataProp": "version"
+                            }
                                 , {
                                 "mDataProp": "status"
+                            }
+                                , {
+                                "mData": "token",
+                                "mRender": function (data, type, full) {
+                                    return '<img id="' + full.id + '" src="/live/' + full.token + '.png?random=' + new Date().getTime() + '" class="img-responsive btnLive2" style="max-width: 100%;"/>';
+                                }
                             }
                                 ,
 
@@ -161,7 +174,8 @@ List_computer.prototype = {
                                 "mData": "id",
                                 "mRender": function (data) {
                                     return '<a title="Live" id="' + data + '" class="btnLive" href="javascript:void(0);"><i class="fa fa-eye fa-customer"></i></a>';
-                                }
+                                },
+                                "bVisible": false
                             }
                             ],
                         });

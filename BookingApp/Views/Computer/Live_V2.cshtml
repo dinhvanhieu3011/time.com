@@ -1,0 +1,109 @@
+﻿@{
+    ViewData["Title"] = "Lịch sử ";
+}
+
+
+
+<div class="container">
+    <div id="Viewer" class="imgPreview">
+        <img id="imgPrev" src="@ViewBag.Ip" class="img-responsive" style="max-width: 100%;" alt="LIVE! Sever Screen Now!" />
+        <br />
+    </div>
+</div>
+
+<script src="~/lib/jquery-3.3.1.min.js"></script>
+
+<style>
+
+    h4 {
+        padding-top: 15px;
+        padding-bottom: 10px;
+    }
+
+    .pNew {
+        padding-top: 12px;
+    }
+
+    .col-right {
+        text-align: right;
+    }
+</style>
+<style>
+    /* Style for the table */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+
+    /* Style for table header */
+    th {
+        background-color: #f2f2f2;
+        color: #333;
+        padding: 8px;
+        text-align: left;
+    }
+
+    /* Style for table rows */
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    /* Style for table cells */
+    td {
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    /* Hover effect for table rows */
+    tr:hover {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<script>
+
+    var refreshInterval = 500;
+    var isWatching = true;
+    var serverFailCount = 0;
+    var ImagePreview = document.getElementById('imgPrev');
+    // var viewer = document.getElementById('serverStoppedMessage');
+
+    function LoadImage() {
+        setTimeout(function () {
+            // viewer.className = 'd-none';
+            ImagePreview.className = 'img-responsive';
+            ImagePreview.src = '@ViewBag.Ip' + '?rand=' + Math.random();
+        }, refreshInterval);
+    }
+
+    ImagePreview.onload = function () {
+        if (isWatching) {
+            serverFailCount = 0;
+            LoadImage();
+        }
+    };
+
+    var checkServerStatusInterval;
+
+    ImagePreview.onerror = function (err) {
+        console.log(err);
+        serverFailCount++;
+        if (serverFailCount >= 5) {
+            //viewer.className = '';
+            ImagePreview.className = 'img-responsive d-none';
+            checkServerStatusInterval = setInterval(function () {
+                fetch('@ViewBag.Ip', {
+                    "method": "GET",
+                }).then(function (success) {
+                    clearInterval(checkServerStatusInterval);
+                    LoadImage();
+                });
+            }, 3000);
+        }
+        else
+            LoadImage();
+    }
+
+</script>
+
